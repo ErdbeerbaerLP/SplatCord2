@@ -230,7 +230,7 @@ public class Bot implements EventListener {
             while (true) {
                 jda.getPresence().setPresence(presences[presence], false);
                 try {
-                    sleep(1000 * (r.nextInt(7) + 1));
+                    sleep(1000 * (r.nextInt(19) + 1));
                 } catch (InterruptedException e) {
                     return;
                 }
