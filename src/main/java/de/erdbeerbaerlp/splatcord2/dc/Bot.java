@@ -235,7 +235,7 @@ public class Bot implements EventListener {
                     return;
                 }
                 presence++;
-                if (presence > presences.length) presence = 0;
+                if (presence > presences.length-1) presence = 0;
 
             }
         }
