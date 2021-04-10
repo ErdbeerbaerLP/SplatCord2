@@ -174,6 +174,7 @@ public class Bot implements EventListener {
     }
 
     private static boolean isAdmin(Member m) {
+        if(m == null) return false;
         return m.hasPermission(Permission.MANAGE_SERVER);
     }
 
