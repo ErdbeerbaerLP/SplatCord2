@@ -133,6 +133,7 @@ public class Bot implements EventListener {
                                 break;
                             }
                             Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), null);
+                            sendMessage(lang.botLocale.deleteSuccessful, ev.getChannel().getId());
                             break;
                         case "delstage":
                             if (!isAdmin(ev.getMember())) {
@@ -140,6 +141,7 @@ public class Bot implements EventListener {
                                 break;
                             }
                             Main.iface.setStageChannel(ev.getGuild().getIdLong(), null);
+                            sendMessage(lang.botLocale.deleteSuccessful, ev.getChannel().getId());
                             break;
                         case "stage":
                         case "stages":

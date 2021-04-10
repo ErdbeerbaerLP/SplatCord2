@@ -29,5 +29,6 @@ public class EnglishBase {
                     Config.instance().discord.prefix + "invite - Gives you the invite URL for this bot\n" +
                     Config.instance().discord.prefix + "stages - Sends the currently active stages\n" +
                     Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run",
-            unknownLanguage = "You did not specify an valid language, valid languages are german (de) and english (en)";
+            unknownLanguage = "You did not specify an valid language, valid languages are german (de) and english (en)",
+            deleteSuccessful = "Successfully deleted";
 }

@@ -26,5 +26,6 @@ public class German extends EnglishBase {
                 Config.instance().discord.prefix + "stages - Sendet die aktuell aktiven Arenen\n" +
                 Config.instance().discord.prefix + "salmon - Sendet den Aktuellen oder Kommenden SalmonRun";
         unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en)";
+        deleteSuccessful = "Erfolgreich gelöscht!";
     }
 }
