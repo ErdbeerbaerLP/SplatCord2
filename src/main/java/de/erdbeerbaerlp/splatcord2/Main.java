@@ -93,7 +93,7 @@ public class Main {
                 TimeUnit.MINUTES.sleep(5);
             }
             long prevSalmonStartTime = coop_schedules.details[0].start_time;
-            if (coop_schedules.details[0].start_time != prevSalmonStartTime && coop_schedules.details[0].start_time >= System.currentTimeMillis() && prevSalmonStartTime != currentSalmonStartTime) {
+            if (coop_schedules.details[0].start_time >= System.currentTimeMillis() && prevSalmonStartTime != currentSalmonStartTime) {
                 iface.getAllSalmonChannels().forEach((serverid, channel) -> {
                     bot.sendSalmonMessage(serverid, channel);
                 });
