@@ -6,7 +6,10 @@ import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.json.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
 import net.dv8tion.jda.api.*;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
@@ -22,12 +25,16 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
 import java.time.Instant;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class Bot implements EventListener {
-    private final JDA jda;
+    public final JDA jda;
     private final PresenceUpdater presence;
 
     public Bot() throws LoginException, InterruptedException {
@@ -57,6 +64,12 @@ public class Bot implements EventListener {
         if (msg == null || channelId == null) return;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) channel.sendMessage(msg).queue();
+    }
+    private CompletableFuture<Message> submitMessage(Message msg, Long channelId) {
+        if (msg == null || channelId == null) return null;
+        final TextChannel channel = jda.getTextChannelById(channelId);
+        if (channel != null) return channel.sendMessage(msg).submit();
+        return null;
     }
 
     public void sendMessage(Message msg, String channelId) {
@@ -148,7 +161,11 @@ public class Bot implements EventListener {
                             sendMapMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
                             break;
                         case "salmon":
-                            sendSalmonMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
+                            try {
+                                sendSalmonMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
+                            } catch (ExecutionException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             break;
                         case "invite":
                             sendMessage("<" + jda.getInviteUrl(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES) + ">", ev.getChannel().getId());
@@ -186,9 +203,9 @@ public class Bot implements EventListener {
         }
     }
 
-    public void sendSalmonMessage(long serverid, long channel) {
+    public Map.Entry<Long, Long> sendSalmonMessage(long serverid, long channel) throws ExecutionException, InterruptedException {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
+        return new AbstractMap.SimpleEntry<>(serverid, submitMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
                 .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
                 .addField(lang.botLocale.weapons,
                         getWeaponName(lang, Main.coop_schedules.details[0].weapons[0]) + ", " +
@@ -199,7 +216,7 @@ public class Bot implements EventListener {
                 .setImage("https://splatoon2.ink/assets/splatnet/" + Main.coop_schedules.details[0].stage.image)
                 .setFooter(lang.botLocale.footer_ends)
                 .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[0].end_time))
-                .build()).build(), channel);
+                .build()).build(), channel).get().getIdLong());
     }
 
     public void sendMapMessage(Long serverid, long channel) {

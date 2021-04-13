@@ -8,7 +8,7 @@ public class German extends EnglishBase {
         weapons = "Waffen:";
         stagesTitle = "Aktuelle Arenen";
         footer_ends = "Endet";
-        footer_starts = "Startet";
+        footer_closed = "Geschlossen";
         unknownCommand = "Unbekannter Befehl";
         noAdminPerms = "Du benötigst Administrative Berechtigungen (Server verwalten) um diesen Befehl auszuführen!";
         stageFeedMsg = "Aktuelle Arenen werden nun regelmäßig in diesen Kanal gesendet";

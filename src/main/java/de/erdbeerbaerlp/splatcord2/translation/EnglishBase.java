@@ -11,7 +11,7 @@ public class EnglishBase {
             weapons = "Weapons:",
             stagesTitle = "Current Stages",
             footer_ends = "Ends",
-            footer_starts = "Starting",
+            footer_closed = "Closed",
             salmonRunTitle = "Salmon Run",
             unknownCommand = "Unknown command",
             noAdminPerms = "You need administrative permissions (manage server) to execute this command!",

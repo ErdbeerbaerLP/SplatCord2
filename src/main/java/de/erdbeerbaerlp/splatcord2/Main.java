@@ -9,6 +9,9 @@ import de.erdbeerbaerlp.splatcord2.storage.json.coop_schedules.CoOpSchedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.scheduling.Schedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
@@ -17,6 +20,9 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
@@ -95,10 +101,30 @@ public class Main {
             long prevSalmonStartTime = coop_schedules.details[0].start_time;
             if (coop_schedules.details[0].start_time >= System.currentTimeMillis() && prevSalmonStartTime != currentSalmonStartTime) {
                 iface.getAllSalmonChannels().forEach((serverid, channel) -> {
-                    bot.sendSalmonMessage(serverid, channel);
+                    try {
+                        Map.Entry<Long,Long> msg = bot.sendSalmonMessage(serverid, channel);
+                        iface.setSalmonMessage(msg.getKey(),msg.getValue());
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 });
                 currentSalmonStartTime = coop_schedules.details[0].start_time;
-
+            }else if(coop_schedules.details[0].start_time < System.currentTimeMillis() && prevSalmonStartTime != currentSalmonStartTime){
+                iface.getAllSalmonMessages().forEach((chan,msg)->{
+                    if(msg != null){
+                        final TextChannel channel = bot.jda.getTextChannelById(chan);
+                        if(channel == null) return;
+                        Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
+                        channel.retrieveMessageById(msg).submit().thenAccept((message)->{
+                            final List<MessageEmbed> e = message.getEmbeds();
+                            final EmbedBuilder embedBuilder = new EmbedBuilder(e.get(0));
+                            embedBuilder.setTimestamp(null);
+                            embedBuilder.setFooter(lang.botLocale.footer_closed);
+                            message.editMessage(embedBuilder.build()).queue();
+                        });
+                    }
+                });
             }
             TimeUnit.SECONDS.sleep(30);
         }

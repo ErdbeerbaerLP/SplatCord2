@@ -16,7 +16,14 @@ public class DatabaseInterface implements AutoCloseable {
         if (conn == null) {
             throw new SQLException();
         }
-        runUpdate("create table if not exists servers (serverid mediumtext not null,lang int default 0 not null,mapchannel bigint null,salchannel bigint null);");
+        runUpdate("create table if not exists servers\n" +
+                "(\n" +
+                "\tserverid bigint not null,\n" +
+                "\tlang int default 0 not null,\n" +
+                "\tmapchannel bigint null,\n" +
+                "\tsalchannel bigint null,\n" +
+                "\tlastSalmon bigint null\n" +
+                ");");
     }
 
     public void addServer(long id) {
@@ -42,37 +49,57 @@ public class DatabaseInterface implements AutoCloseable {
         runUpdate("UPDATE servers SET mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
 
-    public  HashMap<Long, Long> getAllMapChannels() {
+    public HashMap<Long, Long> getAllMapChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,mapchannel FROM servers")) {
             while (res != null && res.next()) {
                 final long serverid = res.getLong(1);
                 final long channelid = res.getLong(2);
                 if (!res.wasNull())
-                    mapChannels.put(serverid,channelid);
+                    mapChannels.put(serverid, channelid);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return mapChannels;
     }
+
     public void setSalmonChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET salchannel = " + channelID + " WHERE serverid = " + serverID);
     }
 
-    public  HashMap<Long, Long> getAllSalmonChannels() {
+    public void setSalmonMessage(long serverID, Long messageID) {
+        runUpdate("UPDATE servers SET lastSalmon = " + messageID + " WHERE serverid = " + serverID);
+    }
+
+    public HashMap<Long, Long> getAllSalmonChannels() {
         final HashMap<Long, Long> salmoChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,salchannel FROM servers")) {
             while (res != null && res.next()) {
                 final long serverid = res.getLong(1);
                 final long channelid = res.getLong(2);
                 if (!res.wasNull())
-                    salmoChannels.put(serverid,channelid);
+                    salmoChannels.put(serverid, channelid);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return salmoChannels;
+    }
+
+    public HashMap<Long, Long> getAllSalmonMessages() {
+        final HashMap<Long, Long> salmonMessages = new HashMap<>();
+        try (final ResultSet res = query("SELECT salchannel,lastSalmon FROM servers")) {
+            while (res != null && res.next()) {
+                final long channelid = res.getLong(1);
+                final long messageid = res.getLong(2);
+                if (!res.wasNull())
+                    salmonMessages.put(channelid, messageid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return salmonMessages;
     }
 
     public void delServer(long serverID) {
