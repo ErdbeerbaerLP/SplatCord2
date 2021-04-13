@@ -122,6 +122,7 @@ public class Main {
                             embedBuilder.setTimestamp(null);
                             embedBuilder.setFooter(lang.botLocale.footer_closed);
                             message.editMessage(embedBuilder.build()).queue();
+                            iface.setSalmonMessage(channel.getGuild().getIdLong(),null);
                         });
                     }
                 });
