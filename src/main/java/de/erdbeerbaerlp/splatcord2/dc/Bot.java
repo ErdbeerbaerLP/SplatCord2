@@ -170,6 +170,9 @@ public class Bot implements EventListener {
                         case "invite":
                             sendMessage("<" + jda.getInviteUrl(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES) + ">", ev.getChannel().getId());
                             break;
+                        case "support":
+                            sendMessage("https://discord.gg/DBH9FSFCXb", ev.getChannel().getId());
+                            break;
                         case "help":
                             sendMessage(lang.botLocale.helpMessage, ev.getChannel().getId());
                             break;
