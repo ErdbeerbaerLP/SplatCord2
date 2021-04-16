@@ -49,6 +49,8 @@ public class Config {
     public Discord discord = new Discord();
     @TomlComment("MySQL Database settings")
     public Database database = new Database();
+    @TomlComment("Do not edit theese vars, they are used by the bot itself to store stuff between restarts")
+    public DoNotEdit doNotEdit = new DoNotEdit();
 
     public static class Discord {
         @TomlComment("The discord bot token")
@@ -59,6 +61,7 @@ public class Config {
     public static class Database{
         @TomlComment("Database IP")
         public String ip = "0.0.0.0";
+        @TomlComment("Database Port")
         public int port = 3306;
         @TomlComment("Username")
         public String username = "splatcord2";
@@ -66,5 +69,9 @@ public class Config {
         public String password = "topsecret";
         @TomlComment("Database Name")
         public String dbName = "SplatcordDB";
+    }
+
+    public static class DoNotEdit{
+        public long lastSalmonTimestamp = 0;
     }
 }

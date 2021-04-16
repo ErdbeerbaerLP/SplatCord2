@@ -79,7 +79,6 @@ public class Main {
         deConn2.connect();
 
         coop_schedules = gson.fromJson(new InputStreamReader(deConn2.getInputStream()), CoOpSchedules.class);
-        long currentSalmonStartTime = coop_schedules.details[0].start_time;
         while (true) {
             if (LocalTime.now().getMinute() == 1) {
                 long prevStartTime = schedules.regular[0].start_time;
@@ -93,13 +92,11 @@ public class Main {
                 updateCOOP.connect();
                 coop_schedules = gson.fromJson(new InputStreamReader(updateCOOP.getInputStream()), CoOpSchedules.class);
                 if (schedules.regular[0].start_time != prevStartTime)
-                    iface.getAllMapChannels().forEach((serverid, channel) -> {
-                        bot.sendMapMessage(serverid, channel);
-                    });
+                    iface.getAllMapChannels().forEach((serverid, channel) -> bot.sendMapMessage(serverid, channel));
                 TimeUnit.MINUTES.sleep(5);
             }
             long prevSalmonStartTime = coop_schedules.details[0].start_time;
-            if (coop_schedules.details[0].start_time >= System.currentTimeMillis() && prevSalmonStartTime != currentSalmonStartTime) {
+            if (coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000) && prevSalmonStartTime != Config.instance().doNotEdit.lastSalmonTimestamp) {
                 iface.getAllSalmonChannels().forEach((serverid, channel) -> {
                     try {
                         Map.Entry<Long,Long> msg = bot.sendSalmonMessage(serverid, channel);
@@ -109,9 +106,9 @@ public class Main {
                     }
 
                 });
-                currentSalmonStartTime = coop_schedules.details[0].start_time;
-            }else if(coop_schedules.details[0].start_time < System.currentTimeMillis() && prevSalmonStartTime != currentSalmonStartTime){
-                iface.getAllSalmonMessages().forEach((chan,msg)->{
+                Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
+                Config.instance().saveConfig();
+            }else if(coop_schedules.details[0].end_time <= (System.currentTimeMillis() / 1000) && prevSalmonStartTime != Config.instance().doNotEdit.lastSalmonTimestamp){                iface.getAllSalmonMessages().forEach((chan,msg)->{
                     if(msg != null){
                         final TextChannel channel = bot.jda.getTextChannelById(chan);
                         if(channel == null) return;
@@ -126,8 +123,14 @@ public class Main {
                         });
                     }
                 });
+                Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
+                Config.instance().saveConfig();
             }
-            TimeUnit.SECONDS.sleep(30);
+            try {
+                TimeUnit.SECONDS.sleep(30);
+            }catch (InterruptedException e){
+                return;
+            }
         }
     }
 }

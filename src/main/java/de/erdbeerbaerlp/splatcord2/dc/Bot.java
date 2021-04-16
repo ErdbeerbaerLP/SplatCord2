@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 
 public class Bot implements EventListener {
     public final JDA jda;
+    @SuppressWarnings("FieldCanBeLocal")
     private final PresenceUpdater presence;
 
     public Bot() throws LoginException, InterruptedException {
@@ -193,6 +194,7 @@ public class Bot implements EventListener {
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isAdmin(Member m) {
         if(m == null) return false;
         return m.hasPermission(Permission.MANAGE_SERVER);
@@ -253,6 +255,7 @@ public class Bot implements EventListener {
             while (true) {
                 jda.getPresence().setPresence(presences[presence], false);
                 try {
+                    //noinspection BusyWait
                     sleep(1000 * (r.nextInt(19) + 1));
                 } catch (InterruptedException e) {
                     return;
