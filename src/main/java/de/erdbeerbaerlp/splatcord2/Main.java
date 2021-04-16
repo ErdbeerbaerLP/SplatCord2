@@ -80,7 +80,7 @@ public class Main {
 
         coop_schedules = gson.fromJson(new InputStreamReader(deConn2.getInputStream()), CoOpSchedules.class);
         while (true) {
-            if (LocalTime.now().getMinute() == 1) {
+            if (LocalTime.now().getMinute() == 0 && LocalTime.now().getSecond() >= 30) {
                 long prevStartTime = schedules.regular[0].start_time;
                 System.out.println("Downloading schedules...");
                 final HttpsURLConnection updateSched = (HttpsURLConnection) sched.openConnection();
