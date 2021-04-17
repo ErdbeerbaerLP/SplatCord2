@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 public class Bot implements EventListener {
     public final JDA jda;
     @SuppressWarnings("FieldCanBeLocal")
-    private final PresenceUpdater presence;
+    private final StatusUpdater presence;
 
     public Bot() throws LoginException, InterruptedException {
         JDABuilder b = JDABuilder.create(Config.instance().discord.token, GatewayIntent.GUILD_MESSAGES).addEventListeners(this);
@@ -45,7 +45,7 @@ public class Bot implements EventListener {
         b.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS);
         b.setChunkingFilter(ChunkingFilter.ALL);
         jda = b.build().awaitReady();
-        presence = new PresenceUpdater();
+        presence = new StatusUpdater();
         presence.start();
 
         final ArrayList<Long> knownIDs = Main.iface.getAllServers();
@@ -245,23 +245,26 @@ public class Bot implements EventListener {
                 .build()).build(), channel);
     }
 
-    private class PresenceUpdater extends Thread {
-        final Activity[] presences = new Activity[]{Activity.playing("Spoon 2"), Activity.watching(Config.instance().discord.prefix + "help")};
+    private class StatusUpdater extends Thread {
         int presence = 0;
         final Random r = new Random();
 
         @Override
         public void run() {
+            ArrayList<Activity> statuses = new ArrayList<>();
+            Config.instance().discord.botStatus.forEach((status)->{
+                statuses.add(Activity.of(status.type,status.message));
+            });
             while (true) {
-                jda.getPresence().setPresence(presences[presence], false);
+                jda.getPresence().setPresence(statuses.get(presence), false);
                 try {
                     //noinspection BusyWait
-                    sleep(1000 * (r.nextInt(19) + 1));
+                    sleep(1000 * (r.nextInt(29) + 2));
                 } catch (InterruptedException e) {
                     return;
                 }
                 presence++;
-                if (presence > presences.length-1) presence = 0;
+                if (presence > statuses.size()-1) presence = 0;
 
             }
         }

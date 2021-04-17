@@ -4,10 +4,11 @@ import com.moandjiezana.toml.Toml;
 import com.moandjiezana.toml.TomlComment;
 import com.moandjiezana.toml.TomlIgnore;
 import com.moandjiezana.toml.TomlWriter;
+import net.dv8tion.jda.api.entities.Activity;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
+import java.util.*;
 
 public class Config {
     private static final Random r = new Random();
@@ -53,10 +54,26 @@ public class Config {
     public DoNotEdit doNotEdit = new DoNotEdit();
 
     public static class Discord {
+        public static class Status{
+            public Activity.ActivityType type;
+            public String message;
+            Status(Activity.ActivityType type, String message){
+                this.type = type;
+                this.message = message;
+            }
+        }
+        @TomlIgnore
+        static ArrayList<Status> defaultStatuses = new ArrayList<>();
+        static {
+            defaultStatuses.add(new Status(Activity.ActivityType.DEFAULT, "Spoon 2"));
+            defaultStatuses.add(new Status(Activity.ActivityType.WATCHING, "s!help"));
+        }
         @TomlComment("The discord bot token")
         public String token = "NOT SET";
         @TomlComment("The command prefix")
         public String prefix = "s!";
+        @TomlComment({"Bot status messages shown in discord", "","Type can be DEFAULT (for playing), WATCHING, STREAMING, LISTENING, COMPETING"})
+        public ArrayList<Status> botStatus = Discord.defaultStatuses;
     }
     public static class Database{
         @TomlComment("Database IP")
