@@ -19,7 +19,7 @@ public class EnglishBase {
             salmonFeedMsg = "New Salmon Runs will now be sent here",
             languageSetMessage = "Your server's language is now set to english",
             helpMessage = "__Admin commands:__\n" +
-                    Config.instance().discord.prefix + "setlang <de|en> - Changes the bot language for this server\n" +
+                    Config.instance().discord.prefix + "setlang <de|en|it> - Changes the bot language for this server\n" +
                     Config.instance().discord.prefix + "setsalmon - Marks this channel as the salmon run notification channel\n" +
                     Config.instance().discord.prefix + "delsalmon - Deletes the currently set SalmonRun channel\n" +
                     Config.instance().discord.prefix + "setstage - Marks this channel as the stage notification channel\n" +
@@ -29,6 +29,6 @@ public class EnglishBase {
                     Config.instance().discord.prefix + "invite - Gives you the invite URL for this bot\n" +
                     Config.instance().discord.prefix + "stages - Sends the currently active stages\n" +
                     Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run",
-            unknownLanguage = "You did not specify an valid language, valid languages are german (de) and english (en)",
+            unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)",
             deleteSuccessful = "Successfully deleted";
 }
