@@ -12,3 +12,4 @@ You can also change language, to do that you use s!setlang <language>
 Supported languages are:
 - english (en)
 - german (de)
+- italian (it)
