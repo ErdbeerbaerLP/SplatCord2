@@ -119,6 +119,12 @@ public class Bot implements EventListener {
                                         lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
                                         sendMessage(lang.botLocale.languageSetMessage, ev.getChannel().getId());
                                         break;
+                                    case "italian":
+                                    case "it":
+                                        Main.iface.setServerLang(ev.getGuild().getIdLong(), BotLanguage.ITALIAN);
+                                        lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+                                        sendMessage(lang.botLocale.languageSetMessage, ev.getChannel().getId());
+                                        break;
                                     default:
                                         sendMessage(lang.botLocale.unknownLanguage, ev.getChannel().getId());
                                 }
