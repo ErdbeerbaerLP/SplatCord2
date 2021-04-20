@@ -15,7 +15,7 @@ public class German extends EnglishBase {
         salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet";
         languageSetMessage = "Die Sprache dieses Servers ist nun auf Deutsch eingestellt";
         helpMessage = "__Adminbefehle:__\n" +
-                Config.instance().discord.prefix + "setlang <de|en> - Ändert die Botsprache für diesen Server\n" +
+                Config.instance().discord.prefix + "setlang <de|en|it> - Ändert die Botsprache für diesen Server\n" +
                 Config.instance().discord.prefix + "setsalmon - Markiert einen Kanal für SalmonRun Benachrichtigungen\n" +
                 Config.instance().discord.prefix + "delsalmon - Löscht den gesetzten SalmonRun-Kanal\n" +
                 Config.instance().discord.prefix + "setstage - Markiert einen Kanal für Arena benachrichtigungen\n" +
@@ -25,7 +25,7 @@ public class German extends EnglishBase {
                 Config.instance().discord.prefix + "invite - Sendet den Einladungslink des bots\n" +
                 Config.instance().discord.prefix + "stages - Sendet die aktuell aktiven Arenen\n" +
                 Config.instance().discord.prefix + "salmon - Sendet den Aktuellen oder Kommenden SalmonRun";
-        unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en)";
+        unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en), und Italienisch (it)";
         deleteSuccessful = "Erfolgreich gelöscht!";
     }
 }
