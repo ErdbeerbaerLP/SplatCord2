@@ -79,6 +79,7 @@ public class Main {
         deConn2.connect();
 
         coop_schedules = gson.fromJson(new InputStreamReader(deConn2.getInputStream()), CoOpSchedules.class);
+        long salmonEndTime = coop_schedules.details[0].end_time;
         while (true) {
             if (LocalTime.now().getMinute() == 0 && LocalTime.now().getSecond() >= 30) {
                 long prevStartTime = schedules.regular[0].start_time;
@@ -95,40 +96,43 @@ public class Main {
                     iface.getAllMapChannels().forEach((serverid, channel) -> bot.sendMapMessage(serverid, channel));
                 TimeUnit.MINUTES.sleep(5);
             }
-            long prevSalmonStartTime = coop_schedules.details[0].start_time;
-            if (coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000) && prevSalmonStartTime != Config.instance().doNotEdit.lastSalmonTimestamp) {
-                iface.getAllSalmonChannels().forEach((serverid, channel) -> {
-                    try {
-                        Map.Entry<Long,Long> msg = bot.sendSalmonMessage(serverid, channel);
-                        iface.setSalmonMessage(msg.getKey(),msg.getValue());
-                    } catch (ExecutionException | InterruptedException e) {
-                        e.printStackTrace();
-                    }
+            if (coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp){
+                if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
+                    salmonEndTime = -1;
+                    iface.getAllSalmonMessages().forEach((chan, msg) -> {
+                        if (msg != null) {
+                            final TextChannel channel = bot.jda.getTextChannelById(chan);
+                            if (channel == null) return;
+                            Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
+                            channel.retrieveMessageById(msg).submit().thenAccept((message) -> {
+                                final List<MessageEmbed> e = message.getEmbeds();
+                                final EmbedBuilder embedBuilder = new EmbedBuilder(e.get(0));
+                                embedBuilder.setTimestamp(null);
+                                embedBuilder.setFooter(lang.botLocale.footer_closed);
+                                message.editMessage(embedBuilder.build()).queue();
+                                iface.setSalmonMessage(channel.getGuild().getIdLong(), null);
+                            });
+                        }
+                    });
+                }
+                if (coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
+                    iface.getAllSalmonChannels().forEach((serverid, channel) -> {
+                        try {
+                            Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
+                            iface.setSalmonMessage(msg.getKey(), msg.getValue());
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                });
-                Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
-                Config.instance().saveConfig();
-            }else if(coop_schedules.details[0].end_time <= (System.currentTimeMillis() / 1000) && prevSalmonStartTime != Config.instance().doNotEdit.lastSalmonTimestamp){                iface.getAllSalmonMessages().forEach((chan,msg)->{
-                    if(msg != null){
-                        final TextChannel channel = bot.jda.getTextChannelById(chan);
-                        if(channel == null) return;
-                        Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
-                        channel.retrieveMessageById(msg).submit().thenAccept((message)->{
-                            final List<MessageEmbed> e = message.getEmbeds();
-                            final EmbedBuilder embedBuilder = new EmbedBuilder(e.get(0));
-                            embedBuilder.setTimestamp(null);
-                            embedBuilder.setFooter(lang.botLocale.footer_closed);
-                            message.editMessage(embedBuilder.build()).queue();
-                            iface.setSalmonMessage(channel.getGuild().getIdLong(),null);
-                        });
-                    }
-                });
-                Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
-                Config.instance().saveConfig();
+                    });
+                    Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
+                    Config.instance().saveConfig();
+                }
             }
             try {
                 TimeUnit.SECONDS.sleep(30);
-            }catch (InterruptedException e){
+                Config.instance().loadConfig();
+            } catch (InterruptedException e) {
                 return;
             }
         }
