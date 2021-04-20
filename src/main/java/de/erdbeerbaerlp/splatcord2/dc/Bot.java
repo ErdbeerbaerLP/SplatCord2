@@ -264,12 +264,9 @@ public class Bot implements EventListener {
 
         @Override
         public void run() {
-            ArrayList<Activity> statuses = new ArrayList<>();
-            Config.instance().discord.botStatus.forEach((status)->{
-                statuses.add(Activity.of(status.type,status.message.replace("%servercount%", ""+jda.getGuilds().size())));
-            });
             while (true) {
-                jda.getPresence().setPresence(statuses.get(presence), false);
+                final Config.Discord.Status s = Config.instance().discord.botStatus.get(presence);
+                jda.getPresence().setPresence(Activity.of(s.type,s.message.replace("%servercount%",jda.getGuilds().size()+"")), false);
                 try {
                     //noinspection BusyWait
                     sleep(1000 * (r.nextInt(29) + 2));
@@ -277,7 +274,8 @@ public class Bot implements EventListener {
                     return;
                 }
                 presence++;
-                if (presence > statuses.size()-1) presence = 0;
+                if (presence >
+                        Config.instance().discord.botStatus.size()-1) presence = 0;
 
             }
         }
