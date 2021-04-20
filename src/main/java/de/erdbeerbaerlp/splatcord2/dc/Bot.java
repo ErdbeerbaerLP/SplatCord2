@@ -96,6 +96,13 @@ public class Bot implements EventListener {
                 msg = msg.replaceFirst(Pattern.quote(Config.instance().discord.prefix), "").trim();
                 final String[] cmd = msg.split(" ");
                 Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+                if(!ev.getGuild().getMember(jda.getSelfUser()).hasPermission(ev.getGuild().getGuildChannelById(ev.getChannel().getIdLong()),Permission.MESSAGE_WRITE)){
+                    final Locale finalLang = lang;
+                    ev.getAuthor().openPrivateChannel().queue((channel)->{
+                        channel.sendMessage(finalLang.botLocale.noWritePerms).queue();
+                    });
+                    return;
+                }
                 if (cmd.length > 0) {
                     switch (cmd[0].toLowerCase()) {
                         case "setlang":
@@ -259,7 +266,7 @@ public class Bot implements EventListener {
         public void run() {
             ArrayList<Activity> statuses = new ArrayList<>();
             Config.instance().discord.botStatus.forEach((status)->{
-                statuses.add(Activity.of(status.type,status.message));
+                statuses.add(Activity.of(status.type,status.message.replace("%servercount%", ""+jda.getGuilds().size())));
             });
             while (true) {
                 jda.getPresence().setPresence(statuses.get(presence), false);
