@@ -27,7 +27,7 @@ public class EnglishBase {
                     "__User Commands:__\n" +
                     Config.instance().discord.prefix + "code - Generates an random private battle code\n" +
                     Config.instance().discord.prefix + "invite - Gives you the invite URL for this bot\n" +
-                    Config.instance().discord.prefix + "invite - Gives you the invite link for the discord server of the bot\n" +
+                    Config.instance().discord.prefix + "support - Gives you the invite link for the discord server of the bot\n" +
                     Config.instance().discord.prefix + "stages - Sends the currently active stages\n" +
                     Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run",
             unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)",
