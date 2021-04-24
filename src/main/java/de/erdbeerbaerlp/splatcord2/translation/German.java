@@ -29,5 +29,8 @@ public class German extends EnglishBase {
         unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en), und Italienisch (it)";
         deleteSuccessful = "Erfolgreich gelöscht!";
         noWritePerms = "Dieser Bot hat keine Berechtigung, Nachrichten in diesen Kanal zu senden";
+        skill = "Effekt:";
+        skillSlots = "Effekt-Slots:";
+        price = "Preis:";
     }
 }

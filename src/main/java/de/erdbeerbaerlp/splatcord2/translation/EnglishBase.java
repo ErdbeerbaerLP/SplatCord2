@@ -32,5 +32,9 @@ public class EnglishBase {
                     Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run",
             unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)",
             deleteSuccessful = "Successfully deleted",
-            noWritePerms = "This bot has no permission to write in the target channel";
+            noWritePerms = "This bot has no permission to write in the target channel",
+            skill = "Skill:",
+            price = "Price:",
+            skillSlots = "Skill Slots:",
+            tentaWorld = "TentaWorld";
 }

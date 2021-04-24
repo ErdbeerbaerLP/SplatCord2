@@ -1,5 +1,6 @@
 package de.erdbeerbaerlp.splatcord2.storage.json.translations;
 
+import com.google.gson.JsonElement;
 import de.erdbeerbaerlp.splatcord2.translation.EnglishBase;
 
 import java.util.HashMap;
@@ -12,6 +13,9 @@ public class Locale {
     public HashMap<String, Stage> coop_stages;
     public HashMap<Integer, Weapon> weapons;
     public HashMap<String, Weapon> coop_special_weapons;
+    public HashMap<String, JsonElement> gear;
+    public HashMap<Integer, Brand> brands;
+    public HashMap<Integer, Skill> skills;
 
     public Locale(final EnglishBase botLocale) {
         this.botLocale = botLocale;

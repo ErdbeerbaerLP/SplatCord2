@@ -32,7 +32,7 @@ public class Main {
     public static Bot bot = null;
 
     public static final HashMap<BotLanguage, Locale> translations = new HashMap<>();
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static Schedules schedules;
     public static CoOpSchedules coop_schedules;
 
