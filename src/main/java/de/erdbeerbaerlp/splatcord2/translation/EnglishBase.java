@@ -40,5 +40,5 @@ public class EnglishBase {
             price = "Price:",
             skillSlots = "Skill Slots:",
             splatNetShop = "SplatNet Gear Shop",
-            splatnetCooldown = "The TentaWorld command is currently on cooldown. Please try again in a few minutes.";
+            splatnetCooldown = "The SplatNet command is currently on cooldown. Please try again in a few minutes.";
 }
