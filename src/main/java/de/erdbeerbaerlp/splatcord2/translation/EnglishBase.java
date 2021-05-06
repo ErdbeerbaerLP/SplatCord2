@@ -10,6 +10,7 @@ public class EnglishBase {
     public String salmonStage = "Stages:",
             weapons = "Weapons:",
             stagesTitle = "Current Stages",
+            futureStagesTitle = "Future Stages",
             footer_ends = "Ends",
             footer_closed = "Closed",
             salmonRunTitle = "Salmon Run",
@@ -29,12 +30,15 @@ public class EnglishBase {
                     Config.instance().discord.prefix + "invite - Gives you the invite URL for this bot\n" +
                     Config.instance().discord.prefix + "support - Gives you the invite link for the discord server of the bot\n" +
                     Config.instance().discord.prefix + "stages - Sends the currently active stages\n" +
-                    Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run",
+                    Config.instance().discord.prefix + "rotation - Sends the currently active stages plus the next two rotations\n" +
+                    Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run" +
+                    Config.instance().discord.prefix + "tentaworld - Shows what is currently available on TentaWorld, aliases: `tw`, `gear`\n",
             unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)",
             deleteSuccessful = "Successfully deleted",
             noWritePerms = "This bot has no permission to write in the target channel",
             skill = "Skill:",
             price = "Price:",
             skillSlots = "Skill Slots:",
-            tentaWorld = "TentaWorld";
+            tentaWorld = "TentaWorld",
+            tentaWorldCooldown = "The TentaWorld command is currently on cooldown. Please try again in a few minutes.";
 }

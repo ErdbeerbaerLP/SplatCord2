@@ -6,4 +6,15 @@ public class Gear {
     public int rarity;
     public Brand brand;
     public GearType kind;
+
+    @Override
+    public String toString() {
+        return "Gear{" +
+                "thumbnail='" + thumbnail + '\'' +
+                ", id=" + id +
+                ", rarity=" + rarity +
+                ", brand=" + brand +
+                ", kind=" + kind +
+                '}';
+    }
 }

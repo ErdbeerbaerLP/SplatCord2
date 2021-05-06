@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.AttachmentOption;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -28,19 +29,19 @@ import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class Bot implements EventListener {
     public final JDA jda;
     @SuppressWarnings("FieldCanBeLocal")
     private final StatusUpdater presence;
+    private static HashMap<Long, Long> tentaworldCooldown = new HashMap<>();
 
     public Bot() throws LoginException, InterruptedException {
         JDABuilder b = JDABuilder.create(Config.instance().discord.token, GatewayIntent.GUILD_MESSAGES).addEventListeners(this);
@@ -206,7 +207,24 @@ public class Bot implements EventListener {
                         case "tentaworld":
                         case "tw":
                         case "gear":
+                            if (tentaworldCooldown.containsKey(ev.getGuild().getIdLong())) {
+                                if (Instant.now().getEpochSecond() < tentaworldCooldown.get(ev.getGuild().getIdLong())) {
+                                    sendMessage(lang.botLocale.tentaWorldCooldown, ev.getChannel().getId());
+                                    break;
+                                }
+                            }
+                            tentaworldCooldown.put(ev.getGuild().getIdLong(), Instant.now().getEpochSecond() + TimeUnit.MINUTES.toSeconds(5));
                             sendTentaWorldMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
+                            break;
+                        case "rotation":
+                            sendMapRotation(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
+                            break;
+                        case "dumprawdata":
+                            final StringBuilder builder = new StringBuilder();
+                            builder.append(Main.schedules.toString()).append("\n");
+                            builder.append(Main.coop_schedules.toString()).append("\n");
+                            builder.append(Main.translations);
+                            ev.getChannel().sendFile(builder.toString().getBytes(StandardCharsets.UTF_8), "Dump.txt").queue();
                             break;
                         default:
                             sendMessage(lang.botLocale.unknownCommand, ev.getChannel().getId());
@@ -216,6 +234,7 @@ public class Bot implements EventListener {
             }
         }
     }
+
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isAdmin(Member m) {
@@ -286,6 +305,59 @@ public class Bot implements EventListener {
         } else {
             return "Error, contact Developer";
         }
+    }
+
+    private void sendMapRotation(Long serverid, long channel) {
+        Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
+        sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
+                .addField("<:regular:822873973225947146>" +
+                                lang.game_modes.get("regular").name,
+                        lang.stages.get(Main.schedules.regular[0].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.regular[0].stage_b.id).getName()
+                        , false)
+                .addField("<:ranked:822873973200388106>" +
+                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[1].rule.key).name + ")",
+                        lang.stages.get(Main.schedules.gachi[0].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.gachi[0].stage_b.id).getName()
+                        , false)
+                .addField("<:ranked:822873973142192148>" +
+                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[1].rule.key).name + ")",
+                        lang.stages.get(Main.schedules.league[0].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.league[0].stage_b.id).getName()
+                        , false)
+                .build()).build(), channel);
+        sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle)
+                .addField("<:regular:822873973225947146>" +
+                                lang.game_modes.get("regular").name,
+                        lang.stages.get(Main.schedules.regular[1].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.regular[1].stage_b.id).getName()
+                        , true)
+                .addField("<:ranked:822873973200388106>" +
+                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[1].rule.key).name + ")",
+                        lang.stages.get(Main.schedules.gachi[1].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.gachi[1].stage_b.id).getName()
+                        , true)
+                .addField("<:ranked:822873973142192148>" +
+                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[1].rule.key).name + ")",
+                        lang.stages.get(Main.schedules.league[1].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.league[1].stage_b.id).getName()
+                        , false)
+                .addField("<:regular:822873973225947146>" +
+                                lang.game_modes.get("regular").name,
+                        lang.stages.get(Main.schedules.regular[2].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.regular[2].stage_b.id).getName()
+                        , true)
+                .addField("<:ranked:822873973200388106>" +
+                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[2].rule.key).name + ")",
+                        lang.stages.get(Main.schedules.gachi[2].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.gachi[2].stage_b.id).getName()
+                        , true)
+                .addField("<:ranked:822873973142192148>" +
+                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[2].rule.key).name + ")",
+                        lang.stages.get(Main.schedules.league[2].stage_a.id).getName() +
+                                ", " + lang.stages.get(Main.schedules.league[2].stage_b.id).getName()
+                        , false)
+                .build()).build(), channel);
     }
 
     public void sendMapMessage(Long serverid, long channel) {

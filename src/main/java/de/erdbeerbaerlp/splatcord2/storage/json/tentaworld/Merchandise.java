@@ -7,4 +7,14 @@ public class Merchandise {
     public long end_time;
     public Gear gear;
 
+    @Override
+    public String toString() {
+        return "Merchandise{" +
+                "price=" + price +
+                ", id=" + id +
+                ", skill=" + skill +
+                ", end_time=" + end_time +
+                ", gear=" + gear +
+                '}';
+    }
 }
