@@ -258,7 +258,7 @@ public class Bot implements EventListener {
             final ArrayList<MessageEmbed> embeds = new ArrayList<>();
             for (Merchandise m : tentaWorld.merchandises) {
                 final EmbedBuilder b = new EmbedBuilder()
-                        .setDescription(lang.botLocale.skillSlots+" "+(1+m.gear.rarity))
+                        .setDescription(lang.botLocale.skillSlots + " " + (1 + m.gear.rarity))
                         .setTimestamp(Instant.ofEpochSecond(m.end_time))
                         .setFooter(lang.botLocale.footer_ends)
                         .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.thumbnail)
@@ -269,8 +269,8 @@ public class Bot implements EventListener {
             }
             CompletableFuture<Message> msg = jda.getTextChannelById(channel).sendMessage(lang.botLocale.tentaWorld).embed(embeds.get(0)).submit();
             embeds.remove(0);
-            for(MessageEmbed e : embeds){
-                msg = msg.thenCompose((m)-> m.getChannel().sendMessage(e).submit());
+            for (MessageEmbed e : embeds) {
+                msg = msg.thenCompose((m) -> m.getChannel().sendMessage(e).submit());
             }
 
         } catch (IOException e) {
@@ -279,10 +279,12 @@ public class Bot implements EventListener {
     }
 
     private String getLocalizedGearName(Locale lang, Gear gear) {
-        if (lang.gear.containsKey(gear.id + "")) {
+        if (lang.gear.get(gear.kind.name()).getAsJsonObject().has(gear.id + ""))
+            return lang.gear.get(gear.kind.name()).getAsJsonObject().get(gear.id + "").getAsJsonObject().get("name").getAsString();
+        else if (lang.gear.containsKey(gear.id + "")) {
             return lang.gear.get(gear.id + "").getAsJsonObject().get("name").getAsString();
         } else {
-            return lang.gear.get(gear.kind.name()).getAsJsonObject().get(gear.id + "").getAsJsonObject().get("name").getAsString();
+            return "Error, contact Developer";
         }
     }
 
