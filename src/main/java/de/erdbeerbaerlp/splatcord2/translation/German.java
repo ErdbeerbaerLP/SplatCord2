@@ -27,7 +27,7 @@ public class German extends EnglishBase {
                 Config.instance().discord.prefix + "support - Sendet den Einladungslink zum Discord vom Bot\n" +
                 Config.instance().discord.prefix + "stages - Sendet die aktuell aktiven Arenen\n" +
                 Config.instance().discord.prefix + "rotation - Sendet die aktuell aktiven Arenen und die nächsten 2 Rotationen\n" +
-                Config.instance().discord.prefix + "salmon - Sendet den Aktuellen oder Kommenden SalmonRun" +
+                Config.instance().discord.prefix + "salmon - Sendet den Aktuellen oder Kommenden SalmonRun\n" +
                 Config.instance().discord.prefix + "tentaworld - Sendet die aktuelle Ausrüstung von TentaWorld. Kürzel: `tw`, `gear`\n";
         unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en), und Italienisch (it)";
         deleteSuccessful = "Erfolgreich gelöscht!";
