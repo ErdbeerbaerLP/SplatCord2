@@ -7,7 +7,7 @@ public class Italian extends EnglishBase {
         salmonStage = "Arene:";
         weapons = "Armi:";
         stagesTitle = "Arene attuali";
-        futureStagesTitle = "Arene future",
+        futureStagesTitle = "Arene future";
         footer_ends = "Termina";
         footer_closed = "Chiuso";
         unknownCommand = "Comando sconosciuto";
