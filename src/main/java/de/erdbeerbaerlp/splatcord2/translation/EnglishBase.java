@@ -31,7 +31,7 @@ public class EnglishBase {
                     Config.instance().discord.prefix + "support - Gives you the invite link for the discord server of the bot\n" +
                     Config.instance().discord.prefix + "stages - Sends the currently active stages\n" +
                     Config.instance().discord.prefix + "rotation - Sends the currently active stages plus the next two rotations\n" +
-                    Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run" +
+                    Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run\n" +
                     Config.instance().discord.prefix + "tentaworld - Shows what is currently available on TentaWorld, aliases: `tw`, `gear`\n",
             unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)",
             deleteSuccessful = "Successfully deleted",

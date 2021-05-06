@@ -7,6 +7,7 @@ public class Italian extends EnglishBase {
         salmonStage = "Arene:";
         weapons = "Armi:";
         stagesTitle = "Arene attuali";
+        futureStagesTitle = "Arene future",
         footer_ends = "Termina";
         footer_closed = "Chiuso";
         unknownCommand = "Comando sconosciuto";
@@ -25,12 +26,15 @@ public class Italian extends EnglishBase {
                 Config.instance().discord.prefix + "invite - Manda l'URL invito per questo bot\n" +
                 Config.instance().discord.prefix + "support - Manda l'URL invito per il server discord del bot\n" +
                 Config.instance().discord.prefix + "stages - Manda le arene attualmente attive\n" +
-                Config.instance().discord.prefix + "salmon - Manda le Salmon Run correnti o successive";
+                Config.instance().discord.prefix + "rotation - Manda le arene attualmente attive più le due rotazioni successive\n" +
+                Config.instance().discord.prefix + "salmon - Manda le Salmon Run correnti o successive\n" +
+                Config.instance().discord.prefix + "tentaworld - Manda cosa è correntemente disponibile su TentaWorld, alias: `tw`, `gear`\n";
         unknownLanguage = "Non hai specificato una lingua valida. Lingue valide: tedesco (de), inglese (en), e italiano (it)";
         deleteSuccessful = "Eliminato correttamente";
         noWritePerms = "Questo bot non ha i permessi necessari per scrivere in questo canale";
         skill = "Abilità:";
         skillSlots = "Slot abilità:";
         price = "Prezzo:";
+        tentaWorldCooldown = "Il comando TentaWorld è correntemente in cooldown. Per favore, riprova tra qualche minuto.";
     }
 }
