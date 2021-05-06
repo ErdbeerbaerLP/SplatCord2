@@ -18,7 +18,6 @@ import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.utils.AttachmentOption;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -41,7 +40,7 @@ public class Bot implements EventListener {
     public final JDA jda;
     @SuppressWarnings("FieldCanBeLocal")
     private final StatusUpdater presence;
-    private static HashMap<Long, Long> tentaworldCooldown = new HashMap<>();
+    private static HashMap<Long, Long> splatnetCooldown = new HashMap<>();
 
     public Bot() throws LoginException, InterruptedException {
         JDABuilder b = JDABuilder.create(Config.instance().discord.token, GatewayIntent.GUILD_MESSAGES).addEventListeners(this);
@@ -206,15 +205,17 @@ public class Bot implements EventListener {
                             break;
                         case "tentaworld":
                         case "tw":
+                        case "splatnet":
+                        case "sn":
                         case "gear":
-                            if (tentaworldCooldown.containsKey(ev.getGuild().getIdLong())) {
-                                if (Instant.now().getEpochSecond() < tentaworldCooldown.get(ev.getGuild().getIdLong())) {
-                                    sendMessage(lang.botLocale.tentaWorldCooldown, ev.getChannel().getId());
+                            if (splatnetCooldown.containsKey(ev.getGuild().getIdLong())) {
+                                if (Instant.now().getEpochSecond() < splatnetCooldown.get(ev.getGuild().getIdLong())) {
+                                    sendMessage(lang.botLocale.splatnetCooldown, ev.getChannel().getId());
                                     break;
                                 }
                             }
-                            tentaworldCooldown.put(ev.getGuild().getIdLong(), Instant.now().getEpochSecond() + TimeUnit.MINUTES.toSeconds(5));
-                            sendTentaWorldMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
+                            splatnetCooldown.put(ev.getGuild().getIdLong(), Instant.now().getEpochSecond() + TimeUnit.MINUTES.toSeconds(5));
+                            sendSplatNetShopMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
                             break;
                         case "rotation":
                             sendMapRotation(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
@@ -266,16 +267,16 @@ public class Bot implements EventListener {
                 .build()).build(), channel).get().getIdLong());
     }
 
-    public void sendTentaWorldMessage(long serverid, long channel) {
+    public void sendSplatNetShopMessage(long serverid, long channel) {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
         try {
             final URL tworld = new URL("https://splatoon2.ink/data/merchandises.json");
             final HttpsURLConnection con = (HttpsURLConnection) tworld.openConnection();
             con.setRequestProperty("User-Agent", "SplatCord 2");
             con.connect();
-            final TentaWorld tentaWorld = Main.gson.fromJson(new InputStreamReader(con.getInputStream()), TentaWorld.class);
+            final TentaWorld splatNet = Main.gson.fromJson(new InputStreamReader(con.getInputStream()), TentaWorld.class);
             final ArrayList<MessageEmbed> embeds = new ArrayList<>();
-            for (Merchandise m : tentaWorld.merchandises) {
+            for (Merchandise m : splatNet.merchandises) {
                 final EmbedBuilder b = new EmbedBuilder()
                         .setDescription(lang.botLocale.skillSlots + " " + (1 + m.gear.rarity))
                         .setTimestamp(Instant.ofEpochSecond(m.end_time))
@@ -286,7 +287,7 @@ public class Bot implements EventListener {
                         .addField(lang.botLocale.price, m.price + "", true);
                 embeds.add(b.build());
             }
-            CompletableFuture<Message> msg = jda.getTextChannelById(channel).sendMessage(lang.botLocale.tentaWorld).embed(embeds.get(0)).submit();
+            CompletableFuture<Message> msg = jda.getTextChannelById(channel).sendMessage(lang.botLocale.splatNetShop).embed(embeds.get(0)).submit();
             embeds.remove(0);
             for (MessageEmbed e : embeds) {
                 msg = msg.thenCompose((m) -> m.getChannel().sendMessage(e).submit());

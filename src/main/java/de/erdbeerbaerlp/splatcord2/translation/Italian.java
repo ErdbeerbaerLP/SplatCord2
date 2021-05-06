@@ -28,13 +28,14 @@ public class Italian extends EnglishBase {
                 Config.instance().discord.prefix + "stages - Manda le arene attualmente attive\n" +
                 Config.instance().discord.prefix + "rotation - Manda le arene attualmente attive più le due rotazioni successive\n" +
                 Config.instance().discord.prefix + "salmon - Manda le Salmon Run correnti o successive\n" +
-                Config.instance().discord.prefix + "tentaworld - Manda cosa è correntemente disponibile su TentaWorld, alias: `tw`, `gear`\n";
+                Config.instance().discord.prefix + "splatnet - Manda cosa è correntemente disponibile su Calama-zone, alias: `sn`, `gear`\n";
         unknownLanguage = "Non hai specificato una lingua valida. Lingue valide: tedesco (de), inglese (en), e italiano (it)";
         deleteSuccessful = "Eliminato correttamente";
         noWritePerms = "Questo bot non ha i permessi necessari per scrivere in questo canale";
         skill = "Abilità:";
         skillSlots = "Slot abilità:";
         price = "Prezzo:";
-        tentaWorldCooldown = "Il comando TentaWorld è correntemente in cooldown. Per favore, riprova tra qualche minuto.";
+        splatNetShop  = "Calama-zone";
+        splatnetCooldown = "Il comando Calama-zone è correntemente in cooldown. Per favore, riprova tra qualche minuto.";
     }
 }

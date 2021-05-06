@@ -32,13 +32,13 @@ public class EnglishBase {
                     Config.instance().discord.prefix + "stages - Sends the currently active stages\n" +
                     Config.instance().discord.prefix + "rotation - Sends the currently active stages plus the next two rotations\n" +
                     Config.instance().discord.prefix + "salmon - Sends the currently running or next salmon run\n" +
-                    Config.instance().discord.prefix + "tentaworld - Shows what is currently available on TentaWorld, aliases: `tw`, `gear`\n",
+                    Config.instance().discord.prefix + "splatnet - Shows what is currently available on SplatNet Gear Shop, aliases: `sn`, `gear`\n",
             unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)",
             deleteSuccessful = "Successfully deleted",
             noWritePerms = "This bot has no permission to write in the target channel",
             skill = "Skill:",
             price = "Price:",
             skillSlots = "Skill Slots:",
-            tentaWorld = "TentaWorld",
-            tentaWorldCooldown = "The TentaWorld command is currently on cooldown. Please try again in a few minutes.";
+            splatNetShop = "SplatNet Gear Shop",
+            splatnetCooldown = "The TentaWorld command is currently on cooldown. Please try again in a few minutes.";
 }
