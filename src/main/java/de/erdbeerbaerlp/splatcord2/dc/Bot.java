@@ -317,12 +317,12 @@ public class Bot implements EventListener {
                                 ", " + lang.stages.get(Main.schedules.regular[0].stage_b.id).getName()
                         , false)
                 .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[1].rule.key).name + ")",
+                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[0].rule.key).name + ")",
                         lang.stages.get(Main.schedules.gachi[0].stage_a.id).getName() +
                                 ", " + lang.stages.get(Main.schedules.gachi[0].stage_b.id).getName()
                         , false)
                 .addField("<:ranked:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[1].rule.key).name + ")",
+                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[0].rule.key).name + ")",
                         lang.stages.get(Main.schedules.league[0].stage_a.id).getName() +
                                 ", " + lang.stages.get(Main.schedules.league[0].stage_b.id).getName()
                         , false)
