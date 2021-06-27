@@ -62,5 +62,5 @@ public class EnglishBase {
             cmdRandomWeaponDesc = "Generate random weapon(s)",
             cmdRandomStageDesc = "Generate random stage(s)",
             cmdSalmonDesc = "Shows current and next salmon run",
-            cmdSplatnetDesc = "Shows current and next salmon run";
+            cmdSplatnetDesc = "Shows what is currently available on SplatNet Gear Shop";
 }
