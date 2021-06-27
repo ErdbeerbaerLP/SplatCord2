@@ -43,17 +43,21 @@ public class Italian extends EnglishBase {
         cmdCodeDesc = "Genera un codice casuale per una battaglia privata";
         cmdSupportDesc = "Invia l'invito per il server discord del bot";
         cmdSplatnetDesc = "Invia cosa è correntemente disponibile su Calama-zone";
+        footer_starts = "Inizia";
+        legacyCommand = "Stai usando un comando legacy. Questi comandi verranno presto completamente rimpiazzati da comandi slash.\n" +
+                    "Dovresti usare i comandi slash se possibile\n" +
+                    "Se sei un amministratore e questo server non può ancora utitlizzare i comandi slash, visita <https://discord.com/api/oauth2/authorize?client_id=822228767165644872&scope=applications.commands> e seleziona questo server. Dopo aver fatto questo esegui " + Config.instance().discord.prefix + "fixslashcommands",
+        cmdFixSlashCommands = "I comandi slash entreranno in funzione tra un attimo!\n" +
+                    "In caso contrario, contatta lo sviluppatore del bot";
+        cmdHelpDesc = "Mostra la lista dei comandi";
+        cmdRotationDesc = "Invia le arene correnti più le due rotazioni successive";
+        cmdCodeArgDesc = "Nascondi il codice dagli altri? (Predefinito: mostra)";
+        cmdRandomAmountDesc = "Quantità da generare (Predefinito: 1, massimo: 10)";
+        cmdRandomWeaponDesc = "Genera arma/i casuale/i";
+        cmdRandomStageDesc = "Genera arena/e casuale/i";
+        cmdSalmonDesc = "Invia le Salmon Run correnti e successive";
+        cmdSplatnetDesc = "Invia cosa è correntemente disponibile su Calama-zone";
+}
 
-        // Not yet translated
-        footer_starts = footer_starts;
-        legacyCommand = legacyCommand;
-        cmdFixSlashCommands = cmdFixSlashCommands;
-        cmdHelpDesc = cmdHelpDesc;
-        cmdRotationDesc = cmdRotationDesc;
-        cmdCodeArgDesc = cmdCodeArgDesc;
-        cmdRandomAmountDesc = cmdRandomAmountDesc;
-        cmdRandomWeaponDesc = cmdRandomWeaponDesc;
-        cmdRandomStageDesc = cmdRandomStageDesc;
-        cmdSalmonDesc = cmdSalmonDesc;
     }
 }
