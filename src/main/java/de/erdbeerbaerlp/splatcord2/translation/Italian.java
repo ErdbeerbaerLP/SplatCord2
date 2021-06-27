@@ -1,5 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
+import de.erdbeerbaerlp.splatcord2.storage.Config;
+
 public class Italian extends EnglishBase {
     {
         salmonStage = "Arene:";
@@ -46,7 +48,7 @@ public class Italian extends EnglishBase {
         footer_starts = "Inizia";
         legacyCommand = "Stai usando un comando legacy. Questi comandi verranno presto completamente rimpiazzati da comandi slash.\n" +
                     "Dovresti usare i comandi slash se possibile\n" +
-                    "Se sei un amministratore e questo server non può ancora utitlizzare i comandi slash, visita <https://discord.com/api/oauth2/authorize?client_id=822228767165644872&scope=applications.commands> e seleziona questo server. Dopo aver fatto questo esegui " + Config.instance().discord.prefix + "fixslashcommands",
+                    "Se sei un amministratore e questo server non può ancora utitlizzare i comandi slash, visita <https://discord.com/api/oauth2/authorize?client_id=822228767165644872&scope=applications.commands> e seleziona questo server. Dopo aver fatto questo esegui " + Config.instance().discord.prefix + "fixslashcommands";
         cmdFixSlashCommands = "I comandi slash entreranno in funzione tra un attimo!\n" +
                     "In caso contrario, contatta lo sviluppatore del bot";
         cmdHelpDesc = "Mostra la lista dei comandi";
@@ -57,7 +59,5 @@ public class Italian extends EnglishBase {
         cmdRandomStageDesc = "Genera arena/e casuale/i";
         cmdSalmonDesc = "Invia le Salmon Run correnti e successive";
         cmdSplatnetDesc = "Invia cosa è correntemente disponibile su Calama-zone";
-}
-
     }
 }
