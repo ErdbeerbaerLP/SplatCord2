@@ -2,13 +2,15 @@ package de.erdbeerbaerlp.splatcord2;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import de.erdbeerbaerlp.splatcord2.dc.Bot;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
+import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.coop_schedules.CoOpSchedules;
-import de.erdbeerbaerlp.splatcord2.storage.json.scheduling.Schedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
+import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -16,25 +18,25 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-
+    public static final String USER_AGENT = "SplatCord 2 (https://discord.gg/DBH9FSFCXb)";
     public static DatabaseInterface iface = null;
     public static Bot bot = null;
 
     public static final HashMap<BotLanguage, Locale> translations = new HashMap<>();
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    public static Schedules schedules;
     public static CoOpSchedules coop_schedules;
 
     public static void main(String[] args) throws Exception {
@@ -49,6 +51,17 @@ public class Main {
             e.printStackTrace();
         }
         if (iface == null) return;
+        System.out.println("Downloading locales");
+        for (BotLanguage l : BotLanguage.values()) {
+            final URL lng = new URL("https://splatoon2.ink/data/locale/" + l.key + ".json");
+            final HttpsURLConnection deConn = (HttpsURLConnection) lng.openConnection();
+            deConn.setRequestProperty("User-Agent", USER_AGENT);
+            deConn.connect();
+            String out = new Scanner(deConn.getInputStream(), "UTF-8").useDelimiter("\\A").next();
+            final Locale locale = gson.fromJson(new StringReader(out), Locale.class);
+            locale.botLocale = l.botLocale;
+            translations.put(l, locale);
+        }
         try {
             bot = new Bot();
         } catch (LoginException e) {
@@ -57,85 +70,69 @@ public class Main {
         }
         if (bot == null) return;
 
-        System.out.println("Downloading locales");
-        for (BotLanguage l : BotLanguage.values()) {
-            final URL lng = new URL("https://splatoon2.ink/data/locale/" + l.key + ".json");
-            final HttpsURLConnection deConn = (HttpsURLConnection) lng.openConnection();
-            deConn.setRequestProperty("User-Agent", "SplatCord 2");
-            deConn.connect();
-            final Locale locale = gson.fromJson(new InputStreamReader(deConn.getInputStream()), Locale.class);
-            locale.botLocale = l.botLocale;
-            translations.put(l, locale);
-        }
+        ScheduleUtil.updateRotationData();
 
-        System.out.println("Downloading schedules...");
-        final URL sched = new URL("https://splatoon2.ink/data/schedules.json");
-        final HttpsURLConnection deConn = (HttpsURLConnection) sched.openConnection();
-        deConn.setRequestProperty("User-Agent", "SplatCord 2");
-        deConn.connect();
-        schedules = gson.fromJson(new InputStreamReader(deConn.getInputStream()), Schedules.class);
-        final URL sched2 = new URL("https://splatoon2.ink/data/coop-schedules.json");
-        final HttpsURLConnection deConn2 = (HttpsURLConnection) sched2.openConnection();
-        deConn2.setRequestProperty("User-Agent", "SplatCord 2");
-        deConn2.connect();
-
-        coop_schedules = gson.fromJson(new InputStreamReader(deConn2.getInputStream()), CoOpSchedules.class);
         long salmonEndTime = coop_schedules.details[0].end_time;
-        while (true) {
-            try {
-                if (LocalTime.now().getMinute() == 0 && LocalTime.now().getSecond() >= 30) {
-                    long prevStartTime = schedules.regular[0].start_time;
-                    System.out.println("Downloading schedules...");
-                    final HttpsURLConnection updateSched = (HttpsURLConnection) sched.openConnection();
-                    updateSched.setRequestProperty("User-Agent", "SplatCord 2");
-                    updateSched.connect();
-                    schedules = gson.fromJson(new InputStreamReader(updateSched.getInputStream()), Schedules.class);
-                    final HttpsURLConnection updateCOOP = (HttpsURLConnection) sched2.openConnection();
-                    updateCOOP.setRequestProperty("User-Agent", "SplatCord 2");
-                    updateCOOP.connect();
-                    coop_schedules = gson.fromJson(new InputStreamReader(updateCOOP.getInputStream()), CoOpSchedules.class);
-                    if (schedules.regular[0].start_time != prevStartTime)
-                        iface.getAllMapChannels().forEach((serverid, channel) -> bot.sendMapMessage(serverid, channel));
-                    TimeUnit.MINUTES.sleep(5);
-                }
-                if (coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
-                    if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
-                        salmonEndTime = -1;
-                        iface.getAllSalmonMessages().forEach((chan, msg) -> {
-                            if (msg != null) {
-                                final TextChannel channel = bot.jda.getTextChannelById(chan);
-                                if (channel == null) return;
-                                Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
-                                channel.retrieveMessageById(msg).submit().thenAccept((message) -> {
-                                    final List<MessageEmbed> e = message.getEmbeds();
-                                    final EmbedBuilder embedBuilder = new EmbedBuilder(e.get(0));
-                                    embedBuilder.setTimestamp(null);
-                                    embedBuilder.setFooter(lang.botLocale.footer_closed);
-                                    message.editMessage(embedBuilder.build()).queue();
-                                    iface.setSalmonMessage(channel.getGuild().getIdLong(), null);
-                                });
-                            }
-                        });
-                    }
-                    if (coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
-                        iface.getAllSalmonChannels().forEach((serverid, channel) -> {
-                            try {
-                                Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
-                                iface.setSalmonMessage(msg.getKey(), msg.getValue());
-                            } catch (ExecutionException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
 
-                        });
-                        Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
-                        Config.instance().saveConfig();
-                    }
-                }
-            }catch (IOException e){
-                e.printStackTrace();
+        while (true) {
+            final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
+
+            //Map rotation data
+            if (currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
+                iface.getAllMapChannels().forEach((serverid, channel) -> bot.sendMessage(bot.getMapMessage(serverid, currentRotation), channel));
+                Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
+                Config.instance().saveConfig();
             }
+
+
+            //Salmon run data
+            if (coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
+                if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
+                    salmonEndTime = -1;
+                    iface.getAllSalmonMessages().forEach((chan, msg) -> {
+                        if (msg != null) {
+                            final TextChannel channel = bot.jda.getTextChannelById(chan);
+                            if (channel == null) return;
+                            Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
+                            channel.retrieveMessageById(msg).submit().thenAccept((message) -> {
+                                final List<MessageEmbed> e = message.getEmbeds();
+                                final EmbedBuilder embedBuilder = new EmbedBuilder(e.get(0));
+                                embedBuilder.setTimestamp(null);
+                                embedBuilder.setFooter(lang.botLocale.footer_closed);
+                                message.editMessage(embedBuilder.build()).queue();
+                                iface.setSalmonMessage(channel.getGuild().getIdLong(), null);
+                            });
+                        }
+                    });
+                }
+                if (coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
+                    iface.getAllSalmonChannels().forEach((serverid, channel) -> {
+                        try {
+                            Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
+                            iface.setSalmonMessage(msg.getKey(), msg.getValue());
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    });
+                    Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
+                    Config.instance().saveConfig();
+                }
+            }
+
+
+            //Try to update data
+            if (LocalTime.now().getMinute() == 0 && LocalTime.now().getSecond() >= 30) {
+                try {
+                    ScheduleUtil.updateRotationData();
+                } catch (IOException | JsonParseException e) {
+                    e.printStackTrace();
+                }
+                TimeUnit.MINUTES.sleep(2);
+            }
+
             try {
-                TimeUnit.SECONDS.sleep(30);
+                TimeUnit.SECONDS.sleep(15);
                 Config.instance().loadConfig();
             } catch (InterruptedException e) {
                 return;

@@ -1,22 +1,27 @@
 package de.erdbeerbaerlp.splatcord2.dc;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
+import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
+import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.tentaworld.Gear;
 import de.erdbeerbaerlp.splatcord2.storage.json.tentaworld.Merchandise;
 import de.erdbeerbaerlp.splatcord2.storage.json.tentaworld.TentaWorld;
 import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.api.events.guild.UnavailableGuildJoinedEvent;
-import net.dv8tion.jda.api.events.guild.UnavailableGuildLeaveEvent;
+import net.dv8tion.jda.api.events.guild.*;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.role.RoleCreateEvent;
+import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -40,12 +45,14 @@ public class Bot implements EventListener {
     public final JDA jda;
     @SuppressWarnings("FieldCanBeLocal")
     private final StatusUpdater presence;
-    private static HashMap<Long, Long> splatnetCooldown = new HashMap<>();
+    public static final HashMap<Long, Long> splatnetCooldown = new HashMap<>();
 
     public Bot() throws LoginException, InterruptedException {
+        CommandRegistry.registerAllBaseCommands();
         JDABuilder b = JDABuilder.create(Config.instance().discord.token, GatewayIntent.GUILD_MESSAGES).addEventListeners(this);
         b.setMemberCachePolicy(MemberCachePolicy.DEFAULT);
         b.setAutoReconnect(true);
+        b.disableCache(CacheFlag.ONLINE_STATUS);
         b.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS);
         b.setChunkingFilter(ChunkingFilter.ALL);
         jda = b.build().awaitReady();
@@ -54,9 +61,9 @@ public class Bot implements EventListener {
 
         final ArrayList<Long> knownIDs = Main.iface.getAllServers();
         jda.getGuilds().forEach((g) -> {
-            System.out.println(g.getId());
             if (!knownIDs.contains(g.getIdLong()))
                 Main.iface.addServer(g.getIdLong());
+            CommandRegistry.setCommands(g);
         });
 
     }
@@ -65,7 +72,7 @@ public class Bot implements EventListener {
         sendMessage(new MessageBuilder().setContent(msg).build(), channelId);
     }
 
-    private void sendMessage(Message msg, Long channelId) {
+    public void sendMessage(Message msg, Long channelId) {
         if (msg == null || channelId == null) return;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) channel.sendMessage(msg).queue();
@@ -86,13 +93,48 @@ public class Bot implements EventListener {
 
     @Override
     public void onEvent(@NotNull GenericEvent event) {
-        if (event instanceof GuildJoinEvent) Main.iface.addServer(((GuildJoinEvent) event).getGuild().getIdLong());
-        if (event instanceof UnavailableGuildJoinedEvent)
+
+        //Guild joining
+        if (event instanceof GuildJoinEvent) {
+            final GuildJoinEvent guildJoinEvent = (GuildJoinEvent) event;
+            Main.iface.addServer(((GuildJoinEvent) event).getGuild().getIdLong());
+            CommandRegistry.setCommands(guildJoinEvent.getGuild());
+        }
+        if (event instanceof UnavailableGuildJoinedEvent) {
             Main.iface.addServer(((UnavailableGuildJoinedEvent) event).getGuildIdLong());
+        }
+        if(event instanceof GuildAvailableEvent){
+            CommandRegistry.setCommands(((GuildAvailableEvent) event).getGuild());
+        }
+
+        //Guild leaving
         if (event instanceof GuildLeaveEvent) Main.iface.delServer(((GuildLeaveEvent) event).getGuild().getIdLong());
         if (event instanceof UnavailableGuildLeaveEvent)
             Main.iface.delServer(((UnavailableGuildLeaveEvent) event).getGuildIdLong());
 
+
+        // /slash commands
+        if (event instanceof SlashCommandEvent) {
+            SlashCommandEvent ev = (SlashCommandEvent) event;
+            if (ev.getChannelType() != ChannelType.TEXT) return;
+            final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
+            if (cmd != null) {
+                final BaseCommand baseCmd = CommandRegistry.getCommandByName(cmd.getName());
+                if (baseCmd != null)
+                    baseCmd.execute(ev);
+            }
+        }
+
+        //Update command permissions on role creation / permission change
+        if(event instanceof RoleUpdatePermissionsEvent){
+            CommandRegistry.setCommands(((RoleUpdatePermissionsEvent) event).getGuild());
+        }
+        if(event instanceof RoleCreateEvent)
+            CommandRegistry.setCommands(((RoleCreateEvent) event).getGuild());
+
+
+
+        //Legacy commands
         if (event instanceof MessageReceivedEvent) {
             final MessageReceivedEvent ev = ((MessageReceivedEvent) event);
             if (ev.getAuthor().isBot()) return;
@@ -108,8 +150,17 @@ public class Bot implements EventListener {
                     });
                     return;
                 }
+                sendMessage(lang.botLocale.legacyCommand, ev.getChannel().getId());
                 if (cmd.length > 0) {
                     switch (cmd[0].toLowerCase()) {
+                        case "fixslashcommands":
+                            if (!isAdmin(ev.getMember())) {
+                                sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
+                                break;
+                            }
+                            CommandRegistry.setCommands(ev.getGuild());
+                            sendMessage(lang.botLocale.cmdFixSlashCommands,ev.getChannel().getId());
+                            break;
                         case "setlang":
                             if (!isAdmin(ev.getMember())) {
                                 sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
@@ -177,7 +228,7 @@ public class Bot implements EventListener {
                             break;
                         case "stage":
                         case "stages":
-                            sendMapMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
+                            sendMessage(getMapMessage(ev.getGuild().getIdLong(), ScheduleUtil.getCurrentRotation()),ev.getChannel().getId());
                             break;
                         case "salmon":
                             try {
@@ -187,7 +238,7 @@ public class Bot implements EventListener {
                             }
                             break;
                         case "invite":
-                            sendMessage("<" + jda.getInviteUrl(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES) + ">", ev.getChannel().getId());
+                            sendMessage("<https://discord.com/api/oauth2/authorize?client_id=822228767165644872&permissions=379968&scope=applications.commands%20bot>", ev.getChannel().getId());
                             break;
                         case "support":
                             sendMessage("https://discord.gg/DBH9FSFCXb", ev.getChannel().getId());
@@ -221,11 +272,10 @@ public class Bot implements EventListener {
                             sendMapRotation(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
                             break;
                         case "dumprawdata":
-                            final StringBuilder builder = new StringBuilder();
-                            builder.append(Main.schedules.toString()).append("\n");
-                            builder.append(Main.coop_schedules.toString()).append("\n");
-                            builder.append(Main.translations);
-                            ev.getChannel().sendFile(builder.toString().getBytes(StandardCharsets.UTF_8), "Dump.txt").queue();
+                            String message = ScheduleUtil.getSchedulesString() + "\n" +
+                                    Main.coop_schedules.toString() + "\n" +
+                                    Main.translations;
+                            ev.getChannel().sendFile(message.getBytes(StandardCharsets.UTF_8), "Dump.txt").queue();
                             break;
                         default:
                             sendMessage(lang.botLocale.unknownCommand, ev.getChannel().getId());
@@ -238,7 +288,7 @@ public class Bot implements EventListener {
 
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private static boolean isAdmin(Member m) {
+    public static boolean isAdmin(Member m) {
         if (m == null) return false;
         return m.hasPermission(Permission.MANAGE_SERVER);
     }
@@ -309,77 +359,68 @@ public class Bot implements EventListener {
     }
 
     private void sendMapRotation(Long serverid, long channel) {
-        Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
-                .addField("<:regular:822873973225947146>" +
-                                lang.game_modes.get("regular").name,
-                        lang.stages.get(Main.schedules.regular[0].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.regular[0].stage_b.id).getName()
-                        , false)
-                .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[0].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.gachi[0].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.gachi[0].stage_b.id).getName()
-                        , false)
-                .addField("<:ranked:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[0].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.league[0].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.league[0].stage_b.id).getName()
-                        , false)
-                .build()).build(), channel);
+        final Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
+
+        final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
+        final ArrayList<Rotation> nextRotations = ScheduleUtil.getNext3Rotations();
+
+        sendMessage(getMapMessage(serverid, currentRotation),channel);
         sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle)
+                .addField(":alarm_clock: ", "<t:" + nextRotations.get(0).getRegular().start_time + ":R>", true)
                 .addField("<:regular:822873973225947146>" +
                                 lang.game_modes.get("regular").name,
-                        lang.stages.get(Main.schedules.regular[1].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.regular[1].stage_b.id).getName()
+                        lang.stages.get(nextRotations.get(0).getRegular().stage_a.id).getName() +
+                                ", " + lang.stages.get(nextRotations.get(0).getRegular().stage_b.id).getName()
                         , true)
                 .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[1].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.gachi[1].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.gachi[1].stage_b.id).getName()
+                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(nextRotations.get(0).getRanked().rule.key).name + ")",
+                        lang.stages.get(nextRotations.get(0).getRanked().stage_a.id).getName() +
+                                ", " + lang.stages.get(nextRotations.get(0).getRanked().stage_b.id).getName()
                         , true)
-                .addField("<:ranked:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[1].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.league[1].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.league[1].stage_b.id).getName()
-                        , false)
+                .addField("<:league:822873973142192148>" +
+                                lang.game_modes.get("league").name + " (" + lang.rules.get(nextRotations.get(0).getLeague().rule.key).name + ")",
+                        lang.stages.get(nextRotations.get(0).getLeague().stage_a.id).getName() +
+                                ", " + lang.stages.get(nextRotations.get(0).getLeague().stage_b.id).getName()
+                        , true)
+                .addBlankField(false)
+                .addField(":alarm_clock: ", "<t:" + nextRotations.get(1).getRegular().start_time + ":R>", true)
                 .addField("<:regular:822873973225947146>" +
                                 lang.game_modes.get("regular").name,
-                        lang.stages.get(Main.schedules.regular[2].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.regular[2].stage_b.id).getName()
+                        lang.stages.get(nextRotations.get(1).getRegular().stage_a.id).getName() +
+                                ", " + lang.stages.get(nextRotations.get(1).getRegular().stage_b.id).getName()
                         , true)
                 .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[2].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.gachi[2].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.gachi[2].stage_b.id).getName()
+                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(nextRotations.get(1).getRanked().rule.key).name + ")",
+                        lang.stages.get(nextRotations.get(1).getRanked().stage_a.id).getName() +
+                                ", " + lang.stages.get(nextRotations.get(1).getRanked().stage_b.id).getName()
                         , true)
-                .addField("<:ranked:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[2].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.league[2].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.league[2].stage_b.id).getName()
-                        , false)
+                .addField("<:league:822873973142192148>" +
+                                lang.game_modes.get("league").name + " (" + lang.rules.get(nextRotations.get(1).getLeague().rule.key).name + ")",
+                        lang.stages.get(nextRotations.get(1).getLeague().stage_a.id).getName() +
+                                ", " + lang.stages.get(nextRotations.get(1).getLeague().stage_b.id).getName()
+                        , true)
                 .build()).build(), channel);
     }
 
-    public void sendMapMessage(Long serverid, long channel) {
+    public Message getMapMessage(Long serverid, Rotation r) {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
+        return new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
                 .addField("<:regular:822873973225947146>" +
                                 lang.game_modes.get("regular").name,
-                        lang.stages.get(Main.schedules.regular[0].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.regular[0].stage_b.id).getName()
+                        lang.stages.get(r.getRegular().stage_a.id).getName() +
+                                ", " + lang.stages.get(r.getRegular().stage_b.id).getName()
                         , false)
                 .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(Main.schedules.gachi[0].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.gachi[0].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.gachi[0].stage_b.id).getName()
+                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(r.getRanked().rule.key).name + ")",
+                        lang.stages.get(r.getRanked().stage_a.id).getName() +
+                                ", " + lang.stages.get(r.getRanked().stage_b.id).getName()
                         , false)
                 .addField("<:ranked:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(Main.schedules.league[0].rule.key).name + ")",
-                        lang.stages.get(Main.schedules.league[0].stage_a.id).getName() +
-                                ", " + lang.stages.get(Main.schedules.league[0].stage_b.id).getName()
+                                lang.game_modes.get("league").name + " (" + lang.rules.get(r.getLeague().rule.key).name + ")",
+                        lang.stages.get(r.getLeague().stage_a.id).getName() +
+                                ", " + lang.stages.get(r.getLeague().stage_b.id).getName()
                         , false)
-                .build()).build(), channel);
+                .build()).build();
     }
 
     private class StatusUpdater extends Thread {

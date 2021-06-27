@@ -87,8 +87,8 @@ public class Config {
         @TomlComment("Database Name")
         public String dbName = "SplatcordDB";
     }
-
     public static class DoNotEdit{
         public long lastSalmonTimestamp = 0;
+        public long lastRotationTimestamp = 0;
     }
 }

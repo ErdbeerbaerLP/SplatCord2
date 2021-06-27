@@ -6,7 +6,11 @@ version = '1.0.0'
 group = "de.erdbeerbaerlp.splatcord2" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 mainClassName = 'de.erdbeerbaerlp.splatcord2.Main'
 repositories {
-    jcenter()
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
+    mavenCentral()
     maven {
         url "https://jitpack.io"
     }
@@ -17,7 +21,7 @@ configurations {
     compile.extendsFrom(embed)
 }
 dependencies {
-    embed('net.dv8tion:JDA:4.2.0_242'){
+    embed('net.dv8tion:JDA:4.3.0_277'){
         transitive = true
         exclude module: 'opus-java'
     }
