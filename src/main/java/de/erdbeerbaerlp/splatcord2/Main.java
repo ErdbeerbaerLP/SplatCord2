@@ -109,7 +109,8 @@ public class Main {
                     iface.getAllSalmonChannels().forEach((serverid, channel) -> {
                         try {
                             Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
-                            iface.setSalmonMessage(msg.getKey(), msg.getValue());
+                            if (msg != null)
+                                iface.setSalmonMessage(msg.getKey(), msg.getValue());
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }

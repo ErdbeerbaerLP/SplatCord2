@@ -150,136 +150,16 @@ public class Bot implements EventListener {
                     });
                     return;
                 }
-                sendMessage(lang.botLocale.legacyCommand, ev.getChannel().getId());
                 if (cmd.length > 0) {
-                    switch (cmd[0].toLowerCase()) {
-                        case "fixslashcommands":
-                            if (!isAdmin(ev.getMember())) {
-                                sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
-                                break;
-                            }
-                            CommandRegistry.setCommands(ev.getGuild());
-                            sendMessage(lang.botLocale.cmdFixSlashCommands,ev.getChannel().getId());
-                            break;
-                        case "setlang":
-                            if (!isAdmin(ev.getMember())) {
-                                sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
-                                break;
-                            }
-                            if (cmd.length > 1)
-                                switch (cmd[1].toLowerCase()) {
-                                    case "deutsch":
-                                    case "german":
-                                    case "de":
-                                        Main.iface.setServerLang(ev.getGuild().getIdLong(), BotLanguage.GERMAN);
-                                        lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-                                        sendMessage(lang.botLocale.languageSetMessage, ev.getChannel().getId());
-                                        break;
-                                    case "english":
-                                    case "englisch":
-                                    case "en":
-                                        Main.iface.setServerLang(ev.getGuild().getIdLong(), BotLanguage.ENGLISH);
-                                        lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-                                        sendMessage(lang.botLocale.languageSetMessage, ev.getChannel().getId());
-                                        break;
-                                    case "italian":
-                                    case "it":
-                                        Main.iface.setServerLang(ev.getGuild().getIdLong(), BotLanguage.ITALIAN);
-                                        lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-                                        sendMessage(lang.botLocale.languageSetMessage, ev.getChannel().getId());
-                                        break;
-                                    default:
-                                        sendMessage(lang.botLocale.unknownLanguage, ev.getChannel().getId());
-                                }
-                            else
-                                sendMessage(lang.botLocale.unknownLanguage, ev.getChannel().getId());
-                            break;
-                        case "setstage":
-                            if (!isAdmin(ev.getMember())) {
-                                sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
-                                break;
-                            }
-                            Main.iface.setStageChannel(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
-                            sendMessage(lang.botLocale.stageFeedMsg, ev.getChannel().getId());
-                            break;
-                        case "setsalmon":
-                            if (!isAdmin(ev.getMember())) {
-                                sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
-                                break;
-                            }
-                            Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
-                            sendMessage(lang.botLocale.salmonFeedMsg, ev.getChannel().getId());
-                            break;
-                        case "delsalmon":
-                            if (!isAdmin(ev.getMember())) {
-                                sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
-                                break;
-                            }
-                            Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), null);
-                            sendMessage(lang.botLocale.deleteSuccessful, ev.getChannel().getId());
-                            break;
-                        case "delstage":
-                            if (!isAdmin(ev.getMember())) {
-                                sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
-                                break;
-                            }
-                            Main.iface.setStageChannel(ev.getGuild().getIdLong(), null);
-                            sendMessage(lang.botLocale.deleteSuccessful, ev.getChannel().getId());
-                            break;
-                        case "stage":
-                        case "stages":
-                            sendMessage(getMapMessage(ev.getGuild().getIdLong(), ScheduleUtil.getCurrentRotation()),ev.getChannel().getId());
-                            break;
-                        case "salmon":
-                            try {
-                                sendSalmonMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
-                            } catch (ExecutionException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        case "invite":
-                            sendMessage("<https://discord.com/api/oauth2/authorize?client_id=822228767165644872&permissions=379968&scope=applications.commands%20bot>", ev.getChannel().getId());
-                            break;
-                        case "support":
-                            sendMessage("https://discord.gg/DBH9FSFCXb", ev.getChannel().getId());
-                            break;
-                        case "help":
-                            sendMessage(lang.botLocale.helpMessage, ev.getChannel().getId());
-                            break;
-                        case "code":
-                            final Random r = new Random();
-                            final int a = r.nextInt(10);
-                            final int b = r.nextInt(10);
-                            final int c = r.nextInt(10);
-                            final int d = r.nextInt(10);
-                            sendMessage(a + "" + b + "" + c + "" + d, ev.getChannel().getId());
-                            break;
-                        case "tentaworld":
-                        case "tw":
-                        case "splatnet":
-                        case "sn":
-                        case "gear":
-                            if (splatnetCooldown.containsKey(ev.getGuild().getIdLong())) {
-                                if (Instant.now().getEpochSecond() < splatnetCooldown.get(ev.getGuild().getIdLong())) {
-                                    sendMessage(lang.botLocale.splatnetCooldown, ev.getChannel().getId());
-                                    break;
-                                }
-                            }
-                            splatnetCooldown.put(ev.getGuild().getIdLong(), Instant.now().getEpochSecond() + TimeUnit.MINUTES.toSeconds(5));
-                            sendSplatNetShopMessage(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
-                            break;
-                        case "rotation":
-                            sendMapRotation(ev.getGuild().getIdLong(), ev.getChannel().getIdLong());
-                            break;
-                        case "dumprawdata":
-                            String message = ScheduleUtil.getSchedulesString() + "\n" +
-                                    Main.coop_schedules.toString() + "\n" +
-                                    Main.translations;
-                            ev.getChannel().sendFile(message.getBytes(StandardCharsets.UTF_8), "Dump.txt").queue();
-                            break;
-                        default:
-                            sendMessage(lang.botLocale.unknownCommand, ev.getChannel().getId());
-                            break;
+                    if(cmd[0].equalsIgnoreCase("fixslashcommands")) {
+                        if (!isAdmin(ev.getMember())) {
+                            sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
+                            return;
+                        }
+                        CommandRegistry.setCommands(ev.getGuild());
+                        sendMessage(lang.botLocale.cmdFixSlashCommands, ev.getChannel().getId());
+                    }else{
+                        sendMessage(lang.botLocale.legacyCommand, ev.getChannel().getId());
                     }
                 }
             }
@@ -303,18 +183,23 @@ public class Bot implements EventListener {
 
     public Map.Entry<Long, Long> sendSalmonMessage(long serverid, long channel) throws ExecutionException, InterruptedException {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        return new AbstractMap.SimpleEntry<>(serverid, submitMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
-                .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
-                .addField(lang.botLocale.weapons,
-                        getWeaponName(lang, Main.coop_schedules.details[0].weapons[0]) + ", " +
-                                getWeaponName(lang, Main.coop_schedules.details[0].weapons[1]) + ", " +
-                                getWeaponName(lang, Main.coop_schedules.details[0].weapons[2]) + ", " +
-                                getWeaponName(lang, Main.coop_schedules.details[0].weapons[3])
-                        , true)
-                .setImage("https://splatoon2.ink/assets/splatnet/" + Main.coop_schedules.details[0].stage.image)
-                .setFooter(lang.botLocale.footer_ends)
-                .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[0].end_time))
-                .build()).build(), channel).get().getIdLong());
+        final CompletableFuture<Message> submitMsg = submitMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
+                        .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
+                        .addField(lang.botLocale.weapons,
+                                getWeaponName(lang, Main.coop_schedules.details[0].weapons[0]) + ", " +
+                                        getWeaponName(lang, Main.coop_schedules.details[0].weapons[1]) + ", " +
+                                        getWeaponName(lang, Main.coop_schedules.details[0].weapons[2]) + ", " +
+                                        getWeaponName(lang, Main.coop_schedules.details[0].weapons[3])
+                                , true)
+                        .setImage("https://splatoon2.ink/assets/splatnet/" + Main.coop_schedules.details[0].stage.image)
+                        .setFooter(lang.botLocale.footer_ends)
+                        .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[0].end_time))
+                        .build()
+                ).build(),
+                channel);
+        if(submitMsg != null)
+        return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
+        else return null;
     }
 
     public void sendSplatNetShopMessage(long serverid, long channel) {
