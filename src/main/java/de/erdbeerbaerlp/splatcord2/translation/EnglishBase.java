@@ -41,8 +41,8 @@ public class EnglishBase {
             skillSlots = "Skill Slots:",
             splatNetShop = "SplatNet Gear Shop",
             splatnetCooldown = "The SplatNet command is currently on cooldown. Please try again in a few minutes.",
-            legacyCommand = "You are using an legacy command. Theese commands will soon be completely replaced by slash commands.\n" +
-                    "You should use the slash commands if you can\n" +
+            legacyCommand = "You are attempting to use an legacy command, which is no longer possible!\n"+
+                    "Use the slash commands instead"+
                     "If you are server admin and this server cannot use the slash commands yet, open <https://discord.com/api/oauth2/authorize?client_id=822228767165644872&scope=applications.commands> and select this server. After doing this run " + Config.instance().discord.prefix + "fixslashcommands",
             cmdFixSlashCommands = "Slash commands should work soon now!\n" +
                     "If that is not the case, contact the bot developer",
