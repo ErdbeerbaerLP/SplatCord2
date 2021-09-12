@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -72,13 +73,13 @@ public class Bot implements EventListener {
         sendMessage(new MessageBuilder().setContent(msg).build(), channelId);
     }
 
-    public void sendMessage(Message msg, Long channelId) {
+    public void sendMessage(Message msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) channel.sendMessage(msg).queue();
     }
 
-    private CompletableFuture<Message> submitMessage(Message msg, Long channelId) {
+    private CompletableFuture<Message> submitMessage(Message msg, Long channelId) throws InsufficientPermissionException{
         if (msg == null || channelId == null) return null;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
@@ -118,7 +119,12 @@ public class Bot implements EventListener {
             SlashCommandEvent ev = (SlashCommandEvent) event;
             if (ev.getChannelType() != ChannelType.TEXT) return;
             final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
+
             if (cmd != null) {
+                if(!Main.iface.status.isDBAlive() && !(cmd.getName().equals("status") || cmd.getName().equals("support"))){
+                    ev.reply(Main.translations.get(BotLanguage.ENGLISH).botLocale.databaseError).queue();
+                    return;
+                }
                 final BaseCommand baseCmd = CommandRegistry.getCommandByName(cmd.getName());
                 if (baseCmd != null)
                     baseCmd.execute(ev);
@@ -181,7 +187,7 @@ public class Bot implements EventListener {
         }
     }
 
-    public Map.Entry<Long, Long> sendSalmonMessage(long serverid, long channel) throws ExecutionException, InterruptedException {
+    public Map.Entry<Long, Long> sendSalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
         final CompletableFuture<Message> submitMsg = submitMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
                         .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
@@ -316,7 +322,7 @@ public class Bot implements EventListener {
         public void run() {
             while (true) {
                 final Config.Discord.Status s = Config.instance().discord.botStatus.get(presence);
-                jda.getPresence().setPresence(Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + "")), false);
+                jda.getPresence().setPresence(Main.iface.status.isDBAlive()?OnlineStatus.ONLINE:OnlineStatus.DO_NOT_DISTURB,Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + "")), false);
                 try {
                     //noinspection BusyWait
                     sleep(1000 * (r.nextInt(29) + 2));

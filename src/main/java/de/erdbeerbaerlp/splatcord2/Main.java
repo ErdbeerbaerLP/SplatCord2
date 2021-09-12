@@ -12,15 +12,19 @@ import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +38,9 @@ public class Main {
     public static final String USER_AGENT = "SplatCord 2 (https://discord.gg/DBH9FSFCXb)";
     public static DatabaseInterface iface = null;
     public static Bot bot = null;
+    public static Instant startTime = null;
+
+    public static boolean splatoon2inkStatus = false;
 
     public static final HashMap<BotLanguage, Locale> translations = new HashMap<>();
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -57,7 +64,7 @@ public class Main {
             final HttpsURLConnection deConn = (HttpsURLConnection) lng.openConnection();
             deConn.setRequestProperty("User-Agent", USER_AGENT);
             deConn.connect();
-            String out = new Scanner(deConn.getInputStream(), "UTF-8").useDelimiter("\\A").next();
+            String out = new Scanner(deConn.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
             final Locale locale = gson.fromJson(new StringReader(out), Locale.class);
             locale.botLocale = l.botLocale;
             translations.put(l, locale);
@@ -69,24 +76,39 @@ public class Main {
             e.printStackTrace();
         }
         if (bot == null) return;
-
-        ScheduleUtil.updateRotationData();
+        startTime = Instant.now();
+        try {
+            ScheduleUtil.updateRotationData();
+            splatoon2inkStatus = true;
+        } catch (IOException | JsonParseException e) {
+            splatoon2inkStatus = false;
+            e.printStackTrace();
+        }
 
         long salmonEndTime = coop_schedules.details[0].end_time;
 
         while (true) {
+
             final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
 
             //Map rotation data
-            if (currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
-                iface.getAllMapChannels().forEach((serverid, channel) -> bot.sendMessage(bot.getMapMessage(serverid, currentRotation), channel));
+            if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
+                iface.getAllMapChannels().forEach((serverid, channel) -> {
+                    try {
+                        bot.sendMessage(bot.getMapMessage(serverid, currentRotation), channel);
+
+                    } catch (InsufficientPermissionException e) {
+                        Guild guildById = bot.jda.getGuildById(serverid);
+                        System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
+                    }
+                });
                 Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
                 Config.instance().saveConfig();
             }
 
 
             //Salmon run data
-            if (coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
+            if (iface.status.isDBAlive() && coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
                 if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
                     salmonEndTime = -1;
                     iface.getAllSalmonMessages().forEach((chan, msg) -> {
@@ -105,7 +127,7 @@ public class Main {
                         }
                     });
                 }
-                if (coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
+                if (iface.status.isDBAlive() && coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
                     iface.getAllSalmonChannels().forEach((serverid, channel) -> {
                         try {
                             Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
@@ -113,6 +135,10 @@ public class Main {
                                 iface.setSalmonMessage(msg.getKey(), msg.getValue());
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
+                        } catch (InsufficientPermissionException e) {
+                            Guild guildById = bot.jda.getGuildById(serverid);
+                            System.err.println("Failed to send salmon to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
+
                         }
 
                     });
@@ -121,17 +147,17 @@ public class Main {
                 }
             }
 
-
             //Try to update data
             if (LocalTime.now().getMinute() == 0 && LocalTime.now().getSecond() >= 30) {
                 try {
                     ScheduleUtil.updateRotationData();
+                    splatoon2inkStatus = true;
                 } catch (IOException | JsonParseException e) {
                     e.printStackTrace();
+                    splatoon2inkStatus = false;
                 }
                 TimeUnit.MINUTES.sleep(2);
             }
-
             try {
                 TimeUnit.SECONDS.sleep(15);
                 Config.instance().loadConfig();

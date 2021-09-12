@@ -16,19 +16,6 @@ public class German extends EnglishBase {
         stageFeedMsg = "Aktuelle Arenen werden nun regelmäßig in diesen Kanal gesendet";
         salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet";
         languageSetMessage = "Die Sprache dieses Servers ist nun auf Deutsch eingestellt";
-        helpMessage = "__Adminbefehle:__\n" +
-                "/setlang <de|en|it> - Ändert die Botsprache für diesen Server\n" +
-                "/setsalmon - Markiert einen Kanal für SalmonRun Benachrichtigungen\n" +
-                "/delsalmon - Löscht den gesetzten SalmonRun-Kanal\n" +
-                "/setstage - Markiert einen Kanal für Arena benachrichtigungen\n" +
-                "/delstage - Löscht den gesetzten Arena-Kanal\n\n" +
-                "__Nutzerbefehle:__\n" +
-                "/code - Generiert einen zufälligen Privatkampf-code\n" +
-                "/invite - Sendet den Einladungslink des bots\n" +
-                "/support - Sendet den Einladungslink zum Discord vom Bot\n" +
-                "/rotation - Sendet die aktuell aktiven Arenen und die nächsten Rotationen\n" +
-                "/salmon - Sendet den Aktuellen oder Kommenden SalmonRun\n" +
-                "/splatnet - Sendet die aktuelle Ausrüstung von TentaWorld. Kürzel: `sn`, `gear`\n";
         unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en), und Italienisch (it)";
         deleteSuccessful = "Erfolgreich gelöscht!";
         noWritePerms = "Dieser Bot hat keine Berechtigung, Nachrichten in diesen Kanal zu senden";
@@ -43,7 +30,6 @@ public class German extends EnglishBase {
         cmdFixSlashCommands = "Slash-Befehle sollten nur wieder funktionieren!\n" +
                 "Falls dies nicht der fall ist, kontaktiere den Bot-Entwickler";
         cmdSetlangDesc = "Ändert die Botsprache für diesen Server";
-        cmdHelpDesc = "Zeigt eine Befehlsliste";
         cmdInviteDesc = "Sendet den Einladungslink des Bots";
         cmdSetsalmonDesc = "Markiert einen Kanal für SalmonRun Benachrichtigungen";
         cmdDelsalmonDesc = "Löscht den gesetzten SalmonRun-Kanal";
@@ -58,5 +44,11 @@ public class German extends EnglishBase {
         cmdRandomStageDesc = "Generiere zufällige Arenen";
         cmdSalmonDesc = "Zeigt aktuellen und nächsten Salmon Run";
         cmdSplatnetDesc = "Sendet die aktuelle Ausrüstung von TentaWorld";
+        cmdStatusDB = "Datenbank";
+        cmdStatusDesc = "Zeigt Bostatus und Statistiken";
+        cmdStatusStats = "Statistiken";
+        cmdStatusStatsServers = "Server: ";
+        cmdStatusStatsUptime = "Uptime: ";
+        cmdStatusStatsDbUptime = "Datenbank-Uptime: ";
     }
 }

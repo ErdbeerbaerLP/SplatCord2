@@ -6,16 +6,20 @@ import de.erdbeerbaerlp.splatcord2.storage.Config;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class DatabaseInterface implements AutoCloseable {
-    private final Connection conn;
+    private Connection conn;
+    public final StatusThread status;
 
     public DatabaseInterface() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mysql://" + Config.instance().database.ip + ":" + Config.instance().database.port + "/" + Config.instance().database.dbName, Config.instance().database.username, Config.instance().database.password);
+        connect();
         if (conn == null) {
             throw new SQLException();
         }
+        status = new StatusThread();
+        status.start();
         runUpdate("create table if not exists servers\n" +
                 "(\n" +
                 "\tserverid bigint not null,\n" +
@@ -24,6 +28,49 @@ public class DatabaseInterface implements AutoCloseable {
                 "\tsalchannel bigint null,\n" +
                 "\tlastSalmon bigint null\n" +
                 ");");
+    }
+
+    private void connect() throws SQLException {
+        conn = DriverManager.getConnection("jdbc:mysql://" + Config.instance().database.ip + ":" + Config.instance().database.port + "/" + Config.instance().database.dbName, Config.instance().database.username, Config.instance().database.password);
+    }
+
+    public class StatusThread extends Thread {
+        private boolean alive = true;
+
+        public boolean isDBAlive() {
+            return alive;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                alive = DatabaseInterface.this.isConnected();
+                if (!alive) try {
+                    System.err.println("Attempting Database reconnect...");
+                    DatabaseInterface.this.connect();
+                } catch (SQLException e) {
+                    System.err.println("Failed to reconnect to database: "+e.getMessage());
+                    try {
+                        TimeUnit.SECONDS.sleep(15);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean isConnected() {
+        try {
+            return conn.isValid(10);
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     public void addServer(long id) {

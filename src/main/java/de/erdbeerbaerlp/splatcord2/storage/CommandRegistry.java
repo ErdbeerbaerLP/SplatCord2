@@ -29,7 +29,7 @@ public class CommandRegistry {
     }
 
     public static void registerAllBaseCommands() {
-        baseCommandClasses.add(HelpCommand.class);
+        baseCommandClasses.add(StatusCommand.class);
         baseCommandClasses.add(InviteCommand.class);
         baseCommandClasses.add(SupportCommand.class);
         baseCommandClasses.add(SetlangCommand.class);

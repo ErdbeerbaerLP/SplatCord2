@@ -1,7 +1,9 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
+
 version = '1.0.0'
 group = "de.erdbeerbaerlp.splatcord2" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 mainClassName = 'de.erdbeerbaerlp.splatcord2.Main'
@@ -18,7 +20,14 @@ repositories {
 compileJava.options.encoding = 'UTF-8'
 configurations {
     embed
-    compile.extendsFrom(embed)
+    compileOnly.extendsFrom(embed)
+}
+shadowJar {
+    classifier = ''
+    configurations = [project.configurations.embed]
+}
+artifacts {
+    archives tasks.shadowJar
 }
 dependencies {
     embed('net.dv8tion:JDA:4.3.0_277'){
@@ -31,12 +40,6 @@ dependencies {
 
 }
 jar {
-
-    configurations.embed.each { dep ->
-        from(project.zipTree(dep)) {
-            exclude 'META-INF', 'META-INF/**'
-        }
-    }
     manifest {
         attributes(
                 'Main-Class': mainClassName
