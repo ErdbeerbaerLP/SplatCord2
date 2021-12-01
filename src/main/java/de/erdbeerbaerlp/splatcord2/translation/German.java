@@ -64,7 +64,7 @@ public class German extends EnglishBase {
         cmdProfilePNIDDesc = "Deine Pretendo Network ID";
         cmdProfileLevelDesc = "Dein in-game Level";
         cmdProfileNameDesc = "Dein in-game Name";
-        cmdProfileRankDesc = "Dein Splatoon Rang (Beispiele: C-, S+4)";
+        cmdProfileRankDesc = "Dein Splatoon Rang (Beispiele: C-, A, S)";
         cmdProfileRank2Desc = "Dein Splatoon 2 %mode% Rang (Beispiele: C-, B, S+4, X 2000)";
         salmonRunTitleUnset = "Praktikant";
         salmonRunTitleApprentice = "Praktikant";
@@ -77,5 +77,11 @@ public class German extends EnglishBase {
         cmdProfileSRTitleDesc = "Dein Salmon Run Titel";
         cmdProfileSRTitle = "Salmon Run Titel";
         cmdProfileNameErr = "Name zu lang! Es sind nur max. 10 Zeichen erlaubt!";
+        cmdProfileLevel1Set = "Splatoon 1 level gesetzt auf ";
+        cmdProfileLevel2Set = "Splatoon 2 level gesetzt auf ";
+        cmdProfileNameSet = "In-Game Name gesetzt auf ";
+        cmdProfileMissingNID = "Du hast noch keine Nintendo Network ID oder eine Pretendo Network ID festgelegt";
+        cmdProfileMissingFC = "Du hast noch keinen Switch Freundescode festgelegt.";
+        cmdProfileFCSet = "Switch Freundescode gesetzt auf ";
     }
 }

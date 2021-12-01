@@ -83,7 +83,7 @@ public class ProfileCommand extends BaseCommand {
 
                             ev.replyEmbeds(b.build()).queue();
                         } else {
-                            ev.reply("You did not configure an Nintendo Network ID or an Pretendo Network ID yet.").queue();
+                            ev.reply(lang.botLocale.cmdProfileMissingNID).queue();
                         }
                     } else {
                         String msg = "";
@@ -99,7 +99,7 @@ public class ProfileCommand extends BaseCommand {
 
                             if (ev.getOption("level") != null) {
                                 profile.splat1Profile.level = (Integer.parseInt(ev.getOption("level").getAsString()));
-                                msg += "Splatoon 1 level set to " + profile.splat1Profile.level + "\n";
+                                msg += lang.botLocale.cmdProfileLevel1Set + profile.splat1Profile.level + "\n";
                             }
                             if (ev.getOption("name") != null) {
                                 final String name = ev.getOption("name").getAsString();
@@ -107,7 +107,7 @@ public class ProfileCommand extends BaseCommand {
                                     msg += lang.botLocale.cmdProfileNameErr + "\n";
                                 } else {
                                     profile.splat1Profile.name = name;
-                                    msg += "Splatoon 1 Name set to " + name + "\n";
+                                    msg += lang.botLocale.cmdProfileNameSet + name + "\n";
                                 }
                             }
                             if (ev.getOption("rank") != null) {
@@ -148,19 +148,19 @@ public class ProfileCommand extends BaseCommand {
 
                             ev.replyEmbeds(b.build()).queue();
                         } else {
-                            ev.reply("You did not configure an Switch Friend Code yet.").queue();
+                            ev.reply(lang.botLocale.cmdProfileMissingFC).queue();
                         }
                     } else {
                         String msg = "";
                         if (ev.getOption("switch-fc") != null) {
                             profile.switch_fc = Long.parseLong(ev.getOption("switch-fc").getAsString());
-                            msg += "Set Friend Code to " + ev.getOption("switch-fc").getAsString() + "\n";
+                            msg += lang.botLocale.cmdProfileFCSet + ev.getOption("switch-fc").getAsString() + "\n";
                         }
                         if (profile.switch_fc != -1) {
 
                             if (ev.getOption("level") != null) {
                                 profile.splat2Profile.setLevel(Integer.parseInt(ev.getOption("level").getAsString()));
-                                msg += "Splatoon 2 level set to " + profile.splat2Profile.getLevel() + "\n";
+                                msg += lang.botLocale.cmdProfileLevel2Set + profile.splat2Profile.getLevel() + "\n";
                             }
                             if (ev.getOption("name") != null) {
                                 final String name = ev.getOption("name").getAsString();

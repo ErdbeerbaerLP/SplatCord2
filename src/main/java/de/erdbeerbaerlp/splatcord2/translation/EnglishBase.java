@@ -85,5 +85,11 @@ public class EnglishBase {
             cmdProfileLevel = "Level",
             cmdProfileSRTitleDesc = "Your Salmon Run Title",
             cmdProfileSRTitle = "Salmon Run Title",
-            cmdProfileNameErr = "Name too long! Can only be 10 characters!";
+            cmdProfileNameErr = "Name too long! Can only be 10 characters!",
+            cmdProfileLevel1Set = "Splatoon 1 level set to ",
+            cmdProfileLevel2Set = "Splatoon 2 level set to ",
+            cmdProfileNameSet = "In-Game name set to ",
+            cmdProfileMissingNID = "You did not configure an Nintendo Network ID or an Pretendo Network ID yet.",
+            cmdProfileMissingFC = "You did not configure an Switch Friend Code yet.",
+            cmdProfileFCSet = "Set Friend Code to ";
 }
