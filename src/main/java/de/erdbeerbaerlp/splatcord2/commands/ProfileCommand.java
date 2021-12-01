@@ -31,10 +31,10 @@ public class ProfileCommand extends BaseCommand {
 
 
         //Splatoon 2 only
-        final OptionData rainmaker = new OptionData(OptionType.STRING, "rainmaker", l.botLocale.cmdProfileRank2Desc, false);
-        final OptionData splatzones = new OptionData(OptionType.STRING, "splatzones", l.botLocale.cmdProfileRank2Desc, false);
-        final OptionData towercontrol = new OptionData(OptionType.STRING, "towercontrol", l.botLocale.cmdProfileRank2Desc, false);
-        final OptionData clamblitz = new OptionData(OptionType.STRING, "clamblitz", l.botLocale.cmdProfileRank2Desc, false);
+        final OptionData rainmaker = new OptionData(OptionType.STRING, "rainmaker", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("rainmaker").name), false);
+        final OptionData splatzones = new OptionData(OptionType.STRING, "splatzones", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("splat_zones").name), false);
+        final OptionData towercontrol = new OptionData(OptionType.STRING, "towercontrol", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("tower_control").name), false);
+        final OptionData clamblitz = new OptionData(OptionType.STRING, "clamblitz", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("clam_blitz").name), false);
         final OptionData salmonTitle = new OptionData(OptionType.INTEGER, "salmon-run-title", l.botLocale.cmdProfileSRTitleDesc, false);
         salmonTitle.addChoice(l.botLocale.salmonRunTitleApprentice, 1);
         salmonTitle.addChoice(l.botLocale.salmonRunTitlePartTimer, 2);

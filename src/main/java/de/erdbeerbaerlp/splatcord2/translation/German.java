@@ -64,7 +64,8 @@ public class German extends EnglishBase {
         cmdProfilePNIDDesc = "Deine Pretendo Network ID";
         cmdProfileLevelDesc = "Dein in-game Level";
         cmdProfileNameDesc = "Dein in-game Name";
-        cmdProfileRankDesc = "Dein Splatoon Rang (Beispiele: C-, S+4, X 2000)";
+        cmdProfileRankDesc = "Dein Splatoon Rang (Beispiele: C-, S+4)";
+        cmdProfileRank2Desc = "Dein Splatoon 2 %mode% Rang (Beispiele: C-, B, S+4, X 2000)";
         salmonRunTitleUnset = "Praktikant";
         salmonRunTitleApprentice = "Praktikant";
         salmonRunTitlePartTimer = "Lehrling";
