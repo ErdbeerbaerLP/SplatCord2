@@ -1,11 +1,11 @@
-package de.erdbeerbaerlp.splatcord2.storage.json.translations;
+package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations;
 
-public class Skill {
+public class Gear {
     public String name;
 
     @Override
     public String toString() {
-        return "Skill{" +
+        return "Gear{" +
                 "name='" + name + '\'' +
                 '}';
     }

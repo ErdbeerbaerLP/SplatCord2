@@ -1,8 +1,8 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
-import de.erdbeerbaerlp.splatcord2.storage.json.coop_schedules.Weapons;
-import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 

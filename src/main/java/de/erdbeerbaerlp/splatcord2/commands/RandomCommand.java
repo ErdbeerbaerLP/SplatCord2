@@ -1,9 +1,9 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
-import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
-import de.erdbeerbaerlp.splatcord2.storage.json.translations.Stage;
-import de.erdbeerbaerlp.splatcord2.storage.json.translations.Weapon;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;

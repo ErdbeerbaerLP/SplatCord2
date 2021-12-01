@@ -50,5 +50,31 @@ public class German extends EnglishBase {
         cmdStatusStatsServers = "Server: ";
         cmdStatusStatsUptime = "Uptime: ";
         cmdStatusStatsDbUptime = "Datenbank-Uptime: ";
+        cmdProfile1Desc = "Zeigt oder bearbeitet den Splatoon 1 Profil";
+        cmdProfile2Desc = "Zeigt oder bearbeitet den Splatoon 2 Profil";
+        cmdProfile3Desc = "Zeigt oder bearbeitet den Splatoon 3 Profil";
+        cmdProfilennidErr = "Um das Profil Feature zu verwenden, musst du erst deine Nintendo Network ID oder Pretendo Network ID festlegen!";
+        cmdProfilefcErr = "Um das Profil Feature zu verwenden, musst du erst deinen Switch Freundes Code!";
+        cmdProfileRankFormatNotValid = "Das Rang-Format ist fehlerhaft !";
+        cmdProfileS1RankSet = "Dein Splatoon 1 Rang wurde auf %rank% gesetzt";
+        cmdProfileS2RankSet = "Dein %mode% rang wurde auf %rank% gesetzt";
+        cmdProfileS2SalmonSet = "Dein Salmon Run Titel ist nun %title%";
+        cmdProfileSwitchFCDesc = "Dein Switch Freundes Codes";
+        cmdProfileNNIDDesc = "Deine Nintendo Network ID";
+        cmdProfilePNIDDesc = "Deine Pretendo Network ID";
+        cmdProfileLevelDesc = "Dein in-game Level";
+        cmdProfileNameDesc = "Dein in-game Name";
+        cmdProfileRankDesc = "Dein Splatoon Rang (Beispiele: C-, S+4, X 2000)";
+        salmonRunTitleUnset = "Praktikant";
+        salmonRunTitleApprentice = "Praktikant";
+        salmonRunTitlePartTimer = "Lehrling";
+        salmonRunTitleGoGetter = "Mitarbeiter des Monats";
+        salmonRunTitleOverachiever = "Führungskraft";
+        salmonRunTitleProfreshional = "Boss";
+        cmdProfileRank = "Rang";
+        cmdProfileLevel = "Level";
+        cmdProfileSRTitleDesc = "Dein Salmon Run Titel";
+        cmdProfileSRTitle = "Salmon Run Titel";
+        cmdProfileNameErr = "Name zu lang! Es sind nur max. 10 Zeichen erlaubt!";
     }
 }

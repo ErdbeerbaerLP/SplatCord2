@@ -1,7 +1,11 @@
 package de.erdbeerbaerlp.splatcord2.storage.sql;
 
+import com.google.gson.JsonStreamParser;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
+import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,16 +26,48 @@ public class DatabaseInterface implements AutoCloseable {
         status.start();
         runUpdate("create table if not exists servers\n" +
                 "(\n" +
-                "\tserverid bigint not null,\n" +
-                "\tlang int default 0 not null,\n" +
-                "\tmapchannel bigint null,\n" +
-                "\tsalchannel bigint null,\n" +
-                "\tlastSalmon bigint null\n" +
+                "`serverid` bigint not null COMMENT 'Discord Server ID',\n" +
+                "`lang` int default 0 not null COMMENT 'Language ID',\n" +
+                "`mapchannel` bigint null COMMENT 'Channel ID for automatic Splatoon 2 map rotation updates',\n" +
+                "`salchannel` bigint null COMMENT 'Channel ID for automatic Salmon Run rotation updates',\n" +
+                "`lastSalmon` bigint null COMMENT 'Message ID of last salmon run update message'\n" +
                 ");");
+        runUpdate("CREATE TABLE if not exists `users` (\n" +
+                "`id` BIGINT NOT NULL COMMENT 'Discord User ID',\n" +
+                "`wiiu-nnid` VARCHAR(16) NULL COMMENT 'Wii U Nintendo Network ID',\n" +
+                "`wiiu-pnid` VARCHAR(16) NULL COMMENT 'Wii U Pretendo Network ID',\n" +
+                "`switch-fc` BIGINT NULL COMMENT 'Nintendo Switch Friend-Code',\n" +
+                "`splatoon1-profile` JSON NULL COMMENT 'Profile Data for Splatoon 1',\n" +
+                "`splatoon2-profile` JSON NULL COMMENT 'Profile data for Splatoon 2',\n" +
+                "`splatoon3-profile` JSON NULL COMMENT 'Profile data for Splatoon 3',\n" +
+                "UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,\n" +
+                "PRIMARY KEY (`id`));");
     }
 
     private void connect() throws SQLException {
         conn = DriverManager.getConnection("jdbc:mysql://" + Config.instance().database.ip + ":" + Config.instance().database.port + "/" + Config.instance().database.dbName, Config.instance().database.username, Config.instance().database.password);
+    }
+
+    public SplatProfile getSplatoonProfiles(long userID) {
+        final SplatProfile profile = new SplatProfile(userID);
+        try (final ResultSet res = query("SELECT `wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile` FROM users WHERE `id` = " + userID)) {
+            while (res != null && res.next()) {
+                if (res.wasNull())
+                    return profile;
+                profile.wiiu_nnid = res.getString(1);
+                profile.wiiu_pnid = res.getString(2);
+                profile.switch_fc = res.getLong(3);
+                profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(res.getString(4)).next().getAsJsonObject());
+                profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(res.getString(5)).next().getAsJsonObject());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return profile;
+    }
+
+    public void updateSplatProfile(SplatProfile profile) {
+        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', null)");
     }
 
     public class StatusThread extends Thread {
@@ -49,7 +85,7 @@ public class DatabaseInterface implements AutoCloseable {
                     System.err.println("Attempting Database reconnect...");
                     DatabaseInterface.this.connect();
                 } catch (SQLException e) {
-                    System.err.println("Failed to reconnect to database: "+e.getMessage());
+                    System.err.println("Failed to reconnect to database: " + e.getMessage());
                     try {
                         TimeUnit.SECONDS.sleep(15);
                     } catch (InterruptedException ex) {

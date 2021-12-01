@@ -1,6 +1,6 @@
 package de.erdbeerbaerlp.splatcord2.storage;
 
-import de.erdbeerbaerlp.splatcord2.storage.json.scheduling.Schedule;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
 
 public class Rotation {
     private final Schedule regular, gachi, league;

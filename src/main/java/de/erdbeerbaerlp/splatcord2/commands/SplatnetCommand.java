@@ -1,10 +1,10 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
-import de.erdbeerbaerlp.splatcord2.storage.json.tentaworld.Gear;
-import de.erdbeerbaerlp.splatcord2.storage.json.tentaworld.Merchandise;
-import de.erdbeerbaerlp.splatcord2.storage.json.tentaworld.TentaWorld;
-import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.Gear;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.Merchandise;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.TentaWorld;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;

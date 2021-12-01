@@ -2,7 +2,7 @@ package de.erdbeerbaerlp.splatcord2.storage;
 
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.commands.*;
-import de.erdbeerbaerlp.splatcord2.storage.json.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -42,6 +42,7 @@ public class CommandRegistry {
         baseCommandClasses.add(SplatnetCommand.class);
         baseCommandClasses.add(RandomCommand.class);
         baseCommandClasses.add(SalmonCommand.class);
+        baseCommandClasses.add(ProfileCommand.class);
     }
 
     public static void setCommands(Guild g) {

@@ -3,9 +3,9 @@ package de.erdbeerbaerlp.splatcord2.util;
 import com.google.gson.JsonParseException;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
-import de.erdbeerbaerlp.splatcord2.storage.json.coop_schedules.CoOpSchedules;
-import de.erdbeerbaerlp.splatcord2.storage.json.scheduling.Schedule;
-import de.erdbeerbaerlp.splatcord2.storage.json.scheduling.Schedules;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedules;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
