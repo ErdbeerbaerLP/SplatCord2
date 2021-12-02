@@ -29,7 +29,7 @@ public class RotationCommand extends BaseCommand {
 
         final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle);
         for (int i = 0; i < nextRotations.size(); i++) {
-            future.addField(":alarm_clock: ", "<t:" + nextRotations.get(i).getRegular().start_time + ":R>", true)
+            future.addField(":alarm_clock: ", "<t:" + nextRotations.get(i).getRegular().start_time + ":t>", true)
                     .addField("<:regular:822873973225947146>" +
                                     lang.game_modes.get("regular").name,
                             lang.stages.get(nextRotations.get(i).getRegular().stage_a.id).getName() +
