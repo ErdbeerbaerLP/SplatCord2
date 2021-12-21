@@ -29,7 +29,7 @@ public class German extends EnglishBase {
                 "Falls du Server-Admin bist und noch keine Slash-Befehle nutzen kannst, besuche <https://discord.com/api/oauth2/authorize?client_id=822228767165644872&scope=applications.commands> und wähle diesen Server aus. Danach kannst du die Slash-Befehle mit " + Config.instance().discord.prefix + "fixslashcommands aktivieren";
         cmdFixSlashCommands = "Slash-Befehle sollten nur wieder funktionieren!\n" +
                 "Falls dies nicht der fall ist, kontaktiere den Bot-Entwickler";
-        cmdSetlangDesc = "Ändert die Botsprache für diesen Server";
+        cmdSettingsLang = "Ändert die Botsprache für diesen Server";
         cmdInviteDesc = "Sendet den Einladungslink des Bots";
         cmdSetsalmonDesc = "Markiert einen Kanal für SalmonRun Benachrichtigungen";
         cmdDelsalmonDesc = "Löscht den gesetzten SalmonRun-Kanal";
@@ -83,5 +83,10 @@ public class German extends EnglishBase {
         cmdProfileMissingNID = "Du hast noch keine Nintendo Network ID oder eine Pretendo Network ID festgelegt";
         cmdProfileMissingFC = "Du hast noch keinen Switch Freundescode festgelegt.";
         cmdProfileFCSet = "Switch Freundescode gesetzt auf ";
+        cmdSettingsDesc = "Bearbeite Servereinstellungen (z.B. Sprache)";
+        cmdSettingsDelMsg = "Alte Rotations-Nachrichten Löschen?";
+        cmdSettingsDelEnable = "Alte Rotations-Nachrichten werden jetzt aus dem channel gelöscht";
+        cmdSettingsDelDisable = "Alte Rotations-Nachrichten werden jetzt im channel belassen";
+        cmdSettingsArgMissing = "Nicht genug Parameter angegeben, Einstellungen wurden nicht verändert";
     }
 }

@@ -10,6 +10,7 @@ import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
+import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -94,13 +95,7 @@ public class Main {
             //Map rotation data
             if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
                 iface.getAllMapChannels().forEach((serverid, channel) -> {
-                    try {
-                        bot.sendMessage(bot.getMapMessage(serverid, currentRotation), channel);
-
-                    } catch (InsufficientPermissionException e) {
-                        Guild guildById = bot.jda.getGuildById(serverid);
-                        System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
-                    }
+                    MessageUtil.sendRotationFeed(serverid,channel,currentRotation);
                 });
                 Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
                 Config.instance().saveConfig();
@@ -129,17 +124,8 @@ public class Main {
                 }
                 if (iface.status.isDBAlive() && coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
                     iface.getAllSalmonChannels().forEach((serverid, channel) -> {
-                        try {
-                            Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
-                            if (msg != null)
-                                iface.setSalmonMessage(msg.getKey(), msg.getValue());
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (InsufficientPermissionException e) {
-                            Guild guildById = bot.jda.getGuildById(serverid);
-                            System.err.println("Failed to send salmon to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
+                        MessageUtil.sendSalmonFeed(serverid,channel);
 
-                        }
 
                     });
                     Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;

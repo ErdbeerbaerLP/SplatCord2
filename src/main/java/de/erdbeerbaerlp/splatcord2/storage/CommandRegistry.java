@@ -32,7 +32,7 @@ public class CommandRegistry {
         baseCommandClasses.add(StatusCommand.class);
         baseCommandClasses.add(InviteCommand.class);
         baseCommandClasses.add(SupportCommand.class);
-        baseCommandClasses.add(SetlangCommand.class);
+        baseCommandClasses.add(SettingsCommand.class);
         baseCommandClasses.add(SetstageCommand.class);
         baseCommandClasses.add(DelstageCommand.class);
         baseCommandClasses.add(SetsalmonCommand.class);

@@ -11,6 +11,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.Gear;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.Merchandise;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.TentaWorld;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
@@ -71,10 +72,11 @@ public class Bot implements EventListener {
         sendMessage(new MessageBuilder().setContent(msg).build(), channelId);
     }
 
-    public void sendMessage(Message msg, Long channelId) throws InsufficientPermissionException {
-        if (msg == null || channelId == null) return;
+    public CompletableFuture<Message> sendMessage(Message msg, Long channelId) throws InsufficientPermissionException {
+        if (msg == null || channelId == null) return null;
         final TextChannel channel = jda.getTextChannelById(channelId);
-        if (channel != null) channel.sendMessage(msg).queue();
+        if (channel != null) return channel.sendMessage(msg).submit();
+        return null;
     }
 
     private CompletableFuture<Message> submitMessage(Message msg, Long channelId) throws InsufficientPermissionException{
@@ -253,7 +255,7 @@ public class Bot implements EventListener {
         final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
         final ArrayList<Rotation> nextRotations = ScheduleUtil.getNext3Rotations();
 
-        sendMessage(getMapMessage(serverid, currentRotation),channel);
+        sendMessage(MessageUtil.getMapMessage(serverid, currentRotation),channel);
         sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle)
                 .addField(":alarm_clock: ", "<t:" + nextRotations.get(0).getRegular().start_time + ":R>", true)
                 .addField("<:regular:822873973225947146>" +
@@ -289,27 +291,6 @@ public class Bot implements EventListener {
                                 ", " + lang.stages.get(nextRotations.get(1).getLeague().stage_b.id).getName()
                         , true)
                 .build()).build(), channel);
-    }
-
-    public Message getMapMessage(Long serverid, Rotation r) {
-        Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        return new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
-                .addField("<:regular:822873973225947146>" +
-                                lang.game_modes.get("regular").name,
-                        lang.stages.get(r.getRegular().stage_a.id).getName() +
-                                ", " + lang.stages.get(r.getRegular().stage_b.id).getName()
-                        , false)
-                .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(r.getRanked().rule.key).name + ")",
-                        lang.stages.get(r.getRanked().stage_a.id).getName() +
-                                ", " + lang.stages.get(r.getRanked().stage_b.id).getName()
-                        , false)
-                .addField("<:ranked:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(r.getLeague().rule.key).name + ")",
-                        lang.stages.get(r.getLeague().stage_a.id).getName() +
-                                ", " + lang.stages.get(r.getLeague().stage_b.id).getName()
-                        , false)
-                .build()).build();
     }
 
     private class StatusUpdater extends Thread {

@@ -23,7 +23,7 @@ public class Italian extends EnglishBase {
         price = "Prezzo:";
         splatNetShop  = "Calama-zone";
         splatnetCooldown = "Il comando Calama-zone è correntemente in cooldown. Per favore, riprova tra qualche minuto.";
-        cmdSetlangDesc = "Cambia la lingua del bot per questo server";
+        cmdSettingsLang = "Cambia la lingua del bot per questo server";
         cmdInviteDesc = "Invia l'invito per questo bot";
         cmdSetsalmonDesc = "Seleziona questo canale per le notifiche delle Salmon Run";
         cmdDelsalmonDesc = "Deseleziona il canale impostato per le notifiche delle Salmon Run";

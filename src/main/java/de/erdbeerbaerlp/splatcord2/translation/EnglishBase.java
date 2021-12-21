@@ -33,7 +33,7 @@ public class EnglishBase {
                     "If you are server admin and this server cannot use the slash commands yet, open <https://discord.com/api/oauth2/authorize?client_id=822228767165644872&scope=applications.commands> and select this server. After doing this run " + Config.instance().discord.prefix + "fixslashcommands",
             cmdFixSlashCommands = "Slash commands should work soon now!\n" +
                     "If that is not the case, contact the bot developer",
-            cmdSetlangDesc = "Changes the bot language for this server",
+            cmdSettingsLang = "Changes the bot language for this server",
             cmdInviteDesc = "Gives you the invite URL for this bot",
             cmdSetstageDesc = "Marks this channel as the stage notification channel",
             cmdDelstageDesc = "Deletes the set stage notification channel",
@@ -91,5 +91,10 @@ public class EnglishBase {
             cmdProfileNameSet = "In-Game name set to ",
             cmdProfileMissingNID = "You did not configure an Nintendo Network ID or an Pretendo Network ID yet.",
             cmdProfileMissingFC = "You did not configure an Switch Friend Code yet.",
-            cmdProfileFCSet = "Set Friend Code to ";
+            cmdProfileFCSet = "Set Friend Code to ",
+            cmdSettingsDesc = "Edit server settings (ex. language)",
+            cmdSettingsDelMsg = "Delete old rotation messages?",
+            cmdSettingsDelEnable = "Old rotation messages will now be deleted when sending new ones",
+            cmdSettingsDelDisable = "Old rotation messages will be kept when sending new ones",
+            cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified";
 }

@@ -30,7 +30,9 @@ public class DatabaseInterface implements AutoCloseable {
                 "`lang` int default 0 not null COMMENT 'Language ID',\n" +
                 "`mapchannel` bigint null COMMENT 'Channel ID for automatic Splatoon 2 map rotation updates',\n" +
                 "`salchannel` bigint null COMMENT 'Channel ID for automatic Salmon Run rotation updates',\n" +
-                "`lastSalmon` bigint null COMMENT 'Message ID of last salmon run update message'\n" +
+                "`lastSalmon` bigint null COMMENT 'Message ID of last salmon run update message',\n" +
+                "`lastStage2` bigint null COMMENT 'Message ID of last Splatoon 2 Stage Notification',\n" +
+                "`deleteMessage` tinyint not null default 1  COMMENT 'Whether or not the bot should delete the old schedule message'\n" +
                 ");");
         runUpdate("CREATE TABLE if not exists `users` (\n" +
                 "`id` BIGINT NOT NULL COMMENT 'Discord User ID',\n" +
@@ -70,7 +72,11 @@ public class DatabaseInterface implements AutoCloseable {
         runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', null)");
     }
 
+
+
+
     public class StatusThread extends Thread {
+
         private boolean alive = true;
 
         public boolean isDBAlive() {
@@ -127,7 +133,40 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return BotLanguage.ENGLISH;
     }
+    public boolean getDeleteMessage(long serverID) {
+        try (final ResultSet res = query("SELECT deleteMessage FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
+    public long getStageChannel(long serverID) {
+        try (final ResultSet res = query("SELECT mapchannel FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public long getSalmonChannel(long serverID) {
+        try (final ResultSet res = query("SELECT salchannel FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public void setDeleteMessage(long serverID, boolean deleteMessage) {
+        runUpdate("UPDATE servers SET deleteMessage = " + (deleteMessage ? 1:0) + " WHERE serverid = " + serverID);
+    }
     public void setStageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
@@ -153,6 +192,9 @@ public class DatabaseInterface implements AutoCloseable {
 
     public void setSalmonMessage(long serverID, Long messageID) {
         runUpdate("UPDATE servers SET lastSalmon = " + messageID + " WHERE serverid = " + serverID);
+    }
+    public void setLastRotationMessage(long serverID, long msgID) {
+        runUpdate("UPDATE servers SET lastStage2 = " + msgID + " WHERE serverid = " + serverID);
     }
 
     public HashMap<Long, Long> getAllSalmonChannels() {
@@ -183,6 +225,27 @@ public class DatabaseInterface implements AutoCloseable {
             e.printStackTrace();
         }
         return salmonMessages;
+    }
+    public long getLastRotationMessage(long serverID) {
+        try (final ResultSet res = query("SELECT lastStage2 FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public long getLastSalmonMessage(long serverID) {
+        try (final ResultSet res = query("SELECT lastSalmon FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public void delServer(long serverID) {
