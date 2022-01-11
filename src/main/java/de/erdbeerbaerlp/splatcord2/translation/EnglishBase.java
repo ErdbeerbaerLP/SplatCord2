@@ -104,6 +104,7 @@ public class EnglishBase {
             cmdSettingsDelEnable = "Old rotation messages will now be deleted when sending new ones",
             cmdSettingsDelDisable = "Old rotation messages will be kept when sending new ones",
             cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified",
+            cmdEditProfileArgMissing = "Not enough arguments supplied, profile have not been modified",
             cmdProfileUserDesc = "User to check profile",
             cmdRandomTeamAlpha = "Alpha",
             cmdRandomTeamBravo = "Bravo",

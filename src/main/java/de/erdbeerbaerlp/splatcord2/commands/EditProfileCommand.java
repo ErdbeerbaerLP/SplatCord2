@@ -7,6 +7,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -63,28 +64,7 @@ public class EditProfileCommand extends BaseCommand {
             switch (subcommandName) {
                 case "splat1":
                     if (ev.getOptions().isEmpty()) {
-                        if ((profile.wiiu_nnid != null || profile.wiiu_pnid != null) && (!profile.wiiu_pnid.isBlank() || !profile.wiiu_pnid.isEmpty())) {
-                            final EmbedBuilder b = new EmbedBuilder();
-                            if (profile.splat1Profile.name != null && !profile.splat1Profile.name.isBlank())
-                                b.setTitle(profile.splat1Profile.name + "'s Splatoon 1 Profile");
-                            else
-                                b.setTitle(ev.getMember().getEffectiveName() + "'s Splatoon 1 Profile");
-                            b.addField(lang.botLocale.cmdProfileLevel, profile.splat1Profile.level + "", true);
-                            b.addField(lang.botLocale.cmdProfileRank, profile.splat1Profile.rank.toString(), true);
-                            String footer = "";
-                            if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank())
-                                footer += "NNID: " + profile.wiiu_nnid;
-                            if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank() && profile.wiiu_pnid != null && !profile.wiiu_pnid.isBlank()) {
-                                footer += " | ";
-                            }
-                            if (profile.wiiu_pnid != null && !profile.wiiu_pnid.isBlank())
-                                footer += "PNID: " + profile.wiiu_pnid;
-                            b.setFooter(footer);
-
-                            ev.replyEmbeds(b.build()).queue();
-                        } else {
-                            ev.reply(lang.botLocale.cmdProfileMissingNID).queue();
-                        }
+                        ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
                     } else {
                         String msg = "";
                         if (ev.getOption("nintendo-id") != null) {
@@ -129,35 +109,16 @@ public class EditProfileCommand extends BaseCommand {
                     break;
                 case "splat2":
                     if (ev.getOptions().isEmpty()) {
-                        if (profile.switch_fc != -1) {
-                            final EmbedBuilder b = new EmbedBuilder();
-                            if (profile.splat2Profile.getName() != null && !profile.splat2Profile.getName().isBlank())
-                                b.setTitle(profile.splat2Profile.getName() + "'s Splatoon 2 Profile");
-                            else
-                                b.setTitle(ev.getMember().getEffectiveName() + "'s Splatoon 2 Profile");
-                            b.addField(lang.botLocale.cmdProfileLevel, profile.splat2Profile.getLevel(), true);
-
-                            b.addField(lang.botLocale.cmdProfileSRTitle, getSRTitle(profile.splat2Profile.srTitle, lang), true);
-                            b.addBlankField(false);
-                            b.addField(lang.rules.get("rainmaker").name, profile.splat2Profile.rainmaker.toString(), true);
-                            b.addField(lang.rules.get("splat_zones").name, profile.splat2Profile.splatzones.toString(), true);
-                            b.addField(lang.rules.get("tower_control").name, profile.splat2Profile.towercontrol.toString(), true);
-                            b.addField(lang.rules.get("clam_blitz").name, profile.splat2Profile.clamblitz.toString(), true);
-                            String footer = "Switch FC: " + profile.switch_fc;
-                            b.setFooter(footer);
-
-                            ev.replyEmbeds(b.build()).queue();
-                        } else {
-                            ev.reply(lang.botLocale.cmdProfileMissingFC).queue();
-                        }
+                            ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
                     } else {
                         String msg = "";
-                        if (ev.getOption("switch-fc") != null) {
-                            profile.switch_fc = Long.parseLong(ev.getOption("switch-fc").getAsString());
-                            msg += lang.botLocale.cmdProfileFCSet + ev.getOption("switch-fc").getAsString() + "\n";
+                        OptionMapping switchFCOption = ev.getOption("switch-fc");
+                        if (switchFCOption != null) {
+                            long switchFC = formatFromFC(switchFCOption.getAsString());
+                            profile.switch_fc = switchFC;
+                            msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
                         }
                         if (profile.switch_fc != -1) {
-
                             if (ev.getOption("level") != null) {
                                 profile.splat2Profile.setLevel(Integer.parseInt(ev.getOption("level").getAsString()));
                                 msg += lang.botLocale.cmdProfileLevel2Set + profile.splat2Profile.getLevel() + "\n";
@@ -247,5 +208,12 @@ public class EditProfileCommand extends BaseCommand {
 
         }
         return srTitle;
+    }
+    static String formatToFC(long input){
+        String plain = input +"";
+        return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0,4), plain.substring(4,8), plain.substring(8,12));
+    }
+    static long formatFromFC(String input){
+        return Long.parseLong(input.replaceAll("[^\\d.]", ""));
     }
 }

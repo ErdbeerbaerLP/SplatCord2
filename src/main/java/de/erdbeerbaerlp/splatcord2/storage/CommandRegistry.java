@@ -30,6 +30,8 @@ public class CommandRegistry {
     }
 
     public static void registerAllBaseCommands() {
+        baseCommandClasses.add(ViewProfileCommand.class);
+        baseCommandClasses.add(EditProfileCommand.class);
         baseCommandClasses.add(RandomCommand.class);
         baseCommandClasses.add(StatusCommand.class);
         baseCommandClasses.add(InviteCommand.class);
@@ -43,8 +45,6 @@ public class CommandRegistry {
         baseCommandClasses.add(RotationCommand.class);
         baseCommandClasses.add(SplatnetCommand.class);
         baseCommandClasses.add(SalmonCommand.class);
-        baseCommandClasses.add(EditProfileCommand.class);
-        baseCommandClasses.add(ViewProfileCommand.class);
     }
 
     public static void setCommands(Guild g) {

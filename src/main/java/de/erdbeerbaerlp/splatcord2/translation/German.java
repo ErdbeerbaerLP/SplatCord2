@@ -91,6 +91,7 @@ public class German extends EnglishBase {
         cmdSettingsDelEnable = "Alte Rotations-Nachrichten werden jetzt aus dem channel gelöscht";
         cmdSettingsDelDisable = "Alte Rotations-Nachrichten werden jetzt im channel belassen";
         cmdSettingsArgMissing = "Nicht genug Parameter angegeben, Einstellungen wurden nicht verändert";
+        cmdEditProfileArgMissing = "Nicht genug Parameter angegeben, Profil wurde nicht verändert";
         cmdProfileUserDesc = "Nutzer zum Profil abrufen";
         cmdRandomTeamSpec = "Zuschauer";
         cmdRandomTeamDesc = "Generiert ein zufälliges Privatkampf-Team";

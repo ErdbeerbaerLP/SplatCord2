@@ -80,7 +80,7 @@ public class ViewProfileCommand extends BaseCommand {
                         b.addField(lang.rules.get("splat_zones").name, profile.splat2Profile.splatzones.toString(), true);
                         b.addField(lang.rules.get("tower_control").name, profile.splat2Profile.towercontrol.toString(), true);
                         b.addField(lang.rules.get("clam_blitz").name, profile.splat2Profile.clamblitz.toString(), true);
-                        String footer = "Switch FC: " + profile.switch_fc;
+                        String footer = "Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc);
                         b.setFooter(footer);
 
                         ev.replyEmbeds(b.build()).queue();
