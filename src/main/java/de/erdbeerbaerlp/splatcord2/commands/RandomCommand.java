@@ -45,8 +45,6 @@ public class RandomCommand extends BaseCommand {
 
     @Override
     public void execute(SlashCommandEvent ev) {
-        System.out.println(ev.getName());
-        System.out.println(ev.getChannel());
         final Random r = new Random();
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         final String subcmd = ev.getSubcommandName();
@@ -94,7 +92,6 @@ public class RandomCommand extends BaseCommand {
                     playerArray[i] = i+1;
                 }
                 shuffleArray(playerArray);
-                System.out.println(Arrays.toString(playerArray));
                 final StringBuilder teamString = new StringBuilder();
                 teamString.append(lang.botLocale.cmdRandomTeamAlpha+":\n");
                 teamString.append("[" + playerArray[0]+"] ");
@@ -140,8 +137,6 @@ public class RandomCommand extends BaseCommand {
                 if(players == 7) teamString.append("[" + playerArray[6] + "]\n");
                 if (players >= 9) teamString.append("[" + playerArray[8] + "]\n");
                 if (players == 10) teamString.append("[" + playerArray[9] + "]\n");
-                System.out.println(teamString.toString());
-
                 ev.reply(teamString.toString().trim()).queue();
                 break;
         }

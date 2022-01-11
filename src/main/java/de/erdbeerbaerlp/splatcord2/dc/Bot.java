@@ -117,8 +117,6 @@ public class Bot implements EventListener {
         // /slash commands
         if (event instanceof SlashCommandEvent) {
             SlashCommandEvent ev = (SlashCommandEvent) event;
-            System.out.println(ev.getChannel());
-            System.out.println(ev.getName());
             if (ev.getChannelType() != ChannelType.TEXT) return;
             final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
             if (cmd != null) {
@@ -127,11 +125,8 @@ public class Bot implements EventListener {
                     return;
                 }
                 final BaseCommand baseCmd = CommandRegistry.getCommandByName(cmd.getName());
-                if (baseCmd != null)
-                    baseCmd.execute(ev);
-                else
-                    System.out.println("BaseCMD == NULL");
-            }else System.out.println("CMD == NULL");
+                if (baseCmd != null) baseCmd.execute(ev);
+            }
         }
 
         //Update command permissions on role creation / permission change
@@ -211,37 +206,6 @@ public class Bot implements EventListener {
         else return null;
     }
 
-    public void sendSplatNetShopMessage(long serverid, long channel) {
-        Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        try {
-            final URL tworld = new URL("https://splatoon2.ink/data/merchandises.json");
-            final HttpsURLConnection con = (HttpsURLConnection) tworld.openConnection();
-            con.setRequestProperty("User-Agent", "SplatCord 2");
-            con.connect();
-            final TentaWorld splatNet = Main.gson.fromJson(new InputStreamReader(con.getInputStream()), TentaWorld.class);
-            final ArrayList<MessageEmbed> embeds = new ArrayList<>();
-            for (Merchandise m : splatNet.merchandises) {
-                final EmbedBuilder b = new EmbedBuilder()
-                        .setDescription(lang.botLocale.skillSlots + " " + (1 + m.gear.rarity))
-                        .setTimestamp(Instant.ofEpochSecond(m.end_time))
-                        .setFooter(lang.botLocale.footer_ends)
-                        .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.thumbnail)
-                        .setAuthor(getLocalizedGearName(lang, m.gear) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
-                        .addField(lang.botLocale.skill, lang.skills.get(m.skill.id).name, true)
-                        .addField(lang.botLocale.price, m.price + "", true);
-                embeds.add(b.build());
-            }
-            CompletableFuture<Message> msg = jda.getTextChannelById(channel).sendMessage(lang.botLocale.splatNetShop).setEmbeds(embeds.get(0)).submit();
-            embeds.remove(0);
-            for (MessageEmbed e : embeds) {
-                msg = msg.thenCompose((m) -> m.getChannel().sendMessageEmbeds(e).submit());
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private String getLocalizedGearName(Locale lang, Gear gear) {
         if (lang.gear.get(gear.kind.name()).getAsJsonObject().has(gear.id + ""))
             return lang.gear.get(gear.kind.name()).getAsJsonObject().get(gear.id + "").getAsJsonObject().get("name").getAsString();
@@ -252,49 +216,6 @@ public class Bot implements EventListener {
         }
     }
 
-    private void sendMapRotation(Long serverid, long channel) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-
-        final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
-        final ArrayList<Rotation> nextRotations = ScheduleUtil.getNext3Rotations();
-
-        sendMessage(MessageUtil.getMapMessage(serverid, currentRotation),channel);
-        sendMessage(new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle)
-                .addField(":alarm_clock: ", "<t:" + nextRotations.get(0).getRegular().start_time + ":R>", true)
-                .addField("<:regular:822873973225947146>" +
-                                lang.game_modes.get("regular").name,
-                        lang.stages.get(nextRotations.get(0).getRegular().stage_a.id).getName() +
-                                ", " + lang.stages.get(nextRotations.get(0).getRegular().stage_b.id).getName()
-                        , true)
-                .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(nextRotations.get(0).getRanked().rule.key).name + ")",
-                        lang.stages.get(nextRotations.get(0).getRanked().stage_a.id).getName() +
-                                ", " + lang.stages.get(nextRotations.get(0).getRanked().stage_b.id).getName()
-                        , true)
-                .addField("<:league:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(nextRotations.get(0).getLeague().rule.key).name + ")",
-                        lang.stages.get(nextRotations.get(0).getLeague().stage_a.id).getName() +
-                                ", " + lang.stages.get(nextRotations.get(0).getLeague().stage_b.id).getName()
-                        , true)
-                .addBlankField(false)
-                .addField(":alarm_clock: ", "<t:" + nextRotations.get(1).getRegular().start_time + ":R>", true)
-                .addField("<:regular:822873973225947146>" +
-                                lang.game_modes.get("regular").name,
-                        lang.stages.get(nextRotations.get(1).getRegular().stage_a.id).getName() +
-                                ", " + lang.stages.get(nextRotations.get(1).getRegular().stage_b.id).getName()
-                        , true)
-                .addField("<:ranked:822873973200388106>" +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(nextRotations.get(1).getRanked().rule.key).name + ")",
-                        lang.stages.get(nextRotations.get(1).getRanked().stage_a.id).getName() +
-                                ", " + lang.stages.get(nextRotations.get(1).getRanked().stage_b.id).getName()
-                        , true)
-                .addField("<:league:822873973142192148>" +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(nextRotations.get(1).getLeague().rule.key).name + ")",
-                        lang.stages.get(nextRotations.get(1).getLeague().stage_a.id).getName() +
-                                ", " + lang.stages.get(nextRotations.get(1).getLeague().stage_b.id).getName()
-                        , true)
-                .build()).build(), channel);
-    }
 
     private class StatusUpdater extends Thread {
         int presence = 0;

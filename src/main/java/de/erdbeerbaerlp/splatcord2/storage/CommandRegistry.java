@@ -70,7 +70,6 @@ public class CommandRegistry {
         final CommandListUpdateAction update = g.updateCommands();
         update.addCommands(commands).submit().thenAccept((cmds) -> {
             cmds.forEach((c) -> {
-                System.out.println(c.getName()+" "+c.getIdLong());
                 registeredCommands.put(c.getIdLong(), c);
                 if (getCommandByName(c.getName()).requiresManageServer()) {
                     final ArrayList<CommandPrivilege> privileges = new ArrayList<>();
@@ -80,7 +79,6 @@ public class CommandRegistry {
                     g.retrieveOwner().submit().thenAccept((m)->{
                         privileges.add(CommandPrivilege.enable(m.getUser()));
                     });
-
                     // Allow developer to access commands for faster support
                     privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,135802962013454336l));
                     privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,817445521589010473l));
