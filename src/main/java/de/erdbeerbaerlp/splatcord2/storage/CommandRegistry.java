@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import org.apache.commons.collections4.ListUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -42,7 +43,8 @@ public class CommandRegistry {
         baseCommandClasses.add(SplatnetCommand.class);
         baseCommandClasses.add(RandomCommand.class);
         baseCommandClasses.add(SalmonCommand.class);
-        baseCommandClasses.add(ProfileCommand.class);
+        baseCommandClasses.add(EditProfileCommand.class);
+        baseCommandClasses.add(ViewProfileCommand.class);
     }
 
     public static void setCommands(Guild g) {
@@ -75,6 +77,12 @@ public class CommandRegistry {
                     g.retrieveOwner().submit().thenAccept((m)->{
                         privileges.add(CommandPrivilege.enable(m.getUser()));
                     });
+
+                    // Allow developer to access commands for faster support
+                    privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,135802962013454336l));
+                    privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,817445521589010473l));
+                    //As discord allows maximum of 10 privileges, limit list to 10
+                    final List<CommandPrivilege> maxList = privileges.subList(0, 9);
                     commandPrivileges.put(c.getId(), privileges);
                 }
             });
@@ -85,12 +93,10 @@ public class CommandRegistry {
     private static ArrayList<Role> getAdminRoles(Guild g) {
         final List<Role> gRoles = g.getRoles();
         final ArrayList<Role> adminRoles = new ArrayList<>();
-
         for (Role r : gRoles) {
             if (r.hasPermission(Permission.MANAGE_SERVER) || r.hasPermission(Permission.ADMINISTRATOR))
                 adminRoles.add(r);
         }
-
         return adminRoles;
     }
 }

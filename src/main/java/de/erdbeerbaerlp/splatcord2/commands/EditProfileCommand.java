@@ -11,12 +11,12 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
-public class ProfileCommand extends BaseCommand {
-    public ProfileCommand(Locale l) {
-        super("profile", l.botLocale.cmdProfileDesc);
-        final SubcommandData splat1 = new SubcommandData("splat1", l.botLocale.cmdProfile1Desc);
-        final SubcommandData splat2 = new SubcommandData("splat2", l.botLocale.cmdProfile2Desc);
-        //SubcommandData splat3 = new SubcommandData("splat3",l.botLocale.cmdProfile3Desc);
+public class EditProfileCommand extends BaseCommand {
+    public EditProfileCommand(Locale l) {
+        super("editprofile", l.botLocale.cmdProfileDesc);
+        final SubcommandData splat1 = new SubcommandData("splat1", l.botLocale.cmdEditProfile1Desc);
+        final SubcommandData splat2 = new SubcommandData("splat2", l.botLocale.cmdEditProfile2Desc);
+        //SubcommandData splat3 = new SubcommandData("splat3",l.botLocale.cmdEditProfile3Desc);
 
 
         //Common

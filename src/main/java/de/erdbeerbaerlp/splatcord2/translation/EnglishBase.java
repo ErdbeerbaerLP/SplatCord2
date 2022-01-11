@@ -58,10 +58,14 @@ public class EnglishBase {
             cmdStatusStatsServers = "Servers: ",
             cmdStatusStatsUptime = "Uptime: ",
             cmdStatusStatsDbUptime = "Database-Uptime: ",
-            cmdProfileDesc = "Shows or edits your Splatoon profile(s)", //Should not show up anyway
-            cmdProfile1Desc = "Shows or edits your Splatoon 1 profile",
-            cmdProfile2Desc = "Shows or edits your Splatoon 2 profile",
-            cmdProfile3Desc = "Shows or edits your Splatoon 3 profile",
+            cmdProfileDesc = "Shows your (or someone elses) Splatoon profile(s)", //Should not show up anyway
+            cmdEditProfileDesc = "Edits your Splatoon profile(s)", //Should not show up anyway
+            cmdProfile1Desc = "Shows your or someone elses Splatoon 1 profile",
+            cmdEditProfile1Desc = "Edits your Splatoon 1 profile",
+            cmdProfile2Desc = "Shows your or someone elses Splatoon 2 profile",
+            cmdEditProfile2Desc = "Edits your Splatoon 2 profile",
+            cmdProfile3Desc = "Shows your or someone elses Splatoon 3 profile",
+            cmdEditProfile3Desc = "Edits your Splatoon 3 profile",
             cmdProfilennidErr = "Cannot use profile feature without setting Nintendo Network ID or Pretendo Network ID!",
             cmdProfilefcErr = "Cannot use profile feature without setting your Switch friend code!",
             cmdProfileRankFormatNotValid = "Rank format is not valid!",
@@ -89,12 +93,13 @@ public class EnglishBase {
             cmdProfileLevel1Set = "Splatoon 1 level set to ",
             cmdProfileLevel2Set = "Splatoon 2 level set to ",
             cmdProfileNameSet = "In-Game name set to ",
-            cmdProfileMissingNID = "You did not configure an Nintendo Network ID or an Pretendo Network ID yet.",
-            cmdProfileMissingFC = "You did not configure an Switch Friend Code yet.",
+            cmdProfileMissingNID = "%s did not configure an Nintendo Network ID or an Pretendo Network ID yet.",
+            cmdProfileMissingFC = "%s did not configure an Switch Friend Code yet.",
             cmdProfileFCSet = "Set Friend Code to ",
             cmdSettingsDesc = "Edit server settings (ex. language)",
             cmdSettingsDelMsg = "Delete old rotation messages?",
             cmdSettingsDelEnable = "Old rotation messages will now be deleted when sending new ones",
             cmdSettingsDelDisable = "Old rotation messages will be kept when sending new ones",
-            cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified";
+            cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified",
+            cmdProfileUserDesc = "User to check profile";
 }

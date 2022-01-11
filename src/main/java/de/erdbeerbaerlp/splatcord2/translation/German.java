@@ -50,9 +50,12 @@ public class German extends EnglishBase {
         cmdStatusStatsServers = "Server: ";
         cmdStatusStatsUptime = "Uptime: ";
         cmdStatusStatsDbUptime = "Datenbank-Uptime: ";
-        cmdProfile1Desc = "Zeigt oder bearbeitet den Splatoon 1 Profil";
-        cmdProfile2Desc = "Zeigt oder bearbeitet den Splatoon 2 Profil";
-        cmdProfile3Desc = "Zeigt oder bearbeitet den Splatoon 3 Profil";
+        cmdProfile1Desc = "Zeigt dein (oder ein anderes) Splatoon 1 Profil";
+        cmdEditProfile1Desc = "Bearbeitet dein Splatoon 1 Profil";
+        cmdProfile2Desc = "Zeigt dein (oder ein anderes) Splatoon 2 Profil";
+        cmdEditProfile2Desc = "Bearbeitet dein Splatoon 2 Profil";
+        cmdProfile3Desc = "Zeigt dein (oder ein anderes) Splatoon 3 Profil";
+        cmdEditProfile3Desc = "Bearbeitet dein Splatoon 3 Profil";
         cmdProfilennidErr = "Um das Profil Feature zu verwenden, musst du erst deine Nintendo Network ID oder Pretendo Network ID festlegen!";
         cmdProfilefcErr = "Um das Profil Feature zu verwenden, musst du erst deinen Switch Freundes Code!";
         cmdProfileRankFormatNotValid = "Das Rang-Format ist fehlerhaft !";
@@ -88,5 +91,6 @@ public class German extends EnglishBase {
         cmdSettingsDelEnable = "Alte Rotations-Nachrichten werden jetzt aus dem channel gelöscht";
         cmdSettingsDelDisable = "Alte Rotations-Nachrichten werden jetzt im channel belassen";
         cmdSettingsArgMissing = "Nicht genug Parameter angegeben, Einstellungen wurden nicht verändert";
+        cmdProfileUserDesc = "Nutzer zum Profil abrufen";
     }
 }
