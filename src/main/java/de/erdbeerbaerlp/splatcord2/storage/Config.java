@@ -65,7 +65,7 @@ public class Config {
         @TomlIgnore
         static ArrayList<Status> defaultStatuses = new ArrayList<>();
         static {
-            defaultStatuses.add(new Status(Activity.ActivityType.DEFAULT, "Spoon 2"));
+            defaultStatuses.add(new Status(Activity.ActivityType.PLAYING, "Spoon 2"));
             defaultStatuses.add(new Status(Activity.ActivityType.WATCHING, "s!help"));
         }
         @TomlComment("The discord bot token")

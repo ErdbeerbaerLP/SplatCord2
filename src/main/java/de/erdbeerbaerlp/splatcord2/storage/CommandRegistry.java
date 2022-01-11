@@ -30,6 +30,7 @@ public class CommandRegistry {
     }
 
     public static void registerAllBaseCommands() {
+        baseCommandClasses.add(RandomCommand.class);
         baseCommandClasses.add(StatusCommand.class);
         baseCommandClasses.add(InviteCommand.class);
         baseCommandClasses.add(SupportCommand.class);
@@ -41,7 +42,6 @@ public class CommandRegistry {
         baseCommandClasses.add(CodeCommand.class);
         baseCommandClasses.add(RotationCommand.class);
         baseCommandClasses.add(SplatnetCommand.class);
-        baseCommandClasses.add(RandomCommand.class);
         baseCommandClasses.add(SalmonCommand.class);
         baseCommandClasses.add(EditProfileCommand.class);
         baseCommandClasses.add(ViewProfileCommand.class);
@@ -59,7 +59,9 @@ public class CommandRegistry {
                 if (cmd.requiresManageServer()) {
                     cmd.setDefaultEnabled(false);
                 }
-                if (cmdByName == null) baseCommands.add(cmd);
+                if (cmdByName == null) {
+                    baseCommands.add(cmd);
+                }
                 commands.add(cmd);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 e.printStackTrace();
@@ -68,6 +70,7 @@ public class CommandRegistry {
         final CommandListUpdateAction update = g.updateCommands();
         update.addCommands(commands).submit().thenAccept((cmds) -> {
             cmds.forEach((c) -> {
+                System.out.println(c.getName()+" "+c.getIdLong());
                 registeredCommands.put(c.getIdLong(), c);
                 if (getCommandByName(c.getName()).requiresManageServer()) {
                     final ArrayList<CommandPrivilege> privileges = new ArrayList<>();
@@ -83,7 +86,7 @@ public class CommandRegistry {
                     privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,817445521589010473l));
                     //As discord allows maximum of 10 privileges, limit list to 10
                     final List<CommandPrivilege> maxList = privileges.subList(0, 9);
-                    commandPrivileges.put(c.getId(), privileges);
+                    commandPrivileges.put(c.getId(), maxList);
                 }
             });
             g.updateCommandPrivileges(commandPrivileges).queue();

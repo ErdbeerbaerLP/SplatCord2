@@ -116,7 +116,7 @@ public class Main {
                                 final EmbedBuilder embedBuilder = new EmbedBuilder(e.get(0));
                                 embedBuilder.setTimestamp(null);
                                 embedBuilder.setFooter(lang.botLocale.footer_closed);
-                                message.editMessage(embedBuilder.build()).queue();
+                                message.editMessageEmbeds(embedBuilder.build()).queue();
                                 iface.setSalmonMessage(channel.getGuild().getIdLong(), null);
                             });
                         }

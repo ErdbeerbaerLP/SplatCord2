@@ -69,7 +69,7 @@ public class MessageUtil {
 
     public static Message getMapMessage(Long serverid, Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
+        return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
                 .addField("<:regular:822873973225947146>" +
                                 lang.game_modes.get("regular").name,
                         lang.stages.get(r.getRegular().stage_a.id).getName() +

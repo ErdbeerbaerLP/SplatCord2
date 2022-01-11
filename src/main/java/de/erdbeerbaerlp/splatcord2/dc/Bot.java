@@ -117,9 +117,10 @@ public class Bot implements EventListener {
         // /slash commands
         if (event instanceof SlashCommandEvent) {
             SlashCommandEvent ev = (SlashCommandEvent) event;
+            System.out.println(ev.getChannel());
+            System.out.println(ev.getName());
             if (ev.getChannelType() != ChannelType.TEXT) return;
             final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
-
             if (cmd != null) {
                 if(!Main.iface.status.isDBAlive() && !(cmd.getName().equals("status") || cmd.getName().equals("support"))){
                     ev.reply(Main.translations.get(BotLanguage.ENGLISH).botLocale.databaseError).queue();
@@ -128,7 +129,9 @@ public class Bot implements EventListener {
                 final BaseCommand baseCmd = CommandRegistry.getCommandByName(cmd.getName());
                 if (baseCmd != null)
                     baseCmd.execute(ev);
-            }
+                else
+                    System.out.println("BaseCMD == NULL");
+            }else System.out.println("CMD == NULL");
         }
 
         //Update command permissions on role creation / permission change
@@ -149,7 +152,7 @@ public class Bot implements EventListener {
                 msg = msg.replaceFirst(Pattern.quote(Config.instance().discord.prefix), "").trim();
                 final String[] cmd = msg.split(" ");
                 Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-                if (!ev.getGuild().getMember(jda.getSelfUser()).hasPermission(ev.getGuild().getGuildChannelById(ev.getChannel().getIdLong()), Permission.MESSAGE_WRITE)) {
+                if (!ev.getGuild().getMember(jda.getSelfUser()).hasPermission(ev.getGuild().getGuildChannelById(ev.getChannel().getIdLong()), Permission.MESSAGE_SEND)) {
                     final Locale finalLang = lang;
                     ev.getAuthor().openPrivateChannel().queue((channel) -> {
                         channel.sendMessage(finalLang.botLocale.noWritePerms).queue();
@@ -189,7 +192,7 @@ public class Bot implements EventListener {
 
     public Map.Entry<Long, Long> sendSalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        final CompletableFuture<Message> submitMsg = submitMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
+        final CompletableFuture<Message> submitMsg = submitMessage(new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
                         .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
                         .addField(lang.botLocale.weapons,
                                 getWeaponName(lang, Main.coop_schedules.details[0].weapons[0]) + ", " +
@@ -228,10 +231,10 @@ public class Bot implements EventListener {
                         .addField(lang.botLocale.price, m.price + "", true);
                 embeds.add(b.build());
             }
-            CompletableFuture<Message> msg = jda.getTextChannelById(channel).sendMessage(lang.botLocale.splatNetShop).embed(embeds.get(0)).submit();
+            CompletableFuture<Message> msg = jda.getTextChannelById(channel).sendMessage(lang.botLocale.splatNetShop).setEmbeds(embeds.get(0)).submit();
             embeds.remove(0);
             for (MessageEmbed e : embeds) {
-                msg = msg.thenCompose((m) -> m.getChannel().sendMessage(e).submit());
+                msg = msg.thenCompose((m) -> m.getChannel().sendMessageEmbeds(e).submit());
             }
 
         } catch (IOException e) {
@@ -256,7 +259,7 @@ public class Bot implements EventListener {
         final ArrayList<Rotation> nextRotations = ScheduleUtil.getNext3Rotations();
 
         sendMessage(MessageUtil.getMapMessage(serverid, currentRotation),channel);
-        sendMessage(new MessageBuilder().setEmbed(new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle)
+        sendMessage(new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle)
                 .addField(":alarm_clock: ", "<t:" + nextRotations.get(0).getRegular().start_time + ":R>", true)
                 .addField("<:regular:822873973225947146>" +
                                 lang.game_modes.get("regular").name,

@@ -45,8 +45,11 @@ public class EnglishBase {
             cmdSupportDesc = "Gives you the invite link for the discord server of the bot",
             cmdRandomDesc = "Generates random stuff",
             cmdRandomAmountDesc = "Amount to generate (default=1, max=10)",
+            cmdRandomTeamAmountDesc = "Amount of players (max 10, min 3. Default 10)",
+            cmdRandomTeamWeapons = "Generate random Weapons for the players? (default: false)",
             cmdRandomWeaponDesc = "Generate random weapon(s)",
             cmdRandomStageDesc = "Generate random stage(s)",
+            cmdRandomTeamDesc = "Generate an random private battle Team",
             cmdSalmonDesc = "Shows current and next salmon run",
             cmdSplatnetDesc = "Shows what is currently available on SplatNet Gear Shop",
             databaseError = "The database is currently down. If this issue persists, contact developer", //Never shows up in other languages
@@ -101,5 +104,8 @@ public class EnglishBase {
             cmdSettingsDelEnable = "Old rotation messages will now be deleted when sending new ones",
             cmdSettingsDelDisable = "Old rotation messages will be kept when sending new ones",
             cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified",
-            cmdProfileUserDesc = "User to check profile";
+            cmdProfileUserDesc = "User to check profile",
+            cmdRandomTeamAlpha = "Alpha",
+            cmdRandomTeamBravo = "Bravo",
+            cmdRandomTeamSpec = "Spectator";
 }

@@ -34,7 +34,7 @@ public class SetstageCommand extends BaseCommand{
             switch (ev.getSubcommandName()) {
                 case "splatoon2":
                     final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
-                    if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_WRITE)) {
+                    if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
                         final Locale finalLang = lang;
                         ev.getUser().openPrivateChannel().queue((c) -> {
                             c.sendMessage(finalLang.botLocale.noWritePerms).queue();

@@ -92,5 +92,9 @@ public class German extends EnglishBase {
         cmdSettingsDelDisable = "Alte Rotations-Nachrichten werden jetzt im channel belassen";
         cmdSettingsArgMissing = "Nicht genug Parameter angegeben, Einstellungen wurden nicht verändert";
         cmdProfileUserDesc = "Nutzer zum Profil abrufen";
+        cmdRandomTeamSpec = "Zuschauer";
+        cmdRandomTeamDesc = "Generiert ein zufälliges Privatkampf-Team";
+        cmdRandomTeamAmountDesc = "Spieleranzahl (max 10, min 3. Standard 10)";
+        cmdRandomTeamWeapons = "Zufällige Waffen generieren? (Standard: false)";
     }
 }
