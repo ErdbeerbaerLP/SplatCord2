@@ -24,11 +24,6 @@ public class German extends EnglishBase {
         price = "Preis:";
         splatNetShop = "TentaWorld";
         splatnetCooldown = "Der TentaWorld-Befehl ist gerade im Cooldown. Versuche es in ein paar Minuten erneut.";
-        legacyCommand = "Du versuchst, einen veralteten Befehl zu verwenden. Dies ist nicht mehr möglich!\n" +
-                "Benutze stattdessen die Slash-Befehle\n" +
-                "Falls du Server-Admin bist und noch keine Slash-Befehle nutzen kannst, besuche <https://discord.com/api/oauth2/authorize?client_id=822228767165644872&scope=applications.commands> und wähle diesen Server aus. Danach kannst du die Slash-Befehle mit " + Config.instance().discord.prefix + "fixslashcommands aktivieren";
-        cmdFixSlashCommands = "Slash-Befehle sollten nur wieder funktionieren!\n" +
-                "Falls dies nicht der fall ist, kontaktiere den Bot-Entwickler";
         cmdSettingsLang = "Ändert die Botsprache für diesen Server";
         cmdInviteDesc = "Sendet den Einladungslink des Bots";
         cmdSetsalmonDesc = "Markiert einen Kanal für SalmonRun Benachrichtigungen";

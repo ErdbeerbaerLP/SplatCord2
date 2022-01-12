@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.requests.RestAction;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static de.erdbeerbaerlp.splatcord2.Main.bot;
@@ -22,6 +23,10 @@ import static de.erdbeerbaerlp.splatcord2.Main.iface;
 public class MessageUtil {
     public static void sendSalmonFeed(Long serverid, Long channel){
         final TextChannel ch = bot.jda.getTextChannelById(channel);
+        if(ch == null ) {
+            System.out.println(serverid+" : Channel "+channel+" is null");
+            return;
+        }
         try {
             final long lastRotationMessageID = iface.getLastSalmonMessage(serverid);
             final boolean deleteMessage = iface.getDeleteMessage(serverid);
@@ -43,6 +48,10 @@ public class MessageUtil {
     }
     public static void sendRotationFeed(long serverid, long channel, Rotation currentRotation) {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
+        if(ch == null ) {
+            System.out.println(serverid+" : Channel "+channel+" is null");
+            return;
+        }
         try {
             final long lastRotationMessageID = iface.getLastRotationMessage(serverid);
             final boolean deleteMessage = iface.getDeleteMessage(serverid);
@@ -52,14 +61,11 @@ public class MessageUtil {
                     msg.delete().queue();
                 });
             }
-            bot.sendMessage(
+            final CompletableFuture<Message> msg = bot.sendMessage(
                     getMapMessage(
                             serverid,
-                            currentRotation),
-                    channel)
-                    .thenAccept((a) -> {
-                iface.setLastRotationMessage(serverid, a.getIdLong());
-            });
+                            currentRotation), channel);
+            if(msg != null) msg.thenAccept((a) -> iface.setLastRotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
             Guild guildById = bot.jda.getGuildById(serverid);

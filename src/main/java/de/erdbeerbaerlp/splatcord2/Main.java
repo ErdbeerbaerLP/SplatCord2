@@ -89,13 +89,16 @@ public class Main {
         long salmonEndTime = coop_schedules.details[0].end_time;
 
         while (true) {
-
             final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
 
             //Map rotation data
             if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
                 iface.getAllMapChannels().forEach((serverid, channel) -> {
-                    MessageUtil.sendRotationFeed(serverid,channel,currentRotation);
+                    try {
+                        MessageUtil.sendRotationFeed(serverid, channel, currentRotation);
+                    }catch(Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                        e.printStackTrace();
+                    }
                 });
                 Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
                 Config.instance().saveConfig();
@@ -124,9 +127,11 @@ public class Main {
                 }
                 if (iface.status.isDBAlive() && coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
                     iface.getAllSalmonChannels().forEach((serverid, channel) -> {
-                        MessageUtil.sendSalmonFeed(serverid,channel);
-
-
+                        try {
+                            MessageUtil.sendSalmonFeed(serverid, channel);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                     });
                     Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
                     Config.instance().saveConfig();

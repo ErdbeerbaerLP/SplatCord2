@@ -135,39 +135,6 @@ public class Bot implements EventListener {
         }
         if(event instanceof RoleCreateEvent)
             CommandRegistry.setCommands(((RoleCreateEvent) event).getGuild());
-
-
-
-        //Legacy commands
-        if (event instanceof MessageReceivedEvent) {
-            final MessageReceivedEvent ev = ((MessageReceivedEvent) event);
-            if (ev.getAuthor().isBot()) return;
-            String msg = ev.getMessage().getContentRaw();
-            if (msg.startsWith(Config.instance().discord.prefix)) {
-                msg = msg.replaceFirst(Pattern.quote(Config.instance().discord.prefix), "").trim();
-                final String[] cmd = msg.split(" ");
-                Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-                if (!ev.getGuild().getMember(jda.getSelfUser()).hasPermission(ev.getGuild().getGuildChannelById(ev.getChannel().getIdLong()), Permission.MESSAGE_SEND)) {
-                    final Locale finalLang = lang;
-                    ev.getAuthor().openPrivateChannel().queue((channel) -> {
-                        channel.sendMessage(finalLang.botLocale.noWritePerms).queue();
-                    });
-                    return;
-                }
-                if (cmd.length > 0) {
-                    if(cmd[0].equalsIgnoreCase("fixslashcommands")) {
-                        if (!isAdmin(ev.getMember())) {
-                            sendMessage(lang.botLocale.noAdminPerms, ev.getChannel().getId());
-                            return;
-                        }
-                        CommandRegistry.setCommands(ev.getGuild());
-                        sendMessage(lang.botLocale.cmdFixSlashCommands, ev.getChannel().getId());
-                    }else{
-                        sendMessage(lang.botLocale.legacyCommand, ev.getChannel().getId());
-                    }
-                }
-            }
-        }
     }
 
 
@@ -206,16 +173,6 @@ public class Bot implements EventListener {
         else return null;
     }
 
-    private String getLocalizedGearName(Locale lang, Gear gear) {
-        if (lang.gear.get(gear.kind.name()).getAsJsonObject().has(gear.id + ""))
-            return lang.gear.get(gear.kind.name()).getAsJsonObject().get(gear.id + "").getAsJsonObject().get("name").getAsString();
-        else if (lang.gear.containsKey(gear.id + "")) {
-            return lang.gear.get(gear.id + "").getAsJsonObject().get("name").getAsString();
-        } else {
-            return "Error, contact Developer";
-        }
-    }
-
 
     private class StatusUpdater extends Thread {
         int presence = 0;
@@ -225,7 +182,7 @@ public class Bot implements EventListener {
         public void run() {
             while (true) {
                 final Config.Discord.Status s = Config.instance().discord.botStatus.get(presence);
-                jda.getPresence().setPresence(Main.iface.status.isDBAlive()?OnlineStatus.ONLINE:OnlineStatus.DO_NOT_DISTURB,Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + "")), false);
+                jda.getPresence().setPresence(Main.iface.status.isDBAlive()?OnlineStatus.ONLINE:OnlineStatus.DO_NOT_DISTURB,Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + ""), s.streamingURL), false);
                 try {
                     //noinspection BusyWait
                     sleep(1000 * (r.nextInt(29) + 2));

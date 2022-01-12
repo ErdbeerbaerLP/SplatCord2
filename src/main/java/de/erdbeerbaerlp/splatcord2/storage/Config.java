@@ -57,22 +57,25 @@ public class Config {
         public static class Status{
             public Activity.ActivityType type;
             public String message;
+            public String streamingURL;
             Status(Activity.ActivityType type, String message){
+                this(type,message,"");
+            }
+            Status(Activity.ActivityType type, String message, String streamURL){
                 this.type = type;
                 this.message = message;
+                this.streamingURL = streamURL;
             }
         }
         @TomlIgnore
         static ArrayList<Status> defaultStatuses = new ArrayList<>();
         static {
             defaultStatuses.add(new Status(Activity.ActivityType.PLAYING, "Spoon 2"));
-            defaultStatuses.add(new Status(Activity.ActivityType.WATCHING, "s!help"));
+            defaultStatuses.add(new Status(Activity.ActivityType.STREAMING, "to %servercount% Servers"));
         }
         @TomlComment("The discord bot token")
         public String token = "NOT SET";
-        @TomlComment("The command prefix")
-        public String prefix = "s!";
-        @TomlComment({"Bot status messages shown in discord", "","Type can be DEFAULT (for playing), WATCHING, STREAMING, LISTENING, COMPETING"})
+        @TomlComment({"Bot status messages shown in discord", "","Type can be PLAYING, WATCHING, STREAMING (requires streamingURL), LISTENING, COMPETING"})
         public ArrayList<Status> botStatus = Discord.defaultStatuses;
     }
     public static class Database{
