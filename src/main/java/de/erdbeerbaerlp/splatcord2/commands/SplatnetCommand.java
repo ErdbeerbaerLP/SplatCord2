@@ -57,7 +57,7 @@ public class SplatnetCommand extends BaseCommand{
                         .setDescription(lang.botLocale.skillSlots + " " + (1 + m.gear.rarity))
                         .setTimestamp(Instant.ofEpochSecond(m.end_time))
                         .setFooter(lang.botLocale.footer_ends)
-                        .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.thumbnail)
+                        .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image)
                         .setAuthor(getLocalizedGearName(lang, m.gear) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
                         .addField(lang.botLocale.skill, lang.skills.get(m.skill.id).name, true)
                         .addField(lang.botLocale.price, m.price + "", true);

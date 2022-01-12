@@ -83,11 +83,16 @@ public class CommandRegistry {
                     privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,135802962013454336l));
                     privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,817445521589010473l));
                     //As discord allows maximum of 10 privileges, limit list to 10
-                    final List<CommandPrivilege> maxList = privileges.subList(0, 9);
+                    final List<CommandPrivilege> maxList = privileges.subList(0, Math.min(9,privileges.size()));
                     commandPrivileges.put(c.getId(), maxList);
                 }
             });
             g.updateCommandPrivileges(commandPrivileges).queue();
+        }).whenComplete((v, error) -> {
+            // Handle failure if the user does not exist (or another issue appeared)
+            if (error != null) {
+                System.out.println(g.getName() +" -> "+error.getMessage());
+            }
         });
     }
 
