@@ -5,20 +5,13 @@ import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
 import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
-import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.Gear;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.Merchandise;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld.TentaWorld;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
-import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -30,16 +23,11 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Pattern;
 
 public class Bot implements EventListener {
     public final JDA jda;

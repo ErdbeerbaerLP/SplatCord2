@@ -1,8 +1,8 @@
-package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld;
+package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet;
 
 import java.util.Arrays;
 
-public class TentaWorld {
+public class SplatNet {
     public Merchandise[] merchandises;
 
     @Override

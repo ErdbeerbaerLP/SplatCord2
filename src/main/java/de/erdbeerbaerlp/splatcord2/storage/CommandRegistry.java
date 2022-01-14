@@ -89,7 +89,6 @@ public class CommandRegistry {
             });
             g.updateCommandPrivileges(commandPrivileges).queue();
         }).whenComplete((v, error) -> {
-            // Handle failure if the user does not exist (or another issue appeared)
             if (error != null) {
                 System.out.println(g.getName() +" -> "+error.getMessage());
             }

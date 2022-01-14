@@ -167,7 +167,7 @@ public class DatabaseInterface implements AutoCloseable {
     public void setDeleteMessage(long serverID, boolean deleteMessage) {
         runUpdate("UPDATE servers SET deleteMessage = " + (deleteMessage ? 1:0) + " WHERE serverid = " + serverID);
     }
-    public void setStageChannel(long serverID, Long channelID) {
+    public void setS2StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
 

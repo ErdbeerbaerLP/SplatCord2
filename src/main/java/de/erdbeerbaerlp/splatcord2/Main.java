@@ -120,7 +120,7 @@ public class Main {
                                 embedBuilder.setTimestamp(null);
                                 embedBuilder.setFooter(lang.botLocale.footer_closed);
                                 message.editMessageEmbeds(embedBuilder.build()).queue();
-                                iface.setSalmonMessage(channel.getGuild().getIdLong(), null);
+                                iface.setSalmonMessage(channel.getGuild().getIdLong(), message.getIdLong());
                             });
                         }
                     });

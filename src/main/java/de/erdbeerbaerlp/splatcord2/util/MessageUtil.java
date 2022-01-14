@@ -1,18 +1,17 @@
 package de.erdbeerbaerlp.splatcord2.util;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.requests.RestAction;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -21,10 +20,11 @@ import static de.erdbeerbaerlp.splatcord2.Main.bot;
 import static de.erdbeerbaerlp.splatcord2.Main.iface;
 
 public class MessageUtil {
-    public static void sendSalmonFeed(Long serverid, Long channel){
+    public static void sendSalmonFeed(Long serverid, Long channel) {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
-        if(ch == null ) {
-            System.out.println(serverid+" : Channel "+channel+" is null");
+        if (ch == null) {
+            System.out.println(serverid + " : Channel " + channel + " is null, removing...");
+            iface.setSalmonChannel(serverid, null);
             return;
         }
         try {
@@ -34,6 +34,11 @@ public class MessageUtil {
                 final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
                 message.submit().thenAccept((msg) -> {
                     msg.delete().queue();
+                }).whenComplete((v, error) -> {
+                    // Handle failure if the user does not exist (or another issue appeared)
+                    if (error != null) {
+                        System.out.println("Failed deleting salmon " + error.getMessage());
+                    }
                 });
             }
             Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
@@ -46,10 +51,12 @@ public class MessageUtil {
             System.err.println("Failed to send salmon to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
+
     public static void sendRotationFeed(long serverid, long channel, Rotation currentRotation) {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
-        if(ch == null ) {
-            System.out.println(serverid+" : Channel "+channel+" is null");
+        if (ch == null) {
+            System.out.println(serverid + " : Channel " + channel + " is null, removing...");
+            iface.setS2StageChannel(serverid, null);
             return;
         }
         try {
@@ -65,7 +72,7 @@ public class MessageUtil {
                     getMapMessage(
                             serverid,
                             currentRotation), channel);
-            if(msg != null) msg.thenAccept((a) -> iface.setLastRotationMessage(serverid, a.getIdLong()));
+            if (msg != null) msg.thenAccept((a) -> iface.setLastRotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
             Guild guildById = bot.jda.getGuildById(serverid);
@@ -76,17 +83,17 @@ public class MessageUtil {
     public static Message getMapMessage(Long serverid, Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
         return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
-                .addField("<:regular:822873973225947146>" +
+                .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.stages.get(r.getRegular().stage_a.id).getName() +
                                 ", " + lang.stages.get(r.getRegular().stage_b.id).getName()
                         , false)
-                .addField("<:ranked:822873973200388106>" +
+                .addField(Emote.RANKED +
                                 lang.game_modes.get("gachi").name + " (" + lang.rules.get(r.getRanked().rule.key).name + ")",
                         lang.stages.get(r.getRanked().stage_a.id).getName() +
                                 ", " + lang.stages.get(r.getRanked().stage_b.id).getName()
                         , false)
-                .addField("<:ranked:822873973142192148>" +
+                .addField(Emote.LEAGUE +
                                 lang.game_modes.get("league").name + " (" + lang.rules.get(r.getLeague().rule.key).name + ")",
                         lang.stages.get(r.getLeague().stage_a.id).getName() +
                                 ", " + lang.stages.get(r.getLeague().stage_b.id).getName()

@@ -1,7 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.Config;
-
 public class Italian extends EnglishBase {
     {
         salmonStage = "Arene:";
@@ -18,7 +16,7 @@ public class Italian extends EnglishBase {
         unknownLanguage = "Non hai specificato una lingua valida. Lingue valide: tedesco (de), inglese (en), e italiano (it)";
         deleteSuccessful = "Eliminato correttamente";
         noWritePerms = "Questo bot non ha i permessi necessari per inviare messaggi in questo canale";
-        skill = "Abilità:";
+        primarySkill = "Abilità:";
         skillSlots = "Slot abilità:";
         price = "Prezzo:";
         splatNetShop  = "Calama-zone";

@@ -23,9 +23,9 @@ public class EnglishBase {
             unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)",
             deleteSuccessful = "Successfully deleted",
             noWritePerms = "This bot has no permission to write in the target channel",
-            skill = "Skill:",
+            primarySkill = "Primary Ability:",
             price = "Price:",
-            skillSlots = "Skill Slots:",
+            skillSlots = "Ability Slots:",
             splatNetShop = "SplatNet Gear Shop",
             splatnetCooldown = "The SplatNet command is currently on cooldown. Please try again in a few minutes.",
             cmdSettingsLang = "Changes the bot language for this server",
@@ -103,5 +103,6 @@ public class EnglishBase {
             cmdProfileUserDesc = "User to check profile",
             cmdRandomTeamAlpha = "Alpha",
             cmdRandomTeamBravo = "Bravo",
-            cmdRandomTeamSpec = "Spectator";
+            cmdRandomTeamSpec = "Spectator",
+            now = "Now";
 }

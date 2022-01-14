@@ -13,7 +13,7 @@ public class Splat2Profile {
     public int srTitle = 0;
 
     public static class Rank {
-        public static enum RankEnum {
+        public enum RankEnum {
             Cminus("c-"),
             Cplus("c+"),
             C("c"),
@@ -34,7 +34,7 @@ public class Splat2Profile {
             }
         }
 
-        private RankEnum rank;
+        private final RankEnum rank;
         private int power = -1;
         private int splusnum = 0;
 

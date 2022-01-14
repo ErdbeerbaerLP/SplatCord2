@@ -1,7 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.Config;
-
 public class German extends EnglishBase {
     {
         salmonStage = "Arenen:";
@@ -19,7 +17,7 @@ public class German extends EnglishBase {
         unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en), und Italienisch (it)";
         deleteSuccessful = "Erfolgreich gelöscht!";
         noWritePerms = "Dieser Bot hat keine Berechtigung, Nachrichten in diesen Kanal zu senden";
-        skill = "Effekt:";
+        primarySkill = "Haupteffekt:";
         skillSlots = "Effekt-Slots:";
         price = "Preis:";
         splatNetShop = "TentaWorld";
@@ -92,5 +90,6 @@ public class German extends EnglishBase {
         cmdRandomTeamDesc = "Generiert ein zufälliges Privatkampf-Team";
         cmdRandomTeamAmountDesc = "Spieleranzahl (max 10, min 3. Standard 10)";
         cmdRandomTeamWeapons = "Zufällige Waffen generieren? (Standard: false)";
+        now = "Aktuell";
     }
 }

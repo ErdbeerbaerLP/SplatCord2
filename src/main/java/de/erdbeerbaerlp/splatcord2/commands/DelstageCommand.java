@@ -31,7 +31,7 @@ public class DelstageCommand extends BaseCommand {
                     ev.reply(lang.botLocale.noAdminPerms).queue();
                     return;
                 }
-                Main.iface.setStageChannel(ev.getGuild().getIdLong(), null);
+                Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), null);
                 ev.reply(lang.botLocale.deleteSuccessful).queue();
                 break;
         }

@@ -18,8 +18,6 @@ public class ScheduleUtil {
 
     private static Schedules schedules;
 
-
-
     private static Rotation getRotationForTimestamp(long timestamp){
         Schedule regular = null, ranked = null, league = null;
         for (Schedule s : schedules.regular) {
@@ -71,8 +69,6 @@ public class ScheduleUtil {
         deConn2.connect();
         Main.coop_schedules = Main.gson.fromJson(new InputStreamReader(deConn2.getInputStream()), CoOpSchedules.class);
     }
-
-
 
 
     public static String getSchedulesString() {

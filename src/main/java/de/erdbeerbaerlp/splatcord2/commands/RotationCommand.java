@@ -1,6 +1,8 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
+import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
@@ -28,43 +30,36 @@ public class RotationCommand extends BaseCommand {
         final ArrayList<Rotation> nextRotations = ScheduleUtil.getNext3Rotations();
 
         final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle);
+        addRotation(future, currentRotation, lang, true);
+        future.addBlankField(false);
         for (int i = 0; i < nextRotations.size(); i++) {
-            future.addField(":alarm_clock: ", "<t:" + nextRotations.get(i).getRegular().start_time + ":t>", true)
-                    .addField("<:regular:822873973225947146>" +
-                                    lang.game_modes.get("regular").name,
-                            lang.stages.get(nextRotations.get(i).getRegular().stage_a.id).getName() +
-                                    ", " + lang.stages.get(nextRotations.get(i).getRegular().stage_b.id).getName()
-                            , true)
-                    .addField("<:ranked:822873973200388106>" +
-                                    lang.game_modes.get("gachi").name + " (" + lang.rules.get(nextRotations.get(i).getRanked().rule.key).name + ")",
-                            lang.stages.get(nextRotations.get(i).getRanked().stage_a.id).getName() +
-                                    ", " + lang.stages.get(nextRotations.get(i).getRanked().stage_b.id).getName()
-                            , true)
-                    .addField("<:league:822873973142192148>" +
-                                    lang.game_modes.get("league").name + " (" + lang.rules.get(nextRotations.get(i).getLeague().rule.key).name + ")",
-                            lang.stages.get(nextRotations.get(i).getLeague().stage_a.id).getName() +
-                                    ", " + lang.stages.get(nextRotations.get(i).getLeague().stage_b.id).getName()
-                            , true);
+            addRotation(future, nextRotations.get(i), lang);
             if (i < nextRotations.size() - 1)
                 future.addBlankField(false);
         }
+        ev.replyEmbeds(future.build()).queue();
+    }
 
-        ev.replyEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
-                .addField("<:regular:822873973225947146>" +
+    private static void addRotation(EmbedBuilder future, Rotation currentRotation, Locale lang) {
+        addRotation(future, currentRotation, lang,false);
+    }
+
+    private static void addRotation(EmbedBuilder future, Rotation currentRotation, Locale lang, boolean now) {
+        future.addField(":alarm_clock: ", now?("`"+lang.botLocale.now+"`"):("<t:" + currentRotation.getRegular().start_time + ":t>"), true)
+                .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.stages.get(currentRotation.getRegular().stage_a.id).getName() +
                                 ", " + lang.stages.get(currentRotation.getRegular().stage_b.id).getName()
-                        , false)
-                .addField("<:ranked:822873973200388106>" +
+                        , true)
+                .addField(Emote.RANKED +
                                 lang.game_modes.get("gachi").name + " (" + lang.rules.get(currentRotation.getRanked().rule.key).name + ")",
                         lang.stages.get(currentRotation.getRanked().stage_a.id).getName() +
                                 ", " + lang.stages.get(currentRotation.getRanked().stage_b.id).getName()
-                        , false)
-                .addField("<:ranked:822873973142192148>" +
+                        , true)
+                .addField(Emote.LEAGUE +
                                 lang.game_modes.get("league").name + " (" + lang.rules.get(currentRotation.getLeague().rule.key).name + ")",
                         lang.stages.get(currentRotation.getLeague().stage_a.id).getName() +
                                 ", " + lang.stages.get(currentRotation.getLeague().stage_b.id).getName()
-                        , false)
-                .build(), future.build()).queue();
+                        , true);
     }
 }

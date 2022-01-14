@@ -1,4 +1,4 @@
-package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.tentaworld;
+package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet;
 
 public class Gear {
     public String image;

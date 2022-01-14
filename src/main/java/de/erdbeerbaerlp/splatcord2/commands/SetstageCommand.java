@@ -45,7 +45,7 @@ public class SetstageCommand extends BaseCommand{
                         ev.reply(lang.botLocale.noAdminPerms).queue();
                         return;
                     }
-                    Main.iface.setStageChannel(guild.getIdLong(), channel.getIdLong());
+                    Main.iface.setS2StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsg).queue();
                     MessageUtil.sendRotationFeed(guild.getIdLong(),channel.getIdLong(), ScheduleUtil.getCurrentRotation());
                     break;
