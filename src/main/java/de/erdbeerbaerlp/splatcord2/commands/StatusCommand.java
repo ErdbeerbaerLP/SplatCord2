@@ -35,7 +35,7 @@ public class StatusCommand extends BaseCommand {
             b.addBlankField(false);
             Duration duration = Duration.between(Main.startTime, Instant.now());
             String stats =
-                    lang.botLocale.cmdStatusStatsServers + Main.iface.getAllServers().size() + "\n" +
+                    lang.botLocale.cmdStatusStatsServers + Main.bot.jda.getGuilds().size() + "\n" +
                             lang.botLocale.cmdStatusStatsUptime + duration.toDaysPart()+"d "+duration.toHoursPart()+"H "+duration.toMinutesPart()+"M";
 
 
