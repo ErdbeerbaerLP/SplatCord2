@@ -77,7 +77,7 @@ public class German extends EnglishBase {
         cmdProfileLevel2Set = "Splatoon 2 level gesetzt auf ";
         cmdProfileNameSet = "In-Game Name gesetzt auf ";
         cmdProfileMissingNID = "Du hast noch keine Nintendo Network ID oder eine Pretendo Network ID festgelegt";
-        cmdProfileMissingFC = "Du hast noch keinen Switch Freundescode festgelegt.";
+        cmdProfileMissingFC = "%s hat noch keinen Switch Freundescode festgelegt.";
         cmdProfileFCSet = "Switch Freundescode gesetzt auf ";
         cmdSettingsDesc = "Bearbeite Servereinstellungen (z.B. Sprache)";
         cmdSettingsDelMsg = "Alte Rotations-Nachrichten Löschen?";

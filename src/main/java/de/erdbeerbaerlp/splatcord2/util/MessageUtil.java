@@ -35,7 +35,6 @@ public class MessageUtil {
                 message.submit().thenAccept((msg) -> {
                     msg.delete().queue();
                 }).whenComplete((v, error) -> {
-                    // Handle failure if the user does not exist (or another issue appeared)
                     if (error != null) {
                         System.out.println("Failed deleting salmon " + error.getMessage());
                     }
