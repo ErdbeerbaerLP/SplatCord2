@@ -86,10 +86,13 @@ public class German extends EnglishBase {
         cmdSettingsArgMissing = "Nicht genug Parameter angegeben, Einstellungen wurden nicht verändert";
         cmdEditProfileArgMissing = "Nicht genug Parameter angegeben, Profil wurde nicht verändert";
         cmdProfileUserDesc = "Nutzer zum Profil abrufen";
-        cmdRandomTeamSpec = "Zuschauer";
-        cmdRandomTeamDesc = "Generiert ein zufälliges Privatkampf-Team";
+        cmdRandomPrivateSpec = "Zuschauer";
+        cmdRandomPrivateDesc = "Generiert einen zufälligen Privatkampf";
         cmdRandomTeamAmountDesc = "Spieleranzahl (max 10, min 3. Standard 10)";
         cmdRandomTeamWeapons = "Zufällige Waffen generieren? (Standard: false)";
         now = "Aktuell";
+        cmdRandomMode = "Generiert einen zufälligen Privatkampf-Modus";
+        cmdRandomModeVersion = "Ziel Splatoon-Version, Standart: Splatoon 2";
+        cmdRandomPrivateMode = "Modus";
     }
 }

@@ -44,7 +44,7 @@ public class EnglishBase {
             cmdRandomTeamWeapons = "Generate random Weapons for the players? (default: false)",
             cmdRandomWeaponDesc = "Generate random weapon(s)",
             cmdRandomStageDesc = "Generate random stage(s)",
-            cmdRandomTeamDesc = "Generate an random private battle Team",
+            cmdRandomPrivateDesc = "Generate an random private battle",
             cmdSalmonDesc = "Shows current and next salmon run",
             cmdSplatnetDesc = "Shows what is currently available on SplatNet Gear Shop",
             databaseError = "The database is currently down. If this issue persists, contact developer", //Never shows up in other languages
@@ -101,8 +101,11 @@ public class EnglishBase {
             cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified",
             cmdEditProfileArgMissing = "Not enough arguments supplied, profile have not been modified",
             cmdProfileUserDesc = "User to check profile",
-            cmdRandomTeamAlpha = "Alpha",
-            cmdRandomTeamBravo = "Bravo",
-            cmdRandomTeamSpec = "Spectator",
-            now = "Now";
+            cmdRandomPrivateAlpha = "Alpha",
+            cmdRandomPrivateBravo = "Bravo",
+            cmdRandomPrivateSpec = "Spectator",
+            now = "Now",
+            cmdRandomMode = "Generate random private battle mode",
+            cmdRandomModeVersion = "Target splatoon version, Defaults to Splatoon 2",
+            cmdRandomPrivateMode = "Mode";
 }

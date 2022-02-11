@@ -1,17 +1,14 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.*;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
-import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomCommand extends BaseCommand {
 
@@ -21,10 +18,16 @@ public class RandomCommand extends BaseCommand {
         weapon.addOption(OptionType.INTEGER, "amount", l.botLocale.cmdRandomAmountDesc);
         final SubcommandData stage = new SubcommandData("stage", l.botLocale.cmdRandomStageDesc);
         stage.addOption(OptionType.INTEGER, "amount", l.botLocale.cmdRandomAmountDesc);
-        final SubcommandData team = new SubcommandData("team", l.botLocale.cmdRandomTeamDesc);
+        final SubcommandData team = new SubcommandData("private", l.botLocale.cmdRandomPrivateDesc);
         team.addOption(OptionType.INTEGER, "players", l.botLocale.cmdRandomTeamAmountDesc);
         team.addOption(OptionType.BOOLEAN, "weapons", l.botLocale.cmdRandomTeamWeapons);
-        addSubcommands(weapon, stage, team);
+        final SubcommandData mode = new SubcommandData("mode", l.botLocale.cmdRandomMode);
+        OptionData splVersions = new OptionData(OptionType.INTEGER, "version", l.botLocale.cmdRandomModeVersion);
+        splVersions.addChoice("Splatoon 1", 1);
+        splVersions.addChoice("Splatoon 2", 2);
+        //splVersions.addChoice("Splatoon 3", 3);
+        mode.addOptions(splVersions);
+        addSubcommands(weapon, stage, team, mode);
     }
 
     static void shuffleArray(int[] ar) {
@@ -75,8 +78,7 @@ public class RandomCommand extends BaseCommand {
                 }
                 ev.reply(stageString.toString().trim()).queue();
                 break;
-            case "team":
-
+            case "private":
                 boolean genWeapons = false;
                 final OptionMapping weaponOption = ev.getOption("weapons");
                 if (weaponOption != null) genWeapons = weaponOption.getAsBoolean();
@@ -92,52 +94,78 @@ public class RandomCommand extends BaseCommand {
                     playerArray[i] = i+1;
                 }
                 shuffleArray(playerArray);
-                final StringBuilder teamString = new StringBuilder();
-                teamString.append(lang.botLocale.cmdRandomTeamAlpha+":\n");
-                teamString.append("[" + playerArray[0]+"] ");
-                if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                teamString.append("\n");
+                final StringBuilder privateString = new StringBuilder();
+                privateString.append(lang.botLocale.cmdRandomPrivateMode +": "+lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
+                privateString.append(lang.botLocale.cmdRandomPrivateAlpha +":\n");
+                privateString.append("[" + playerArray[0]+"] ");
+                if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                privateString.append("\n");
                 if (players >= 4) {
-                    teamString.append("[" + playerArray[2]+"] ");
-                    if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                    teamString.append("\n");
+                    privateString.append("[" + playerArray[2]+"] ");
+                    if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                    privateString.append("\n");
                 }
                 if (players >= 6) {
-                    teamString.append("[" + playerArray[4]+"] ");
-                    if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                    teamString.append("\n");
+                    privateString.append("[" + playerArray[4]+"] ");
+                    if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                    privateString.append("\n");
                 }
                 if (players >= 8) {
-                    teamString.append("[" + playerArray[6]+"] ");
-                    if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                    teamString.append("\n");
+                    privateString.append("[" + playerArray[6]+"] ");
+                    if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                    privateString.append("\n");
                 }
-                teamString.append(lang.botLocale.cmdRandomTeamBravo+":\n");
-                teamString.append("[" + playerArray[1]+"] ");
-                if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                teamString.append("\n");
+                privateString.append(lang.botLocale.cmdRandomPrivateBravo +":\n");
+                privateString.append("[" + playerArray[1]+"] ");
+                if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                privateString.append("\n");
                 if (players >= 4) {
-                    teamString.append("[" + playerArray[3]+"] ");
-                    if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                    teamString.append("\n");
+                    privateString.append("[" + playerArray[3]+"] ");
+                    if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                    privateString.append("\n");
                 }
                 if (players >= 6) {
-                    teamString.append("[" + playerArray[5]+"] ");
-                    if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                    teamString.append("\n");
+                    privateString.append("[" + playerArray[5]+"] ");
+                    if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                    privateString.append("\n");
                 }
                 if (players >= 8) {
-                    teamString.append("[" + playerArray[7]+"] ");
-                    if(genWeapons) teamString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
-                    teamString.append("\n");
+                    privateString.append("[" + playerArray[7]+"] ");
+                    if(genWeapons) privateString.append(weapons[r.nextInt(lang.weapons.size() - 1)].name);
+                    privateString.append("\n");
                 }
-                teamString.append(lang.botLocale.cmdRandomTeamSpec+":\n");
-                if(players == 3) teamString.append("[" + playerArray[2] + "]\n");
-                if(players == 5) teamString.append("[" + playerArray[4] + "]\n");
-                if(players == 7) teamString.append("[" + playerArray[6] + "]\n");
-                if (players >= 9) teamString.append("[" + playerArray[8] + "]\n");
-                if (players == 10) teamString.append("[" + playerArray[9] + "]\n");
-                ev.reply(teamString.toString().trim()).queue();
+                privateString.append(lang.botLocale.cmdRandomPrivateSpec +":\n");
+                if(players == 3) privateString.append("[" + playerArray[2] + "]\n");
+                if(players == 5) privateString.append("[" + playerArray[4] + "]\n");
+                if(players == 7) privateString.append("[" + playerArray[6] + "]\n");
+                if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
+                if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
+                ev.reply(privateString.toString().trim()).queue();
+                break;
+            case "mode":
+                final StringBuilder modeString = new StringBuilder();
+                int splVer = 2;
+                final OptionMapping versionOption = ev.getOption("version");
+                if (versionOption != null) try {
+                    splVer = Integer.parseInt(versionOption.getAsString());
+                } catch (NumberFormatException ignored) {
+                }
+
+                switch (splVer){
+                    case 1:
+                        String mode;
+                        do {
+                            mode = lang.rules.keySet().toArray(new String[0])[new Random().nextInt(lang.rules.size())];
+                        }while(mode.equals("clam_blitz"));
+                        modeString.append(lang.rules.get(mode).name);
+                    break;
+                    case 2:
+                        modeString.append(lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
+                        break;
+                    default:
+                        break;
+                }
+                ev.reply(modeString.toString().trim()).queue();
                 break;
         }
     }
