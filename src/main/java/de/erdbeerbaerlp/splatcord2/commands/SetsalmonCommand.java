@@ -9,10 +9,15 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
-public class SetsalmonCommand extends BaseCommand{
+public class SetsalmonCommand extends BaseCommand {
     public SetsalmonCommand(Locale l) {
         super("setsalmon", l.botLocale.cmdSetsalmonDesc);
+        final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetstageDesc);
+        //final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetstageDesc);
+
+        addSubcommands(splat2);
     }
 
     @Override
@@ -24,21 +29,27 @@ public class SetsalmonCommand extends BaseCommand{
     public void execute(SlashCommandEvent ev) {
         final Guild guild = ev.getGuild();
         final MessageChannel channel = ev.getChannel();
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
-        if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
-            final Locale finalLang = lang;
-            ev.getUser().openPrivateChannel().queue((c) -> {
-                c.sendMessage(finalLang.botLocale.noWritePerms).queue();
-            });
-            return;
-        }
-        if (!Bot.isAdmin(ev.getMember())) {
-            ev.reply(lang.botLocale.noAdminPerms).queue();
-            return;
-        }
-        Main.iface.setSalmonChannel(guild.getIdLong(), channel.getIdLong());
-        ev.reply(lang.botLocale.salmonFeedMsg).queue();
-        MessageUtil.sendSalmonFeed(guild.getIdLong(),channel.getIdLong());
 
+        if (ev.getSubcommandName() != null)
+            switch (ev.getSubcommandName()) {
+
+                case "splatoon2":
+                    final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
+                    if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
+                        final Locale finalLang = lang;
+                        ev.getUser().openPrivateChannel().queue((c) -> {
+                            c.sendMessage(finalLang.botLocale.noWritePerms).queue();
+                        });
+                        return;
+                    }
+                    if (!Bot.isAdmin(ev.getMember())) {
+                        ev.reply(lang.botLocale.noAdminPerms).queue();
+                        return;
+                    }
+                    Main.iface.setSalmonChannel(guild.getIdLong(), channel.getIdLong());
+                    ev.reply(lang.botLocale.salmonFeedMsg).queue();
+                    MessageUtil.sendSalmonFeed(guild.getIdLong(), channel.getIdLong());
+                    break;
+            }
     }
 }
