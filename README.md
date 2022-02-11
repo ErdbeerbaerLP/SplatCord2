@@ -9,7 +9,7 @@ To enable stage notifications, use `/setstage` in the destination channel.
 To enable SalmonRun notifications, use `/setsalmon` in the target channel.
 To disable them, you can use `/delsalmon` or `/delstage` in any channel.
 
-You can also change language, to do that you use `/setlang <language>`
+You can also change language, to do that you use `/settings language <language>`
 
 Supported languages are:
 - english (en)
