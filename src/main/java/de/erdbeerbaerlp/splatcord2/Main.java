@@ -109,7 +109,7 @@ public class Main {
             if (iface.status.isDBAlive() && coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
                 if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
                     salmonEndTime = -1;
-                    iface.getAllSalmonMessages().forEach((chan, msg) -> {
+                    /*iface.getAllSalmonMessages().forEach((chan, msg) -> {
                         if (msg != null) {
                             final TextChannel channel = bot.jda.getTextChannelById(chan);
                             if (channel == null) return;
@@ -122,7 +122,7 @@ public class Main {
                                 message.editMessageEmbeds(embedBuilder.build()).queue();
                             });
                         }
-                    });
+                    });*/
                 }
                 if (iface.status.isDBAlive() && coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
                     iface.getAllSalmonChannels().forEach((serverid, channel) -> {
