@@ -33,6 +33,7 @@ public class CommandRegistry {
         baseCommandClasses.add(ViewProfileCommand.class);
         baseCommandClasses.add(EditProfileCommand.class);
         baseCommandClasses.add(RandomCommand.class);
+        baseCommandClasses.add(PrivateCommand.class);
         baseCommandClasses.add(StatusCommand.class);
         baseCommandClasses.add(InviteCommand.class);
         baseCommandClasses.add(SupportCommand.class);
@@ -81,7 +82,6 @@ public class CommandRegistry {
                     });
                     // Allow developer to access commands for faster support
                     privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,135802962013454336l));
-                    privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,817445521589010473l));
                     //As discord allows maximum of 10 privileges, limit list to 10
                     final List<CommandPrivilege> maxList = privileges.subList(0, Math.min(9,privileges.size()));
                     commandPrivileges.put(c.getId(), maxList);
