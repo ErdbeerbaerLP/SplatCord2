@@ -30,12 +30,12 @@ public class RandomCommand extends BaseCommand {
         addSubcommands(weapon, stage, team, mode);
     }
 
-    static void shuffleArray(int[] ar) {
+    static <T>void shuffleArray(T[] ar) {
         final Random rnd = new Random();
         for (int i = ar.length - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
             // Simple swap
-            int a = ar[index];
+            T a = ar[index];
             ar[index] = ar[i];
             ar[i] = a;
         }
@@ -89,7 +89,7 @@ public class RandomCommand extends BaseCommand {
                     players = Math.max(3, Math.min(Integer.parseInt(playersOption.getAsString()), 10));
                 } catch (NumberFormatException ignored) {
                 }
-                final int[] playerArray = new int[players];
+                final Integer[] playerArray = new Integer[players];
                 for (int i = 0; i < players; i++) {
                     playerArray[i] = i+1;
                 }

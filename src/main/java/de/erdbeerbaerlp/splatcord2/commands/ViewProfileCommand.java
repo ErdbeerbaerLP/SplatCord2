@@ -73,7 +73,6 @@ public class ViewProfileCommand extends BaseCommand {
                         else
                             b.setTitle(m.getEffectiveName() + "'s Splatoon 2 Profile");
                         b.addField(lang.botLocale.cmdProfileLevel, profile.splat2Profile.getLevel(), true);
-
                         b.addField(lang.botLocale.cmdProfileSRTitle, getSRTitle(profile.splat2Profile.srTitle, lang), true);
                         b.addBlankField(false);
                         b.addField(lang.rules.get("rainmaker").name, profile.splat2Profile.rainmaker.toString(), true);

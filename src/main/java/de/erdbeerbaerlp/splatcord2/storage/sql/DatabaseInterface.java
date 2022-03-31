@@ -34,7 +34,7 @@ public class DatabaseInterface implements AutoCloseable {
                 "`lastStage2` bigint null COMMENT 'Message ID of last Splatoon 2 Stage Notification',\n" +
                 "`deleteMessage` tinyint not null default 1  COMMENT 'Whether or not the bot should delete the old schedule message'\n" +
                 ");");
-        runUpdate("CREATE TABLE if not exists `users` (\n" +
+        runUpdate("CREATE TABLE IF NOT EXISTS `users` (\n" +
                 "`id` BIGINT NOT NULL COMMENT 'Discord User ID',\n" +
                 "`wiiu-nnid` VARCHAR(16) NULL COMMENT 'Wii U Nintendo Network ID',\n" +
                 "`wiiu-pnid` VARCHAR(16) NULL COMMENT 'Wii U Pretendo Network ID',\n" +
@@ -44,6 +44,12 @@ public class DatabaseInterface implements AutoCloseable {
                 "`splatoon3-profile` JSON NULL COMMENT 'Profile data for Splatoon 3',\n" +
                 "UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,\n" +
                 "PRIMARY KEY (`id`));");
+        runUpdate("CREATE TABLE IF NOT EXISTS `privaterooms` (\n" +
+                "  `roomid` bigint NOT NULL,\n" +
+                "  `gamever` smallint NOT NULL,\n" +
+                "  `roomowner` bigint NOT NULL,\n" +
+                "  PRIMARY KEY (`roomid`)\n" +
+                ")");
     }
 
     private void connect() throws SQLException {
@@ -59,8 +65,12 @@ public class DatabaseInterface implements AutoCloseable {
                 profile.wiiu_nnid = res.getString(1);
                 profile.wiiu_pnid = res.getString(2);
                 profile.switch_fc = res.getLong(3);
-                profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(res.getString(4)).next().getAsJsonObject());
-                profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(res.getString(5)).next().getAsJsonObject());
+                String splat1str = res.getString(4);
+                if(splat1str == null) splat1str = "{}";
+                String splat2str = res.getString(5);
+                if(splat2str == null) splat2str = "{}";
+                profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(splat1str).next().getAsJsonObject());
+                profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(splat2str).next().getAsJsonObject());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,8 +81,73 @@ public class DatabaseInterface implements AutoCloseable {
     public void updateSplatProfile(SplatProfile profile) {
         runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', null)");
     }
+    public long getUserRoom(long user){
+        try (final ResultSet res = query("SELECT `pb-id` FROM users WHERE id = " + user)){
+            while (res != null && res.next()) {
+                if (res.wasNull())
+                    return 0;
+                return res.getLong(1);
+            }
 
+        }catch (SQLException e){
+            return 0;
+        }
+        return 0;
+    }
+    public long getOwnedRoom(long owner){
+        try (final ResultSet res = query("SELECT `roomid` FROM privaterooms WHERE roomowner = " + owner)){
+            while (res != null && res.next()) {
+                if (res.wasNull())
+                    return 0;
+                return res.getLong(1);
+            }
 
+        }catch (SQLException e){
+            return 0;
+        }
+        return 0;
+    }
+    public boolean createNewPBRoom(long room, short gameVersion, long roomOwner){
+        if(getOwnedRoom(room) == -1 ) return false;
+        runUpdate("INSERT INTO privaterooms (`roomid`, `gamever`, `roomowner`) VALUES ("+room+", "+gameVersion+", "+roomOwner+ ")");
+        runUpdate("REPLACE INTO users (`id`,`pb-id`) VALUES (" + roomOwner + ", "+ room+ ")");
+        return true;
+    }
+
+    public boolean deleteRoom(long room){
+        runUpdate("DELETE FROM privaterooms WHERE `roomid` = "+room);
+        runUpdate("UPDATE users SET `pb-id` = replace(`pbid`,"+ room+",0) WHERE `pb-id` = "+room);
+        return true;
+    }
+    public void setPlayerRoom(long room, long user){
+        runUpdate("REPLACE INTO users (`id`,`pb-id`) VALUES (" + user + ", "+ room+ ")");
+    }
+
+    public boolean roomExists(long room) {
+        try (final ResultSet res = query("SELECT `roomid` FROM privaterooms WHERE roomid = " + room)){
+            while (res != null && res.next()) {
+                if (res.wasNull())
+                    return false;
+                return true;
+            }
+
+        }catch (SQLException e){
+            return false;
+        }
+        return false;
+    }
+
+    public ArrayList<Long> getPlayersInRoom(long room){
+        final ArrayList<Long> out = new ArrayList<>();
+        try (final ResultSet res = query("SELECT `id` FROM users WHERE `pb-id` = " + room)){
+            while (res != null && res.next()) {
+                if (!res.wasNull())
+                    out.add(res.getLong(1));
+            }
+        }catch (SQLException ignored){
+        }
+        return out;
+    }
 
 
     public class StatusThread extends Thread {
