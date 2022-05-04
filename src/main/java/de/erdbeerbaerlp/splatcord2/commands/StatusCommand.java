@@ -2,6 +2,7 @@ package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
+import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -40,6 +41,8 @@ public class StatusCommand extends BaseCommand {
 
 
             b.addField(lang.botLocale.cmdStatusStats, stats, false);
+            final boolean beta = Config.instance().discord.betaServers.contains(ev.getGuild().getId());
+            if(beta) b.addField("Beta server?", beta+"", false);
         }
         ev.replyEmbeds(b.build()).queue();
     }

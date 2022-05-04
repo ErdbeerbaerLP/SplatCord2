@@ -58,9 +58,6 @@ public class CommandRegistry {
             try {
                 BaseCommand cmd = clazz.getConstructor(Locale.class).newInstance(lang);
                 BaseCommand cmdByName = getCommandByName(cmd.getName());
-                if (cmd.requiresManageServer()) {
-                    cmd.setDefaultEnabled(false);
-                }
                 if (cmdByName == null) {
                     baseCommands.add(cmd);
                 }
