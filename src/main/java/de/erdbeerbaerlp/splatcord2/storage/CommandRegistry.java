@@ -50,10 +50,11 @@ public class CommandRegistry {
 
     public static void setCommands(Guild g) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(g.getIdLong()));
-        final ArrayList<Role> adminRoles = getAdminRoles(g);
-        final HashMap<String, Collection<? extends CommandPrivilege>> commandPrivileges = new HashMap<>();
         final ArrayList<BaseCommand> commands = new ArrayList<>();
         for (Class<? extends BaseCommand> clazz : baseCommandClasses) {
+            if(clazz == PrivateCommand.class ){
+                if(!Config.instance().discord.betaServers.contains(g.getId())) continue;
+            }
             try {
                 BaseCommand cmd = clazz.getConstructor(Locale.class).newInstance(lang);
                 BaseCommand cmdByName = getCommandByName(cmd.getName());
@@ -72,22 +73,7 @@ public class CommandRegistry {
         update.addCommands(commands).submit().thenAccept((cmds) -> {
             cmds.forEach((c) -> {
                 registeredCommands.put(c.getIdLong(), c);
-                if (getCommandByName(c.getName()).requiresManageServer()) {
-                    final ArrayList<CommandPrivilege> privileges = new ArrayList<>();
-                    for (Role r : adminRoles) {
-                        privileges.add(CommandPrivilege.enable(r));
-                    }
-                    g.retrieveOwner().submit().thenAccept((m)->{
-                        privileges.add(CommandPrivilege.enable(m.getUser()));
-                    });
-                    // Allow developer to access commands for faster support
-                    privileges.add(new CommandPrivilege(CommandPrivilege.Type.USER,true,135802962013454336l));
-                    //As discord allows maximum of 10 privileges, limit list to 10
-                    final List<CommandPrivilege> maxList = privileges.subList(0, Math.min(9,privileges.size()));
-                    commandPrivileges.put(c.getId(), maxList);
-                }
             });
-            g.updateCommandPrivileges(commandPrivileges).queue();
         }).whenComplete((v, error) -> {
             if (error != null) {
                 System.out.println(g.getName() +" -> "+error.getMessage());
@@ -95,13 +81,5 @@ public class CommandRegistry {
         });
     }
 
-    private static ArrayList<Role> getAdminRoles(Guild g) {
-        final List<Role> gRoles = g.getRoles();
-        final ArrayList<Role> adminRoles = new ArrayList<>();
-        for (Role r : gRoles) {
-            if (r.hasPermission(Permission.MANAGE_SERVER) || r.hasPermission(Permission.ADMINISTRATOR))
-                adminRoles.add(r);
-        }
-        return adminRoles;
-    }
+
 }

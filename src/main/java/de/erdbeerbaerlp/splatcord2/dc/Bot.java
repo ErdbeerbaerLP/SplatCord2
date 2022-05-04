@@ -29,6 +29,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static net.dv8tion.jda.api.Permission.MANAGE_SERVER;
+
 public class Bot implements EventListener {
     public final JDA jda;
     @SuppressWarnings("FieldCanBeLocal")
@@ -67,7 +69,7 @@ public class Bot implements EventListener {
         return null;
     }
 
-    private CompletableFuture<Message> submitMessage(Message msg, Long channelId) throws InsufficientPermissionException{
+    private CompletableFuture<Message> submitMessage(Message msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return null;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
@@ -92,7 +94,7 @@ public class Bot implements EventListener {
         if (event instanceof UnavailableGuildJoinedEvent) {
             Main.iface.addServer(((UnavailableGuildJoinedEvent) event).getGuildIdLong());
         }
-        if(event instanceof GuildAvailableEvent){
+        if (event instanceof GuildAvailableEvent) {
             CommandRegistry.setCommands(((GuildAvailableEvent) event).getGuild());
         }
 
@@ -108,20 +110,26 @@ public class Bot implements EventListener {
             if (ev.getChannelType() != ChannelType.TEXT) return;
             final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
             if (cmd != null) {
-                if(!Main.iface.status.isDBAlive() && !(cmd.getName().equals("status") || cmd.getName().equals("support"))){
+                if (!Main.iface.status.isDBAlive() && !(cmd.getName().equals("status") || cmd.getName().equals("support"))) {
                     ev.reply(Main.translations.get(BotLanguage.ENGLISH).botLocale.databaseError).queue();
                     return;
                 }
                 final BaseCommand baseCmd = CommandRegistry.getCommandByName(cmd.getName());
-                if (baseCmd != null) baseCmd.execute(ev);
+                if (baseCmd != null)
+                    if ((baseCmd.requiresManageServer() && ev.getMember().hasPermission(MANAGE_SERVER)) ||!baseCmd.requiresManageServer())
+                        baseCmd.execute(ev);
+                else{
+                        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+                    ev.deferReply(true).setContent(lang.botLocale.noAdminPerms).queue();
+                    }
             }
         }
 
         //Update command permissions on role creation / permission change
-        if(event instanceof RoleUpdatePermissionsEvent){
+        if (event instanceof RoleUpdatePermissionsEvent) {
             CommandRegistry.setCommands(((RoleUpdatePermissionsEvent) event).getGuild());
         }
-        if(event instanceof RoleCreateEvent)
+        if (event instanceof RoleCreateEvent)
             CommandRegistry.setCommands(((RoleCreateEvent) event).getGuild());
     }
 
@@ -129,7 +137,7 @@ public class Bot implements EventListener {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isAdmin(Member m) {
         if (m == null) return false;
-        return m.hasPermission(Permission.MANAGE_SERVER);
+        return m.hasPermission(MANAGE_SERVER);
     }
 
     private static String getWeaponName(Locale lang, Weapons w) {
@@ -156,8 +164,8 @@ public class Bot implements EventListener {
                         .build()
                 ).build(),
                 channel);
-        if(submitMsg != null)
-        return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
+        if (submitMsg != null)
+            return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
         else return null;
     }
 
@@ -170,7 +178,7 @@ public class Bot implements EventListener {
         public void run() {
             while (true) {
                 final Config.Discord.Status s = Config.instance().discord.botStatus.get(presence);
-                jda.getPresence().setPresence(Main.iface.status.isDBAlive()?OnlineStatus.ONLINE:OnlineStatus.DO_NOT_DISTURB,Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + ""), s.streamingURL), false);
+                jda.getPresence().setPresence(Main.iface.status.isDBAlive() ? OnlineStatus.ONLINE : OnlineStatus.DO_NOT_DISTURB, Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + ""), s.streamingURL), false);
                 try {
                     //noinspection BusyWait
                     sleep(1000 * (r.nextInt(29) + 2));

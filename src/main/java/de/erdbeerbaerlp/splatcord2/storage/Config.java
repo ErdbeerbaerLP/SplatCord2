@@ -77,6 +77,8 @@ public class Config {
         public String token = "NOT SET";
         @TomlComment({"Bot status messages shown in discord", "","Type can be PLAYING, WATCHING, STREAMING (requires streamingURL), LISTENING, COMPETING"})
         public ArrayList<Status> botStatus = Discord.defaultStatuses;
+        @TomlComment("Server IDs allowed to use in-beta commands and features")
+        public ArrayList<String> betaServers = new ArrayList<>(Collections.singleton("0"));
     }
     public static class Database{
         @TomlComment("Database IP")

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class PrivateCommand extends BaseCommand {
 
     public PrivateCommand(Locale l) {
-        super("private", "l.botLocale.cmdPrivateDesc");
+        super("private", "This command is still unfinished");//l.botLocale.cmdPrivateDesc
 
         final SubcommandData join = new SubcommandData("join", "Joins a private room");
         join.addOption(OptionType.STRING, "id", "Room ID", true);
