@@ -107,5 +107,6 @@ public class EnglishBase {
             now = "Now",
             cmdRandomMode = "Generate random private battle mode",
             cmdRandomModeVersion = "Target splatoon version, Defaults to Splatoon 2",
-            cmdRandomPrivateMode = "Mode";
+            cmdRandomPrivateMode = "Mode",
+            cmdErrorBlacklistedChar = "Nice try, you cannot use '\" or \\ here!";
 }

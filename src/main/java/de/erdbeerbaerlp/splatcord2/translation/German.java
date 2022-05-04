@@ -94,5 +94,6 @@ public class German extends EnglishBase {
         cmdRandomMode = "Generiert einen zufälligen Privatkampf-Modus";
         cmdRandomModeVersion = "Ziel Splatoon-Version, Standart: Splatoon 2";
         cmdRandomPrivateMode = "Modus";
+        cmdErrorBlacklistedChar = "Netter versuch, du kannst '\" und \\ hier nicht verwenden!";
     }
 }

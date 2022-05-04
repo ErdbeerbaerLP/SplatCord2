@@ -68,12 +68,22 @@ public class EditProfileCommand extends BaseCommand {
                     } else {
                         String msg = "";
                         if (ev.getOption("nintendo-id") != null) {
-                            profile.wiiu_nnid = ev.getOption("nintendo-id").getAsString();
-                            msg += "Set NNID to " + ev.getOption("nintendo-id").getAsString() + "\n";
+                            String nnid = ev.getOption("nintendo-id").getAsString();
+                            if(hasForbiddenChars(nnid)){
+                                ev.reply(lang.botLocale.cmdErrorBlacklistedChar).queue();
+                                return;
+                            }
+                            profile.wiiu_nnid = nnid;
+                            msg += "Set NNID to " + nnid + "\n";
                         }
                         if (ev.getOption("pretendo-id") != null) {
-                            profile.wiiu_pnid = ev.getOption("pretendo-id").getAsString();
-                            msg += "Set PNID to " + ev.getOption("pretendo-id").getAsString() + "\n";
+                            String pnid = ev.getOption("pretendo-id").getAsString();
+                            if(hasForbiddenChars(pnid)){
+                                ev.reply(lang.botLocale.cmdErrorBlacklistedChar).queue();
+                                return;
+                            }
+                            profile.wiiu_pnid = pnid;
+                            msg += "Set PNID to " + pnid + "\n";
                         }
                         if ((profile.wiiu_nnid != null || profile.wiiu_pnid != null) && (!profile.wiiu_pnid.isBlank() || !profile.wiiu_pnid.isEmpty())) {
 

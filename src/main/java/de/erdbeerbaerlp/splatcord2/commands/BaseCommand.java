@@ -4,6 +4,9 @@ import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public abstract class BaseCommand extends CommandData {
     /**
      * Create an command builder.
@@ -23,5 +26,12 @@ public abstract class BaseCommand extends CommandData {
     public abstract boolean requiresManageServer();
 
     public abstract void execute(SlashCommandEvent ev);
+
+    private final Pattern forbiddenChars = Pattern.compile("['\"\\\\]");
+
+    public boolean hasForbiddenChars(String s){
+        Matcher matcher = forbiddenChars.matcher(s);
+        return matcher.find();
+    }
 
 }
