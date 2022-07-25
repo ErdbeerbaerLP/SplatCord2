@@ -12,6 +12,8 @@ public class Locale {
     public HashMap<String, GameRule> rules;
     public HashMap<String, Stage> coop_stages;
     public HashMap<Integer, Weapon> weapons;
+    public HashMap<Integer, SubWeapon> weapon_subs;
+    public HashMap<Integer, SpecialWeapon> weapon_specials;
     public HashMap<String, Weapon> coop_special_weapons;
     public HashMap<String, JsonElement> gear;
     public HashMap<Integer, Brand> brands;

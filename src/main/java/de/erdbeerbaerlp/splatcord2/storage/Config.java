@@ -50,6 +50,8 @@ public class Config {
     public Discord discord = new Discord();
     @TomlComment("MySQL Database settings")
     public Database database = new Database();
+    @TomlComment("Wii U keys used to download splatoon 1 schedules")
+    public WiiUKeys wiiuKeys = new WiiUKeys();
     @TomlComment("Do not edit theese vars, they are used by the bot itself to store stuff between restarts")
     public DoNotEdit doNotEdit = new DoNotEdit();
 
@@ -92,8 +94,15 @@ public class Config {
         @TomlComment("Database Name")
         public String dbName = "SplatcordDB";
     }
+    public static class WiiUKeys{
+        public String bossAesKey = "0";
+        public String bossHmacKey = "0";
+
+    }
     public static class DoNotEdit{
         public long lastSalmonTimestamp = 0;
         public long lastRotationTimestamp = 0;
+        public long lastS1Rotation = 0;
+        public long lastS3RotationTimestamp = 0;
     }
 }

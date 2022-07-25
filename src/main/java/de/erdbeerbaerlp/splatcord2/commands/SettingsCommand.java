@@ -8,18 +8,14 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class SettingsCommand extends BaseCommand {
@@ -67,7 +63,7 @@ public class SettingsCommand extends BaseCommand {
                         lang[0] = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
                         b.append(lang[0].botLocale.languageSetMessage).append("\n");
                         CommandRegistry.setCommands(guild);
-                        final long stageChannel = Main.iface.getStageChannel(guild.getIdLong());
+                        final long stageChannel = Main.iface.getS2StageChannel(guild.getIdLong());
                         if(stageChannel != 0){
                             MessageUtil.sendRotationFeed(guild.getIdLong(),stageChannel,ScheduleUtil.getCurrentRotation());
                         }

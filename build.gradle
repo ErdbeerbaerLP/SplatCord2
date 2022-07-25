@@ -37,6 +37,7 @@ dependencies {
     embed group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
     embed 'com.github.ErdbeerbaerLP:toml4j:wip-SNAPSHOT'
     embed group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
+    embed "com.fasterxml.jackson.core:jackson-databind:2.6.3"
 
 }
 jar {

@@ -3,35 +3,34 @@ package de.erdbeerbaerlp.splatcord2;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import de.erdbeerbaerlp.splatcord2.dc.Bot;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Byml;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import de.erdbeerbaerlp.splatcord2.util.wiiu.BossFileUtil;
+import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
@@ -41,14 +40,19 @@ public class Main {
     public static Bot bot = null;
     public static Instant startTime = null;
 
+    public static Byml s1rotations = null;
+
     public static boolean splatoon2inkStatus = false;
 
     public static final HashMap<BotLanguage, Locale> translations = new HashMap<>();
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     public static CoOpSchedules coop_schedules;
 
+    public static Map<String, Weapon> weaponData = new HashMap<>();
+
     public static void main(String[] args) throws Exception {
         Config.instance().loadConfig();
+
         try {
             iface = new DatabaseInterface();
         } catch (SQLException e) {
@@ -59,6 +63,16 @@ public class Main {
             e.printStackTrace();
         }
         if (iface == null) return;
+        System.out.println("Downloading Splat1 rotation data");
+
+        try {
+            s1rotations = BossFileUtil.getStageByml();
+        } catch (Exception e) {
+            System.err.println("Failed loading splatoon 1 rotations!");
+            e.printStackTrace();
+        }
+
+
         System.out.println("Downloading locales");
         for (BotLanguage l : BotLanguage.values()) {
             final URL lng = new URL("https://splatoon2.ink/data/locale/" + l.key + ".json");
@@ -70,6 +84,15 @@ public class Main {
             locale.botLocale = l.botLocale;
             translations.put(l, locale);
         }
+        System.out.println("Downloading Weapon Data");
+        final URL wpn = new URL("https://splatoon2.ink/data/weapons.json");
+        final HttpsURLConnection wpnConn = (HttpsURLConnection) wpn.openConnection();
+        wpnConn.setRequestProperty("User-Agent", USER_AGENT);
+        wpnConn.connect();
+        String out = new Scanner(wpnConn.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
+        Type mapType = new TypeToken<Map<String, Weapon>>() {
+        }.getType();
+        weaponData = gson.fromJson(new StringReader(out), mapType);
         try {
             bot = new Bot();
         } catch (LoginException e) {
@@ -90,13 +113,29 @@ public class Main {
 
         while (true) {
             final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
+            final int currentS1RotationInt = RotationTimingUtil.getRotationForInstant(Instant.now());
+            final Phase currentS1Rotation = s1rotations.root.Phases[currentS1RotationInt];
+
+            //Splatoon 1 Rotations
+            if (iface.status.isDBAlive() && currentS1RotationInt != Config.instance().doNotEdit.lastS1Rotation) {
+                iface.getAllS1MapChannels().forEach((serverid, channel) -> {
+                    try {
+                        MessageUtil.sendRotationFeed(serverid, channel, currentS1Rotation);
+                    } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                        e.printStackTrace();
+                    }
+                });
+                Config.instance().doNotEdit.lastS1Rotation = currentS1RotationInt;
+                Config.instance().saveConfig();
+            }
+
 
             //Map rotation data
             if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
-                iface.getAllMapChannels().forEach((serverid, channel) -> {
+                iface.getAllS2MapChannels().forEach((serverid, channel) -> {
                     try {
                         MessageUtil.sendRotationFeed(serverid, channel, currentRotation);
-                    }catch(Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                    } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();
                     }
                 });
@@ -128,7 +167,7 @@ public class Main {
                     iface.getAllSalmonChannels().forEach((serverid, channel) -> {
                         try {
                             MessageUtil.sendSalmonFeed(serverid, channel);
-                        }catch(Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     });
@@ -145,6 +184,12 @@ public class Main {
                 } catch (IOException | JsonParseException e) {
                     e.printStackTrace();
                     splatoon2inkStatus = false;
+                }
+                try {
+                    s1rotations = BossFileUtil.getStageByml();
+                } catch (Exception e) {
+                    System.err.println("Failed loading splatoon 1 rotations!");
+                    e.printStackTrace();
                 }
                 TimeUnit.MINUTES.sleep(2);
             }

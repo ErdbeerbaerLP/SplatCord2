@@ -94,6 +94,49 @@ public class German extends EnglishBase {
         cmdRandomMode = "Generiert einen zufälligen Privatkampf-Modus";
         cmdRandomModeVersion = "Ziel Splatoon-Version, Standart: Splatoon 2";
         cmdRandomPrivateMode = "Modus";
+        weaponSpecial = "Spezialwaffe";
+        weaponSub = "Sekundärwaffe";
+        cmdRandomNumMin = "Kleinste zu generierende Zahl (inklusiv). 0 wenn nicht angegeben";
+        cmdRandomNumMax = "Größte zu generierende Zahl (inklusiv)";
+        cmdRandomNumMinMaxError = "Die kleinste Zahl kann nicht größer sein als die größte Zahl. Eingegebene Zahlen wurde für dich getauscht...\n\n";
         cmdErrorBlacklistedChar = "Netter versuch, du kannst '\" und \\ hier nicht verwenden!";
+    }
+
+    @Override
+    public String getS1MapName(int mapid) {
+        switch(mapid){
+            case 0:
+                return "Dekabahnstation";
+            case 1:
+                return "Kofferfisch-Lager";
+            case 2:
+                return "Bohrinsel Nautilus";
+            case 3:
+                return "Arowana-Center";
+            case 4:
+                return "Punkasius-Skatepark";
+            case 5:
+                return "Camp Schützenfisch";
+            case 6:
+                return "Heilbutt-Hafen";
+            case 7:
+                return "Tümmlerkuppel";
+            case 8:
+                return "Muränentürme";
+            case 9:
+                return "Blauflossen-Depot";
+            case 10:
+                return "Makrelenbrücke";
+            case 11:
+                return "Schollensiedlung";
+            case 12:
+                return "Pinakoithek";
+            case 13:
+                return "Anchobit Games HQ";
+            case 14:
+                return "Steinköhler-Grube";
+            default:
+                return super.getS1MapName(mapid);
+        }
     }
 }

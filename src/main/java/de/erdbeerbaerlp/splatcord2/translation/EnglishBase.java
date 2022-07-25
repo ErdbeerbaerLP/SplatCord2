@@ -108,5 +108,49 @@ public class EnglishBase {
             cmdRandomMode = "Generate random private battle mode",
             cmdRandomModeVersion = "Target splatoon version, Defaults to Splatoon 2",
             cmdRandomPrivateMode = "Mode",
+            weaponSub = "Sub",
+            weaponSpecial = "Special",
+            cmdRandomNumMin = "Smallest possible number to be generated (inclusive), defaults to 0",
+            cmdRandomNumMax = "Largest number to be generated (inclusive)",
+            cmdRandomNumMinMaxError = "Minimum number cannot be larger than maximum number! Swapping the entered numbers for you...\n\n",
             cmdErrorBlacklistedChar = "Nice try, you cannot use '\" or \\ here!";
+    public String getS1MapName(int mapid){
+        switch(mapid){
+            case 0:
+                return "Urchin Underpass";
+            case 1:
+                return "Walleye Warehouse";
+            case 2:
+                return "Saltspray Rig";
+            case 3:
+                return "Arowana Mall";
+            case 4:
+                return "Blackbelly Skatepark";
+            case 5:
+                return "Camp Triggerfish";
+            case 6:
+                return "Port Mackerel";
+            case 7:
+                return "Kelp Dome";
+            case 8:
+                return "Moray Towers";
+            case 9:
+                return "Bluefin Depot";
+            case 10:
+                return "Hammerhead Bridge";
+            case 11:
+                return "Flounder Heights";
+            case 12:
+                return "Museum d'Alfonsino";
+            case 13:
+                return "Ancho-V Games";
+            case 14:
+                return "Piranha Pit";
+            case 15:
+                return "Mahi-Mahi Resort";
+            default:
+                return "Unknown Map #"+mapid;
+        }
+    }
+
 }

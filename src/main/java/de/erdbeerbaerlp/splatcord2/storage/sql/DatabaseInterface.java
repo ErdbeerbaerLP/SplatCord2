@@ -29,6 +29,7 @@ public class DatabaseInterface implements AutoCloseable {
                 "`serverid` bigint not null COMMENT 'Discord Server ID',\n" +
                 "`lang` int default 0 not null COMMENT 'Language ID',\n" +
                 "`mapchannel` bigint null COMMENT 'Channel ID for automatic Splatoon 2 map rotation updates',\n" +
+                "`s1mapchannel` bigint null COMMENT 'Channel ID for automatic Splatoon 1 map rotation updates',\n" +
                 "`salchannel` bigint null COMMENT 'Channel ID for automatic Salmon Run rotation updates',\n" +
                 "`lastSalmon` bigint null COMMENT 'Message ID of last salmon run update message',\n" +
                 "`lastStage2` bigint null COMMENT 'Message ID of last Splatoon 2 Stage Notification',\n" +
@@ -116,7 +117,7 @@ public class DatabaseInterface implements AutoCloseable {
 
     public boolean deleteRoom(long room){
         runUpdate("DELETE FROM privaterooms WHERE `roomid` = "+room);
-        runUpdate("UPDATE users SET `pb-id` = replace(`pbid`,"+ room+",0) WHERE `pb-id` = "+room);
+        runUpdate("UPDATE users SET `pb-id` = replace(`pb-id`,"+ room+",0) WHERE `pb-id` = "+room);
         return true;
     }
     public void setPlayerRoom(long room, long user){
@@ -219,8 +220,18 @@ public class DatabaseInterface implements AutoCloseable {
         return true;
     }
 
-    public long getStageChannel(long serverID) {
+    public long getS2StageChannel(long serverID) {
         try (final ResultSet res = query("SELECT mapchannel FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public long getS1StageChannel(long serverID) {
+        try (final ResultSet res = query("SELECT s1mapchannel FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
             }
@@ -245,10 +256,27 @@ public class DatabaseInterface implements AutoCloseable {
     public void setS2StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
+    public void setS1StageChannel(long serverID, Long channelID) {
+        runUpdate("UPDATE servers SET s1mapchannel = " + channelID + " WHERE serverid = " + serverID);
+    }
 
-    public HashMap<Long, Long> getAllMapChannels() {
+    public HashMap<Long, Long> getAllS2MapChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,mapchannel FROM servers")) {
+            while (res != null && res.next()) {
+                final long serverid = res.getLong(1);
+                final long channelid = res.getLong(2);
+                if (!res.wasNull())
+                    mapChannels.put(serverid, channelid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapChannels;
+    }
+    public HashMap<Long, Long> getAllS1MapChannels() {
+        final HashMap<Long, Long> mapChannels = new HashMap<>();
+        try (final ResultSet res = query("SELECT serverid,s1mapchannel FROM servers")) {
             while (res != null && res.next()) {
                 final long serverid = res.getLong(1);
                 final long channelid = res.getLong(2);
