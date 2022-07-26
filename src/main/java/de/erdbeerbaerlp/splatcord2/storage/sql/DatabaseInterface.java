@@ -296,8 +296,11 @@ public class DatabaseInterface implements AutoCloseable {
     public void setSalmonMessage(long serverID, Long messageID) {
         runUpdate("UPDATE servers SET lastSalmon = " + messageID + " WHERE serverid = " + serverID);
     }
-    public void setLastRotationMessage(long serverID, long msgID) {
+    public void setLastS2RotationMessage(long serverID, long msgID) {
         runUpdate("UPDATE servers SET lastStage2 = " + msgID + " WHERE serverid = " + serverID);
+    }
+    public void setLastS1RotationMessage(long serverID, long msgID) {
+        runUpdate("UPDATE servers SET lastStage1 = " + msgID + " WHERE serverid = " + serverID);
     }
 
     public HashMap<Long, Long> getAllSalmonChannels() {

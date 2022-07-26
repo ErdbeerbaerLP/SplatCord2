@@ -73,7 +73,7 @@ public class MessageUtil {
                     getMapMessage(
                             serverid,
                             currentRotation), channel);
-            if (msg != null) msg.thenAccept((a) -> iface.setLastRotationMessage(serverid, a.getIdLong()));
+            if (msg != null) msg.thenAccept((a) -> iface.setLastS2RotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
             Guild guildById = bot.jda.getGuildById(serverid);
@@ -137,7 +137,7 @@ public class MessageUtil {
                     getMapMessage(
                             serverid,
                             currentS1Rotation), channel);
-            if (msg != null) msg.thenAccept((a) -> iface.setLastRotationMessage(serverid, a.getIdLong()));
+            if (msg != null) msg.thenAccept((a) -> iface.setLastS1RotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
             Guild guildById = bot.jda.getGuildById(serverid);
