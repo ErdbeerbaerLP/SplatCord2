@@ -22,7 +22,6 @@ public class RotationTimingUtil {
 
     public static long getNextRotationStart(long input){
         long s = TimeUnit.MILLISECONDS.toHours(input)- TimeUnit.MILLISECONDS.toHours(BASE_TIMESTAMP);
-        System.out.println(s%4d);
         final long l = TimeUnit.HOURS.toMillis((long) (s - (s % 4d)));
         return BASE_TIMESTAMP+l+rotationIncrement;
     }

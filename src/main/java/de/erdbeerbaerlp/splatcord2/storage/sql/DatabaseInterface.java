@@ -329,8 +329,19 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return salmonMessages;
     }
-    public long getLastRotationMessage(long serverID) {
+    public long getLastS2RotationMessage(long serverID) {
         try (final ResultSet res = query("SELECT lastStage2 FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public long getLastS1RotationMessage(long serverID) {
+        try (final ResultSet res = query("SELECT lastStage1 FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
             }

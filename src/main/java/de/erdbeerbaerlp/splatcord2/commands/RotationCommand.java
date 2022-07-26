@@ -45,7 +45,7 @@ public class RotationCommand extends BaseCommand {
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(),1)]);
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(),2)]);
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(),3)]);
-                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle);
+                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle+ "(Splatoon 1)");
                     addS1Rotation(future, currentS1Rotation, lang, -1);
                     future.addBlankField(false);
                     long time = Instant.now().toEpochMilli();
@@ -62,7 +62,7 @@ public class RotationCommand extends BaseCommand {
                     final Rotation currentS2Rotation = ScheduleUtil.getCurrentRotation();
                     final ArrayList<Rotation> nextS2Rotations = ScheduleUtil.getNext3Rotations();
 
-                    final EmbedBuilder s2EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle);
+                    final EmbedBuilder s2EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle+ "(Splatoon 2)");
                     addS2Rotation(s2EmbedBuilder, currentS2Rotation, lang, true);
                     s2EmbedBuilder.addBlankField(false);
                     for (int i = 0; i < nextS2Rotations.size(); i++) {

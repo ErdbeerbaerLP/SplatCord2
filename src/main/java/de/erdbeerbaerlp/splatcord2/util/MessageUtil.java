@@ -61,7 +61,7 @@ public class MessageUtil {
             return;
         }
         try {
-            final long lastRotationMessageID = iface.getLastRotationMessage(serverid);
+            final long lastRotationMessageID = iface.getLastS2RotationMessage(serverid);
             final boolean deleteMessage = iface.getDeleteMessage(serverid);
             if (deleteMessage && lastRotationMessageID != 0) {
                 final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
@@ -83,7 +83,7 @@ public class MessageUtil {
 
     public static Message getMapMessage(Long serverid, Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
+        return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 2)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.stages.get(r.getRegular().stage_a.id).getName() +
@@ -103,7 +103,7 @@ public class MessageUtil {
     }
     public static Message getMapMessage(Long serverid, Phase currentRotation) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle)
+        return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 1)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
@@ -121,11 +121,11 @@ public class MessageUtil {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
-            iface.setS2StageChannel(serverid, null);
+            iface.setS1StageChannel(serverid, null);
             return;
         }
         try {
-            final long lastRotationMessageID = iface.getLastRotationMessage(serverid);
+            final long lastRotationMessageID = iface.getLastS1RotationMessage(serverid);
             final boolean deleteMessage = iface.getDeleteMessage(serverid);
             if (deleteMessage && lastRotationMessageID != 0) {
                 final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
