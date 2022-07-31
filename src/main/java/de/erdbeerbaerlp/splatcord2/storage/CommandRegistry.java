@@ -52,9 +52,6 @@ public class CommandRegistry {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(g.getIdLong()));
         final ArrayList<BaseCommand> commands = new ArrayList<>();
         for (Class<? extends BaseCommand> clazz : baseCommandClasses) {
-            if(clazz == PrivateCommand.class ){
-                if(!Config.instance().discord.betaServers.contains(g.getId())) continue;
-            }
             try {
                 BaseCommand cmd = clazz.getConstructor(Locale.class).newInstance(lang);
                 BaseCommand cmdByName = getCommandByName(cmd.getName());

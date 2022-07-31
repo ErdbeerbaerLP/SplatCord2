@@ -100,11 +100,24 @@ public class German extends EnglishBase {
         cmdRandomNumMax = "Größte zu generierende Zahl (inklusiv)";
         cmdRandomNumMinMaxError = "Die kleinste Zahl kann nicht größer sein als die größte Zahl. Eingegebene Zahlen wurde für dich getauscht...\n\n";
         cmdErrorBlacklistedChar = "Netter versuch, du kannst '\" und \\ hier nicht verwenden!";
+        cmdPrivateDesc = "Erstelle private Räume und generiere zufällige Matches mit ihnen";
+        cmdPrivateNotEnoughPlayers = "Nicht genügend Spieler im Raum. Du benötigst mindestens 2 Spieler!";
+        cmdPrivateNotOwning = "Du besitzt keinen privaten Raum";
+        cmdPrivateError = "Bei der Ausführung des Befehls ist ein fehler aufgetreten :/";
+        cmdPrivateRoomCreated = "Raum erfolgreich erstellt!";
+        cmdPrivateCannotLeaveOwn = "Du kannst deinen eigenen Raum nicht verlassen. Verwende /private delete um ihn zu löschen";
+        cmdPrivateLeave = "Raum verlassen";
+        cmdPrivateInvalidIDFormat = "ID hat ein ungültiges Format!";
+        cmdPrivateJoin = "Raum betreten";
+        cmdPrivateFull = "Dieser Raum ist momentan voll";
+        cmdPrivateNonExisting = "Dieser Raum existiert nicht";
+        cmdPrivateDeleted = "Raum erfolgreich gelöscht";
+        cmdPrivateRoomID = "Raum ID";
     }
 
     @Override
     public String getS1MapName(int mapid) {
-        switch(mapid){
+        switch (mapid) {
             case 0:
                 return "Dekabahnstation";
             case 1:

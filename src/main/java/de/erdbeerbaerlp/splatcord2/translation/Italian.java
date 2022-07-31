@@ -82,4 +82,44 @@ public class Italian extends EnglishBase {
         cmdProfileMissingFC = "Non hai ancora impostato un Codice amico Switch.";
         cmdProfileFCSet = "Codice amico impostato a ";
     }
+
+    @Override
+    public String getS1MapName(int mapid){
+        switch(mapid){
+            case 0:
+                return "Periferia urbana";
+            case 1:
+                return "Magazzino";
+            case 2:
+                return "Raffineria";
+            case 3:
+                return "Centro commerciale";
+            case 4:
+                return "Pista Polposkate";
+            case 5:
+                return "Campeggio Totan";
+            case 6:
+                return "Porto Polpo";
+            case 7:
+                return "Serra di alghe";
+            case 8:
+                return "Torri cittadine";
+            case 9:
+                return "Molo Mollusco";
+            case 10:
+                return "Ponte Sgombro";
+            case 11:
+                return "Cime sogliolose";
+            case 12:
+                return "Museo di Cefalò";
+            case 13:
+                return "Acciugames";
+            case 14:
+                return "Miniera d'Orata";
+            case 15:
+                return "Villanguilla";
+            default:
+                return super.getS1MapName(mapid);
+        }
+    }
 }

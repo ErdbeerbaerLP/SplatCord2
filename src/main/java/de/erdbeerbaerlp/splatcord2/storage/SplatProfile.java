@@ -8,6 +8,7 @@ public class SplatProfile {
     public String wiiu_nnid, wiiu_pnid;
     public long switch_fc = -1;
 
+    public long pbID = 0;
     public Splat2Profile splat2Profile = new Splat2Profile();
     public Splat1Profile splat1Profile = new Splat1Profile();
 

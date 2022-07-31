@@ -59,7 +59,7 @@ public class DatabaseInterface implements AutoCloseable {
 
     public SplatProfile getSplatoonProfiles(long userID) {
         final SplatProfile profile = new SplatProfile(userID);
-        try (final ResultSet res = query("SELECT `wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile` FROM users WHERE `id` = " + userID)) {
+        try (final ResultSet res = query("SELECT `wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`pb-id` FROM users WHERE `id` = " + userID)) {
             while (res != null && res.next()) {
                 if (res.wasNull())
                     return profile;
@@ -72,6 +72,7 @@ public class DatabaseInterface implements AutoCloseable {
                 if(splat2str == null) splat2str = "{}";
                 profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(splat1str).next().getAsJsonObject());
                 profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(splat2str).next().getAsJsonObject());
+                profile.pbID = res.getLong(6);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,7 +81,7 @@ public class DatabaseInterface implements AutoCloseable {
     }
 
     public void updateSplatProfile(SplatProfile profile) {
-        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', null)");
+        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', null,"+profile.pbID+")");
     }
     public long getUserRoom(long user){
         try (final ResultSet res = query("SELECT `pb-id` FROM users WHERE id = " + user)){
@@ -111,7 +112,7 @@ public class DatabaseInterface implements AutoCloseable {
     public boolean createNewPBRoom(long room, short gameVersion, long roomOwner){
         if(getOwnedRoom(room) == -1 ) return false;
         runUpdate("INSERT INTO privaterooms (`roomid`, `gamever`, `roomowner`) VALUES ("+room+", "+gameVersion+", "+roomOwner+ ")");
-        runUpdate("REPLACE INTO users (`id`,`pb-id`) VALUES (" + roomOwner + ", "+ room+ ")");
+        runUpdate("INSERT INTO users (`id`,`pb-id`) VALUES (" + roomOwner + ", "+ room+ ") ON DUPLICATE KEY UPDATE `pb-id` =VALUES(`pb-id`)");
         return true;
     }
 
@@ -121,7 +122,7 @@ public class DatabaseInterface implements AutoCloseable {
         return true;
     }
     public void setPlayerRoom(long room, long user){
-        runUpdate("REPLACE INTO users (`id`,`pb-id`) VALUES (" + user + ", "+ room+ ")");
+        runUpdate("INSERT INTO users (`id`,`pb-id`) VALUES (" + user + ", "+ room+ ") ON DUPLICATE KEY UPDATE `pb-id` =VALUES(`pb-id`)");
     }
 
     public boolean roomExists(long room) {
