@@ -114,7 +114,7 @@ public class MessageUtil {
                         lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
                                 ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
                         , true)
-                .build()).build();
+                .setFooter("Note that this might be wrong. If that's the case, please be patient until I fixed this").build()).build();
     }
 
     public static void sendRotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {

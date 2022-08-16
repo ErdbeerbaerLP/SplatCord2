@@ -182,28 +182,22 @@ public class BossFileUtil {
         final HttpsURLConnection conn = (HttpsURLConnection) rotationURL.openConnection();
         SSLBypass.allowAllSSL(conn);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        InputStream is = null;
-        try {
-            is = conn.getInputStream();
+        try (InputStream is = conn.getInputStream()) {
             byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
             int n;
 
-            while ( (n = is.read(byteChunk)) > 0 ) {
+            while ((n = is.read(byteChunk)) > 0) {
                 baos.write(byteChunk, 0, n);
             }
-        }
-        catch (IOException e) {
-            System.err.printf ("Failed while reading bytes from %s: %s", rotationURL.toExternalForm(), e.getMessage());
-            e.printStackTrace ();
-        }
-        finally {
-            if (is != null) { is.close(); }
+        } catch (IOException e) {
+            System.err.printf("Failed while reading bytes from %s: %s", rotationURL.toExternalForm(), e.getMessage());
+            e.printStackTrace();
         }
 
 
 
         final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
-        final File boss = File.createTempFile("boss", ".byml");
+        final File boss = new File("./boss.byml");
         try (final FileOutputStream os = new FileOutputStream(boss)) {
             os.write(test.content);
         } catch (IOException e) {

@@ -55,6 +55,7 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS1Rotations.size() - 1)
                             future.addBlankField(false);
                     }
+                    future.setFooter("Note that this might be wrong. If that's the case, please be patient until I fixed this");
                     ev.replyEmbeds(future.build()).queue();
 
                     break;
