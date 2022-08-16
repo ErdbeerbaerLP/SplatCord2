@@ -31,7 +31,7 @@ public class RotationTimingUtil {
     }
 
     private static int getRotationForLong(long l){
-        final int length = 180;
+        final int length = 179;
         long offset = l / rotationIncrement;
         while (offset+BASE_INDEX >= length) {
             offset-=length;
