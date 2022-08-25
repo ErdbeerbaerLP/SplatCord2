@@ -18,13 +18,14 @@ public class ViewProfileCommand extends BaseCommand {
         super("profile", l.botLocale.cmdProfileDesc);
         final SubcommandData splat1 = new SubcommandData("splat1", l.botLocale.cmdProfile1Desc);
         final SubcommandData splat2 = new SubcommandData("splat2", l.botLocale.cmdProfile2Desc);
-        //SubcommandData splat3 = new SubcommandData("splat3",l.botLocale.cmdProfile3Desc);
+        SubcommandData splat3 = new SubcommandData("splat3", l.botLocale.cmdProfile3Desc);
 
         OptionData user = new OptionData(OptionType.USER, "user", l.botLocale.cmdProfileUserDesc, false);
         splat1.addOptions(user);
         splat2.addOptions(user);
+        splat3.addOptions(user);
 
-        addSubcommands(splat2, splat1);
+        addSubcommands(splat2, splat1, splat3);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class ViewProfileCommand extends BaseCommand {
 
                         ev.replyEmbeds(b.build()).queue();
                     } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingNID.replace("%s",m.getEffectiveName())).queue();
+                        ev.reply(lang.botLocale.cmdProfileMissingNID.replace("%s", m.getEffectiveName())).queue();
                     }
                     break;
                 case "splat2":
@@ -84,7 +85,26 @@ public class ViewProfileCommand extends BaseCommand {
 
                         ev.replyEmbeds(b.build()).queue();
                     } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s",m.getEffectiveName())).queue();
+                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).queue();
+                    }
+                    break;
+                case "splat3":
+                    if (profile.switch_fc != -1) {
+                        final EmbedBuilder b = new EmbedBuilder();
+                        if (profile.splat3Profile.getName() != null && !profile.splat3Profile.getName().isBlank())
+                            b.setTitle(profile.splat3Profile.getName() + "'s Splatoon 3 Profile");
+                        else
+                            b.setTitle(m.getEffectiveName() + "'s Splatoon 3 Profile");
+                        b.addField(lang.botLocale.cmdProfileLevel, profile.splat3Profile.getLevel(), true);
+                        b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
+                        b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
+                        b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.getSplatfestTeam(profile.splat3Profile.splatfestTeam), true);
+                        String footer = "Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc);
+                        b.setFooter(footer);
+
+                        ev.replyEmbeds(b.build()).queue();
+                    } else {
+                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).queue();
                     }
                     break;
                 default:

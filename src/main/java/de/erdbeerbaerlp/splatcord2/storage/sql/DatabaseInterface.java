@@ -6,6 +6,7 @@ import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -70,9 +71,12 @@ public class DatabaseInterface implements AutoCloseable {
                 if(splat1str == null) splat1str = "{}";
                 String splat2str = res.getString(5);
                 if(splat2str == null) splat2str = "{}";
+                String splat3str = res.getString(6);
+                if(splat3str == null) splat3str = "{}";
                 profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(splat1str).next().getAsJsonObject());
                 profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(splat2str).next().getAsJsonObject());
-                profile.pbID = res.getLong(6);
+                profile.splat3Profile = Splat3Profile.fromJson(new JsonStreamParser(splat3str).next().getAsJsonObject());
+                profile.pbID = res.getLong(7);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -81,7 +85,7 @@ public class DatabaseInterface implements AutoCloseable {
     }
 
     public void updateSplatProfile(SplatProfile profile) {
-        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', null,"+profile.pbID+")");
+        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '"+profile.splat3Profile.toJson().toString() +"',"+profile.pbID+")");
     }
     public long getUserRoom(long user){
         try (final ResultSet res = query("SELECT `pb-id` FROM users WHERE id = " + user)){

@@ -48,7 +48,7 @@ public class EnglishBase {
     public String cmdSalmonDesc = "Shows current and next salmon run";
     public String cmdSplatnetDesc = "Shows what is currently available on SplatNet Gear Shop";
     public String databaseError = "The database is currently down. If this issue persists, contact developer"; //Never shows up in other languages
-            public String cmdStatusDB = "Database";
+    public String cmdStatusDB = "Database";
     public String online = "Online";
     public String offline = "Offline";
     public String cmdStatusDesc = "Shows bot status and statistics";
@@ -69,13 +69,14 @@ public class EnglishBase {
     public String cmdProfileRankFormatNotValid = "Rank format is not valid!";
     public String cmdProfileS1RankSet = "Your Splatoon 1 rank was set to %rank%";
     public String cmdProfileS2RankSet = "Your %mode% rank was set to %rank%";
-    public String cmdProfileS2SalmonSet = "Your Salmon Run title was set to %title%";
+    public String cmdProfileS2SalmonSet = "Your Splatoon 2 Salmon Run title was set to %title%";
+    public String cmdProfileS3SalmonSet = "Your Splatoon 3 Salmon Run title was set to %title%";
     public String cmdProfileSwitchFCDesc = "Your Switch Friend Code";
     public String cmdProfileNNIDDesc = "Your Nintendo Network ID";
     public String cmdProfilePNIDDesc = "Your Pretendo Network ID";
     public String cmdProfileLevelDesc = "Your in-game level";
     public String cmdProfileNameDesc = "Your in-game name";
-    public String cmdProfileRankDesc = "Your Splatoon Rank (Examples: C-, B, A+ 20, S+99)";
+    public String cmdProfileRankDesc = "Your Splatoon Rank (Examples: C-, B, A+, S+5)";
     public String cmdProfileRank2Desc = "Your Splatoon 2 %mode% Rank (Examples: C-, B, S+4, X 2000)";
     public String salmonRunTitleUnset = "Intern";
     public String salmonRunTitleApprentice = "Apprentice";
@@ -84,6 +85,7 @@ public class EnglishBase {
     public String salmonRunTitleOverachiever = "Overachiever";
     public String salmonRunTitleProfreshional = "Profreshional";
     public String cmdProfileRank = "Rank";
+    public String cmdProfileSplatfest = "Splatfest Team";
     public String cmdProfileLevel = "Level";
     public String cmdProfileSRTitleDesc = "Your Salmon Run Title";
     public String cmdProfileSRTitle = "Salmon Run Title";
@@ -127,9 +129,12 @@ public class EnglishBase {
     public String cmdPrivateNonExisting = "This room does not exist";
     public String cmdPrivateDeleted = "Room deleted successfully";
     public String cmdPrivateRoomID = "Room ID";
+    public String cmdProfileS3RankSet = "Your rank was set to %rank%";
+    public String cmdProfileLevel3Set = "Splatoon 3 level set to ";
+    public String cmdProfileSplatfestSet = "Splatfest team set to ";
 
-    public String getS1MapName(int mapid){
-        switch(mapid){
+    public String getS1MapName(int mapid) {
+        switch (mapid) {
             case 0:
                 return "Urchin Underpass";
             case 1:
@@ -163,8 +168,49 @@ public class EnglishBase {
             case 15:
                 return "Mahi-Mahi Resort";
             default:
-                return "Unknown Map #"+mapid;
+                return "Unknown Map #" + mapid;
         }
     }
 
+    public String getS3MapName(int mapid) {
+        switch (mapid) {
+            default: return null;
+        }
+    }
+    public String getS3SRTitle(int title) {
+        switch (title) {
+            case 0:
+                return "Apprentice";
+            case 1:
+                return "Part-Timer";
+            case 2:
+                return "Go-Getter";
+            case 3:
+                return "Overachiever";
+            case 4:
+                return "Profreshional";
+            case 5:
+                return "Profreshional +1";
+            case 6:
+                return "Profreshional +2";
+            case 7:
+                return "Profreshional +3";
+            case 8:
+            default:
+                return "Eggsecutive VP";
+        }
+    }
+
+
+    public String getSplatfestTeam(int id) {
+        switch (id) {
+            case 1:
+                return "Rock";
+            case 2:
+                return "Paper";
+            case 3:
+                return "Scissors";
+            default: return "Unset";
+        }
+    }
 }

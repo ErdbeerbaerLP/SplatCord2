@@ -1,16 +1,14 @@
-package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2;
+package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3;
 
 import com.google.gson.JsonObject;
 
-public class Splat2Profile {
+public class Splat3Profile {
     int level = 1;
     int stars = 0;
     String name;
-    public Rank rainmaker = new Rank("c-");
-    public Rank splatzones = new Rank("c-");
-    public Rank towercontrol = new Rank("c-");
-    public Rank clamblitz = new Rank("c-");
+    public Rank rank = new Rank("c-");
     public int srTitle = 0;
+    public int splatfestTeam = 0;
 
     public static class Rank {
         public enum RankEnum {
@@ -24,8 +22,7 @@ public class Splat2Profile {
             Aplus("a+"),
             A("a"),
             Splus("s+"),
-            S("s"),
-            X("x");
+            S("s");
             String identifier;
 
             RankEnum(String s) {
@@ -34,7 +31,6 @@ public class Splat2Profile {
         }
 
         private final RankEnum rank;
-        private int power = -1;
         private int splusnum = 0;
 
         public Rank(String s) throws IllegalArgumentException {
@@ -51,13 +47,7 @@ public class Splat2Profile {
             try {
                 if (rank == RankEnum.Splus) {
                     final int i = Integer.parseInt(s.replace(RankEnum.Splus.identifier, "").trim());
-                    if (i >= 0 && i <= 9) splusnum = i;
-                } else if (rank == RankEnum.X) {
-                    final String trim = s.replace(RankEnum.X.identifier, "").trim();
-                    if (!trim.isBlank()) {
-                        final int i = Integer.parseInt(trim);
-                        if (i >= 0) power = i;
-                    }
+                    if (i >= 0 && i <= 50) splusnum = i;
                 }
             } catch (NumberFormatException ignored) {
             }
@@ -68,8 +58,6 @@ public class Splat2Profile {
             String s = rank.identifier.toUpperCase();
             if (rank == RankEnum.Splus) {
                 s += splusnum;
-            } else if (rank == RankEnum.X && power != -1) {
-                s += " (" + power + ")";
             }
             return s;
         }
@@ -106,23 +94,19 @@ public class Splat2Profile {
         json.addProperty("srtitle", srTitle);
         json.addProperty("stars", stars);
         json.addProperty("name", name);
-        json.addProperty("rainmaker", rainmaker.toString().replace("(", "").replace(")", ""));
-        json.addProperty("splatzones", splatzones.toString().replace("(", "").replace(")", ""));
-        json.addProperty("towercontrol", towercontrol.toString().replace("(", "").replace(")", ""));
-        json.addProperty("clamblitz", clamblitz.toString().replace("(", "").replace(")", ""));
+        json.addProperty("rank", rank.toString().replace("(", "").replace(")", ""));
+        json.addProperty("splatfest", splatfestTeam);
         return json;
     }
 
-    public static Splat2Profile fromJson(JsonObject obj) {
-        final Splat2Profile profile = new Splat2Profile();
+    public static Splat3Profile fromJson(JsonObject obj) {
+        final Splat3Profile profile = new Splat3Profile();
         if (obj.get("level") != null) profile.level = obj.get("level").getAsInt();
         if (obj.get("srtitle") != null) profile.srTitle = obj.get("srtitle").getAsInt();
-        if (obj.get("rainmaker") != null) profile.rainmaker = new Rank(obj.get("rainmaker").getAsString());
-        if (obj.get("splatzones") != null) profile.splatzones = new Rank(obj.get("splatzones").getAsString());
-        if (obj.get("towercontrol") != null) profile.towercontrol = new Rank(obj.get("towercontrol").getAsString());
-        if (obj.get("clamblitz") != null) profile.clamblitz = new Rank(obj.get("clamblitz").getAsString());
+        if (obj.get("rank") != null) profile.rank = new Rank(obj.get("rank").getAsString());
         if (obj.get("stars") != null) profile.stars = obj.get("stars").getAsInt();
         if (obj.get("name") != null && !obj.get("name").isJsonNull()) profile.name = obj.get("name").getAsString();
+        if (obj.get("splatfest") != null && !obj.get("splatfest").isJsonNull()) profile.splatfestTeam = obj.get("splatfest").getAsInt();
         return profile;
     }
 

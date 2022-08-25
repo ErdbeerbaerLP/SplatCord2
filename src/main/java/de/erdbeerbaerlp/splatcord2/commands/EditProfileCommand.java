@@ -5,6 +5,7 @@ import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -17,7 +18,7 @@ public class EditProfileCommand extends BaseCommand {
         super("editprofile", l.botLocale.cmdEditProfileDesc);
         final SubcommandData splat1 = new SubcommandData("splat1", l.botLocale.cmdEditProfile1Desc);
         final SubcommandData splat2 = new SubcommandData("splat2", l.botLocale.cmdEditProfile2Desc);
-        //SubcommandData splat3 = new SubcommandData("splat3",l.botLocale.cmdEditProfile3Desc);
+        final SubcommandData splat3 = new SubcommandData("splat3", l.botLocale.cmdEditProfile3Desc);
 
 
         //Common
@@ -27,27 +28,46 @@ public class EditProfileCommand extends BaseCommand {
         final OptionData splatlevel = new OptionData(OptionType.INTEGER, "level", l.botLocale.cmdProfileLevelDesc, false);
         final OptionData splatname = new OptionData(OptionType.STRING, "name", l.botLocale.cmdProfileNameDesc, false);
 
-        //Splatoon 1 only
+        //Splatoon 1 and 3 only
         final OptionData rank = new OptionData(OptionType.STRING, "rank", l.botLocale.cmdProfileRankDesc, false);
 
 
         //Splatoon 2 only
-        final OptionData rainmaker = new OptionData(OptionType.STRING, "rainmaker", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("rainmaker").name), false);
-        final OptionData splatzones = new OptionData(OptionType.STRING, "splatzones", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("splat_zones").name), false);
-        final OptionData towercontrol = new OptionData(OptionType.STRING, "towercontrol", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("tower_control").name), false);
-        final OptionData clamblitz = new OptionData(OptionType.STRING, "clamblitz", l.botLocale.cmdProfileRank2Desc.replace("%mode%",l.rules.get("clam_blitz").name), false);
-        final OptionData salmonTitle = new OptionData(OptionType.INTEGER, "salmon-run-title", l.botLocale.cmdProfileSRTitleDesc, false);
-        salmonTitle.addChoice(l.botLocale.salmonRunTitleApprentice, 1);
-        salmonTitle.addChoice(l.botLocale.salmonRunTitlePartTimer, 2);
-        salmonTitle.addChoice(l.botLocale.salmonRunTitleGoGetter, 3);
-        salmonTitle.addChoice(l.botLocale.salmonRunTitleOverachiever, 4);
-        salmonTitle.addChoice(l.botLocale.salmonRunTitleProfreshional, 5);
+        final OptionData rainmaker = new OptionData(OptionType.STRING, "rainmaker", l.botLocale.cmdProfileRank2Desc.replace("%mode%", l.rules.get("rainmaker").name), false);
+        final OptionData splatzones = new OptionData(OptionType.STRING, "splatzones", l.botLocale.cmdProfileRank2Desc.replace("%mode%", l.rules.get("splat_zones").name), false);
+        final OptionData towercontrol = new OptionData(OptionType.STRING, "towercontrol", l.botLocale.cmdProfileRank2Desc.replace("%mode%", l.rules.get("tower_control").name), false);
+        final OptionData clamblitz = new OptionData(OptionType.STRING, "clamblitz", l.botLocale.cmdProfileRank2Desc.replace("%mode%", l.rules.get("clam_blitz").name), false);
+        final OptionData salmon2Title = new OptionData(OptionType.INTEGER, "salmon-run-title", l.botLocale.cmdProfileSRTitleDesc, false);
+        salmon2Title.addChoice(l.botLocale.salmonRunTitleApprentice, 1);
+        salmon2Title.addChoice(l.botLocale.salmonRunTitlePartTimer, 2);
+        salmon2Title.addChoice(l.botLocale.salmonRunTitleGoGetter, 3);
+        salmon2Title.addChoice(l.botLocale.salmonRunTitleOverachiever, 4);
+        salmon2Title.addChoice(l.botLocale.salmonRunTitleProfreshional, 5);
 
+
+        //Splatoon 3 only
+        final OptionData salmon3Title = new OptionData(OptionType.INTEGER, "salmon-run-title", l.botLocale.cmdProfileSRTitleDesc, false);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(0), 0);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(1), 1);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(2), 2);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(3), 3);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(4), 4);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(5), 5);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(6), 6);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(7), 7);
+        salmon3Title.addChoice(l.botLocale.getS3SRTitle(8), 8);
+
+        final OptionData splatfestTeam = new OptionData(OptionType.INTEGER, "splatfest-team", l.botLocale.cmdProfileSplatfest, false);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(0), 0);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(1), 1);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(2), 2);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3), 3);
 
         splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
-        splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmonTitle);
+        splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title);
+        splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam);
 
-        addSubcommands(splat2, splat1);
+        addSubcommands(splat2, splat1, splat3);
     }
 
     @Override
@@ -69,7 +89,7 @@ public class EditProfileCommand extends BaseCommand {
                         String msg = "";
                         if (ev.getOption("nintendo-id") != null) {
                             String nnid = ev.getOption("nintendo-id").getAsString();
-                            if(hasForbiddenChars(nnid)){
+                            if (hasForbiddenChars(nnid)) {
                                 ev.reply(lang.botLocale.cmdErrorBlacklistedChar).queue();
                                 return;
                             }
@@ -78,7 +98,7 @@ public class EditProfileCommand extends BaseCommand {
                         }
                         if (ev.getOption("pretendo-id") != null) {
                             String pnid = ev.getOption("pretendo-id").getAsString();
-                            if(hasForbiddenChars(pnid)){
+                            if (hasForbiddenChars(pnid)) {
                                 ev.reply(lang.botLocale.cmdErrorBlacklistedChar).queue();
                                 return;
                             }
@@ -119,7 +139,7 @@ public class EditProfileCommand extends BaseCommand {
                     break;
                 case "splat2":
                     if (ev.getOptions().isEmpty()) {
-                            ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
+                        ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
                     } else {
                         String msg = "";
                         OptionMapping switchFCOption = ev.getOption("switch-fc");
@@ -191,6 +211,56 @@ public class EditProfileCommand extends BaseCommand {
                         ev.reply(msg).queue();
                     }
                     break;
+                case "splat3":
+                    if (ev.getOptions().isEmpty()) {
+                        ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
+                    } else {
+                        String msg = "";
+                        OptionMapping switchFCOption = ev.getOption("switch-fc");
+                        if (switchFCOption != null) {
+                            long switchFC = formatFromFC(switchFCOption.getAsString());
+                            profile.switch_fc = switchFC;
+                            msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
+                        }
+                        if (profile.switch_fc != -1) {
+                            if (ev.getOption("level") != null) {
+                                profile.splat3Profile.setLevel(Integer.parseInt(ev.getOption("level").getAsString()));
+                                msg += lang.botLocale.cmdProfileLevel3Set + profile.splat3Profile.getLevel() + "\n";
+                            }
+                            if (ev.getOption("name") != null) {
+                                final String name = ev.getOption("name").getAsString();
+                                if (name.length() > 10) {
+                                    msg += lang.botLocale.cmdProfileNameErr + "\n";
+                                } else {
+                                    profile.splat3Profile.setName(name);
+                                    msg += "Splatoon 3 Name set to " + name + "\n";
+                                }
+                            }
+                            if (ev.getOption("rank") != null) {
+                                try {
+                                    profile.splat3Profile.rank = new Splat3Profile.Rank(ev.getOption("rank").getAsString());
+                                    msg += lang.botLocale.cmdProfileS3RankSet.replace("%rank%", profile.splat2Profile.rainmaker.toString()) + "\n";
+                                } catch (IllegalArgumentException e) {
+                                    msg += lang.botLocale.cmdProfileRankFormatNotValid + "\n";
+                                }
+                            }
+                            if (ev.getOption("salmon-run-title") != null) {
+                                profile.splat3Profile.srTitle = Integer.parseInt(ev.getOption("salmon-run-title").getAsString());
+                                msg += lang.botLocale.cmdProfileS3SalmonSet.replace("%title%", lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle)) + "\n";
+
+                            }
+                            if (ev.getOption("splatfest-team") != null) {
+                                profile.splat3Profile.splatfestTeam = Integer.parseInt(ev.getOption("splatfest-team").getAsString());
+                                msg += lang.botLocale.cmdProfileSplatfestSet + lang.botLocale.getSplatfestTeam(profile.splat3Profile.splatfestTeam) + "\n";
+                            }
+
+                            Main.iface.updateSplatProfile(profile);
+                        } else {
+                            msg += lang.botLocale.cmdProfilefcErr;
+                        }
+                        ev.reply(msg).queue();
+                    }
+                    break;
                 default:
                     ev.reply("Unknown subcommand, report to developer!").queue(); //Should never be shown at all
                     break;
@@ -219,11 +289,13 @@ public class EditProfileCommand extends BaseCommand {
         }
         return srTitle;
     }
-    static String formatToFC(long input){
-        String plain = input +"";
-        return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0,4), plain.substring(4,8), plain.substring(8,12));
+
+    static String formatToFC(long input) {
+        String plain = input + "";
+        return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0, 4), plain.substring(4, 8), plain.substring(8, 12));
     }
-    static long formatFromFC(String input){
+
+    static long formatFromFC(String input) {
         return Long.parseLong(input.replaceAll("[^\\d.]", ""));
     }
 }

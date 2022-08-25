@@ -54,7 +54,8 @@ public class German extends EnglishBase {
         cmdProfileRankFormatNotValid = "Das Rang-Format ist fehlerhaft !";
         cmdProfileS1RankSet = "Dein Splatoon 1 Rang wurde auf %rank% gesetzt";
         cmdProfileS2RankSet = "Dein %mode% rang wurde auf %rank% gesetzt";
-        cmdProfileS2SalmonSet = "Dein Salmon Run Titel ist nun %title%";
+        cmdProfileS2SalmonSet = "Dein Splatoon 2 Salmon Run Titel ist nun %title%";
+        cmdProfileS3SalmonSet = "Dein Splatoon 3 Salmon Run Titel ist nun %title%";
         cmdProfileSwitchFCDesc = "Dein Switch Freundes Codes";
         cmdProfileNNIDDesc = "Deine Nintendo Network ID";
         cmdProfilePNIDDesc = "Deine Pretendo Network ID";
@@ -75,6 +76,7 @@ public class German extends EnglishBase {
         cmdProfileNameErr = "Name zu lang! Es sind nur max. 10 Zeichen erlaubt!";
         cmdProfileLevel1Set = "Splatoon 1 level gesetzt auf ";
         cmdProfileLevel2Set = "Splatoon 2 level gesetzt auf ";
+        cmdProfileLevel3Set = "Splatoon 3 level gesetzt auf ";
         cmdProfileNameSet = "In-Game Name gesetzt auf ";
         cmdProfileMissingNID = "Du hast noch keine Nintendo Network ID oder eine Pretendo Network ID festgelegt";
         cmdProfileMissingFC = "%s hat noch keinen Switch Freundescode festgelegt.";
@@ -113,6 +115,8 @@ public class German extends EnglishBase {
         cmdPrivateNonExisting = "Dieser Raum existiert nicht";
         cmdPrivateDeleted = "Raum erfolgreich gelöscht";
         cmdPrivateRoomID = "Raum ID";
+        cmdProfileS3RankSet = "Dein Rang wurde auf %rank% gesetzt";
+        cmdProfileSplatfestSet = "Dein Splatfest-Team ist nun ";
     }
 
     @Override
@@ -150,6 +154,44 @@ public class German extends EnglishBase {
                 return "Steinköhler-Grube";
             default:
                 return super.getS1MapName(mapid);
+        }
+    }
+
+    public String getS3SRTitle(int title) {
+        switch (title) {
+            case 0:
+                return "Azubi";
+            case 1:
+                return "Teilzeitkraft";
+            case 2:
+                return "Fachpersonal";
+            case 3:
+                return "Führungskraft";
+            case 4:
+                return "Boss";
+            case 5:
+                return "Boss +1";
+            case 6:
+                return "Boss +2";
+            case 7:
+                return "Boss +3";
+            case 8:
+                return "Legende";
+            default:
+                return super.getS3SRTitle(title);
+        }
+    }
+
+    public String getSplatfestTeam(int id) {
+        switch (id) {
+            case 1:
+                return "Stein";
+            case 2:
+                return "Papier";
+            case 3:
+                return "Schere";
+            default:
+                return "Nicht Gesetzt";
         }
     }
 }

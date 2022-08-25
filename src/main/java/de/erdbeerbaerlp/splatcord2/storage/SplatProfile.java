@@ -2,6 +2,7 @@ package de.erdbeerbaerlp.splatcord2.storage;
 
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
 
 public class SplatProfile {
     private final long userid;
@@ -9,6 +10,7 @@ public class SplatProfile {
     public long switch_fc = -1;
 
     public long pbID = 0;
+    public Splat3Profile splat3Profile = new Splat3Profile();
     public Splat2Profile splat2Profile = new Splat2Profile();
     public Splat1Profile splat1Profile = new Splat1Profile();
 
@@ -25,6 +27,7 @@ public class SplatProfile {
                 ", switch_fc=" + switch_fc +
                 ", splat1Profile=" + splat1Profile.toJson() +
                 ", splat2Profile=" + splat2Profile.toJson() +
+                ", splat3Profile=" + splat3Profile.toJson() +
                 '}';
     }
 
