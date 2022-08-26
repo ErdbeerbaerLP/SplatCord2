@@ -239,7 +239,7 @@ public class EditProfileCommand extends BaseCommand {
                             if (ev.getOption("rank") != null) {
                                 try {
                                     profile.splat3Profile.rank = new Splat3Profile.Rank(ev.getOption("rank").getAsString());
-                                    msg += lang.botLocale.cmdProfileS3RankSet.replace("%rank%", profile.splat2Profile.rainmaker.toString()) + "\n";
+                                    msg += lang.botLocale.cmdProfileS3RankSet.replace("%rank%", profile.splat3Profile.rank.toString()) + "\n";
                                 } catch (IllegalArgumentException e) {
                                     msg += lang.botLocale.cmdProfileRankFormatNotValid + "\n";
                                 }
