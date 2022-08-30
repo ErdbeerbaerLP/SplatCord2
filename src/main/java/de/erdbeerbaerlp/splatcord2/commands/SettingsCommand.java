@@ -25,7 +25,7 @@ public class SettingsCommand extends BaseCommand {
         final OptionData language = new OptionData(OptionType.STRING, "language", l.botLocale.cmdSettingsLang, false);
         final ArrayList<Command.Choice> languages = new ArrayList<>();
         for (BotLanguage lang : BotLanguage.values()) {
-            languages.add(new Command.Choice(lang.name().toLowerCase(), lang.val));
+            languages.add(new Command.Choice(lang.getDisplayName(), lang.val));
         }
         language.addChoices(languages);
         addOptions(language, deleteMsg);

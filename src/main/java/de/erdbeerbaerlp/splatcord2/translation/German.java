@@ -14,7 +14,7 @@ public class German extends EnglishBase {
         stageFeedMsg = "Aktuelle Arenen werden nun regelmäßig in diesen Kanal gesendet";
         salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet";
         languageSetMessage = "Die Sprache dieses Servers ist nun auf Deutsch eingestellt";
-        unknownLanguage = "Du hast keine valide Sprache angegeben. Vorhandene Sprachen: Deutsch (de), Englisch (en), und Italienisch (it)";
+        unknownLanguage = "Du hast keine valide Sprache angegeben.";
         deleteSuccessful = "Erfolgreich gelöscht!";
         noWritePerms = "Dieser Bot hat keine Berechtigung, Nachrichten in diesen Kanal zu senden";
         primarySkill = "Haupteffekt:";

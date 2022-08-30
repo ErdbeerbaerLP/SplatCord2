@@ -13,7 +13,7 @@ public class Italian extends EnglishBase {
         stageFeedMsg = "Le nuove rotazioni delle arene verranno ora inviate qui";
         salmonFeedMsg = "Le nuove Salmon Run verranno ora inviate qui";
         languageSetMessage = "La lingua del tuo server è ora Italiano";
-        unknownLanguage = "Non hai specificato una lingua valida. Lingue valide: tedesco (de), inglese (en), e italiano (it)";
+        unknownLanguage = "Non hai specificato una lingua valida.";
         deleteSuccessful = "Eliminato correttamente";
         noWritePerms = "Questo bot non ha i permessi necessari per inviare messaggi in questo canale";
         primarySkill = "Abilità:";

@@ -20,7 +20,7 @@ public class EnglishBase {
     public String stageFeedMsg = "New stage rotations will now be sent here";
     public String salmonFeedMsg = "New Salmon Runs will now be sent here";
     public String languageSetMessage = "Your server's language is now set to english";
-    public String unknownLanguage = "You did not specify an valid language, valid languages are german (de), english (en), and italian (it)";
+    public String unknownLanguage = "You did not specify an valid language.";
     public String deleteSuccessful = "Successfully deleted";
     public String noWritePerms = "This bot has no permission to write in the target channel";
     public String primarySkill = "Primary Ability:";
