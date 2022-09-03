@@ -1,15 +1,17 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.*;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.GameRule;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -81,7 +83,7 @@ public class RandomCommand extends BaseCommand {
     }
 
     @Override
-    public void execute(SlashCommandEvent ev) {
+    public void execute(SlashCommandInteractionEvent ev) {
         final Random r = new Random();
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         final String subcmd = ev.getSubcommandName();
@@ -95,7 +97,7 @@ public class RandomCommand extends BaseCommand {
         System.out.println(subcmd);
         switch (subcmd) {
             case "weapon":
-                final MessageBuilder mb = new MessageBuilder();
+                final MessageCreateBuilder mb = new MessageCreateBuilder();
                 final ArrayList<MessageEmbed> embeds = new ArrayList<>();
                 for (int i = 0; i < amount; ++i) {
                     final String wpnid = getRandomWeaponID(lang);

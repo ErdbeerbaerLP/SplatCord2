@@ -30,7 +30,7 @@ artifacts {
     archives tasks.shadowJar
 }
 dependencies {
-    embed("net.dv8tion:JDA:5.0.0-alpha.4"){
+    embed("net.dv8tion:JDA:5.0.0-alpha.18"){
         transitive = true
         exclude module: 'opus-java'
     }

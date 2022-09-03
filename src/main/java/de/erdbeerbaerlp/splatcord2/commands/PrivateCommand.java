@@ -5,7 +5,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.GameRule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -36,7 +36,7 @@ public class PrivateCommand extends BaseCommand {
     }
 
     @Override
-    public void execute(SlashCommandEvent ev) {
+    public void execute(SlashCommandInteractionEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {

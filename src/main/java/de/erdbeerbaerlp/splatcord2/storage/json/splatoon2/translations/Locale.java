@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import de.erdbeerbaerlp.splatcord2.translation.EnglishBase;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Locale {
     public EnglishBase botLocale;
@@ -18,16 +19,48 @@ public class Locale {
     public HashMap<String, JsonElement> gear;
     public HashMap<Integer, Brand> brands;
     public HashMap<Integer, Skill> skills;
+    public HashMap<String, String> allGears;
 
     public Locale(final EnglishBase botLocale) {
         this.botLocale = botLocale;
+
     }
 
     @Override
     public String toString() {
         return "Locale{" +
-                "stages=" + stages +
+                "botLocale=" + botLocale +
+                ", stages=" + stages +
                 ", game_modes=" + game_modes +
+                ", rules=" + rules +
+                ", coop_stages=" + coop_stages +
+                ", weapons=" + weapons +
+                ", weapon_subs=" + weapon_subs +
+                ", weapon_specials=" + weapon_specials +
+                ", coop_special_weapons=" + coop_special_weapons +
+                ", gear=" + gear +
+                ", brands=" + brands +
+                ", skills=" + skills +
+                ", allGears=" + allGears +
                 '}';
+    }
+
+    public void init() {
+        for (String s : gear.keySet()) {
+            final JsonElement g = gear.get(s);
+            try {
+                final int i = Integer.parseInt(s);
+                //allGears.put(i+"", g.getAsJsonObject().get("name").getAsString());
+            } catch (NumberFormatException e) {
+                for (Map.Entry<String, JsonElement> s2 : g.getAsJsonObject().entrySet()) {
+                    try {
+                        final int i = Integer.parseInt(s2.getKey());
+                        allGears.put(s+"/"+i, s2.getValue().getAsJsonObject().get("name").getAsString());
+                    } catch (NumberFormatException er) {
+                        er.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 }

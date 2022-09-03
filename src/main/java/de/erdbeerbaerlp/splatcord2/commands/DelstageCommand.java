@@ -3,7 +3,7 @@ package de.erdbeerbaerlp.splatcord2.commands;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.dc.Bot;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 public class DelstageCommand extends BaseCommand {
@@ -22,7 +22,7 @@ public class DelstageCommand extends BaseCommand {
     }
 
     @Override
-    public void execute(SlashCommandEvent ev) {
+    public void execute(SlashCommandInteractionEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {

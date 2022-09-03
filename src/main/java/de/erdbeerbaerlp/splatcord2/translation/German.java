@@ -117,6 +117,8 @@ public class German extends EnglishBase {
         cmdPrivateRoomID = "Raum ID";
         cmdProfileS3RankSet = "Dein Rang wurde auf %rank% gesetzt";
         cmdProfileSplatfestSet = "Dein Splatfest-Team ist nun ";
+        cmdSplatnetOrdered = "%gear% wurde Bestellt!\nSobald es verfügbar ist, wirst du erwähnt";
+        cmdSplatnetOrderFinished = "%ping%, deine Bestellung ist nun in TentaWorld verfügbar!";
     }
 
     @Override

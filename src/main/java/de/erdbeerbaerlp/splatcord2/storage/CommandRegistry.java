@@ -3,19 +3,13 @@ package de.erdbeerbaerlp.splatcord2.storage;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.commands.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
-import org.apache.commons.collections4.ListUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class CommandRegistry {
     public static final HashMap<Long, Command> registeredCommands = new HashMap<>();
@@ -44,7 +38,7 @@ public class CommandRegistry {
         baseCommandClasses.add(DelsalmonCommand.class);
         baseCommandClasses.add(CodeCommand.class);
         baseCommandClasses.add(RotationCommand.class);
-        baseCommandClasses.add(SplatnetCommand.class);
+        baseCommandClasses.add(Splatnet2Command.class);
         baseCommandClasses.add(SalmonCommand.class);
     }
 

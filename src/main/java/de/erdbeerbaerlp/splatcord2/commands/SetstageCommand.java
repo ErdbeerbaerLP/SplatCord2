@@ -9,7 +9,7 @@ import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 import java.time.Instant;
@@ -30,7 +30,7 @@ public class SetstageCommand extends BaseCommand{
     }
 
     @Override
-    public void execute(SlashCommandEvent ev) {
+    public void execute(SlashCommandInteractionEvent ev) {
         final Guild guild = ev.getGuild();
         final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
         final MessageChannel channel = ev.getChannel();

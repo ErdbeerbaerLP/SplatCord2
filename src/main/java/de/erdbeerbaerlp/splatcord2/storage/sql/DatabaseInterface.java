@@ -1,16 +1,21 @@
 package de.erdbeerbaerlp.splatcord2.storage.sql;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonStreamParser;
+import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Order;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseInterface implements AutoCloseable {
@@ -44,6 +49,8 @@ public class DatabaseInterface implements AutoCloseable {
                 "`splatoon1-profile` JSON NULL COMMENT 'Profile Data for Splatoon 1',\n" +
                 "`splatoon2-profile` JSON NULL COMMENT 'Profile data for Splatoon 2',\n" +
                 "`splatoon3-profile` JSON NULL COMMENT 'Profile data for Splatoon 3',\n" +
+                "`snet2orders` JSON NULL COMMENT 'Orders for Splatnet2',\n" +
+                "`pb-id` bigint DEFAULT '0',\n" +
                 "UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,\n" +
                 "PRIMARY KEY (`id`));");
         runUpdate("CREATE TABLE IF NOT EXISTS `privaterooms` (\n" +
@@ -60,7 +67,7 @@ public class DatabaseInterface implements AutoCloseable {
 
     public SplatProfile getSplatoonProfiles(long userID) {
         final SplatProfile profile = new SplatProfile(userID);
-        try (final ResultSet res = query("SELECT `wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`pb-id` FROM users WHERE `id` = " + userID)) {
+        try (final ResultSet res = query("SELECT `wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`snet2orders`,`pb-id` FROM users WHERE `id` = " + userID)) {
             while (res != null && res.next()) {
                 if (res.wasNull())
                     return profile;
@@ -76,7 +83,11 @@ public class DatabaseInterface implements AutoCloseable {
                 profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(splat1str).next().getAsJsonObject());
                 profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(splat2str).next().getAsJsonObject());
                 profile.splat3Profile = Splat3Profile.fromJson(new JsonStreamParser(splat3str).next().getAsJsonObject());
-                profile.pbID = res.getLong(7);
+                String orderString = res.getString(7);
+                if(orderString == null) orderString = "[]";
+                final Order[] ordr = Main.gson.fromJson(orderString, Order[].class);
+                profile.s2orders = new ArrayList<>(List.of(ordr));
+                profile.pbID = res.getLong(8);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -85,7 +96,7 @@ public class DatabaseInterface implements AutoCloseable {
     }
 
     public void updateSplatProfile(SplatProfile profile) {
-        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '"+profile.splat3Profile.toJson().toString() +"',"+profile.pbID+")");
+        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`, `snet2orders`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '"+profile.splat3Profile.toJson().toString() +"','"+ Main.gson.toJson(profile.s2orders.toArray())+"',"+profile.pbID+")");
     }
     public long getUserRoom(long user){
         try (final ResultSet res = query("SELECT `pb-id` FROM users WHERE id = " + user)){
@@ -292,6 +303,27 @@ public class DatabaseInterface implements AutoCloseable {
             e.printStackTrace();
         }
         return mapChannels;
+    }
+public HashMap<Long, Order[]> getAllOrders() {
+        final HashMap<Long, Order[]> ret = new HashMap<>();
+        try (final ResultSet res = query("SELECT id,snet2orders FROM users")) {
+            while (res != null && res.next()) {
+                final long userid = res.getLong(1);
+                if (!res.wasNull()) {
+                    final ArrayList<Order> orders = new ArrayList<>();
+                    String orderString = res.getString(2);
+                    if(orderString == null) orderString = "[]";
+                    final JsonArray jsonElements = Main.gson.fromJson(orderString, JsonArray.class);
+                    for(JsonElement i : jsonElements){
+                        orders.add(Main.gson.fromJson(i,Order.class));
+                    }
+                    ret.put(userid, orders.toArray(new Order[0]));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
     }
 
     public void setSalmonChannel(long serverID, Long channelID) {

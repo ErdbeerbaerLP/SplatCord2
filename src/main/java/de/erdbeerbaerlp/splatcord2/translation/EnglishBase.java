@@ -1,7 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.Config;
-
 /**
  * Using english as base, extend other localizations from this class
  */
@@ -132,6 +130,8 @@ public class EnglishBase {
     public String cmdProfileS3RankSet = "Your rank was set to %rank%";
     public String cmdProfileLevel3Set = "Splatoon 3 level set to ";
     public String cmdProfileSplatfestSet = "Splatfest team set to ";
+    public String cmdSplatnetOrdered = "Ordered %gear%\nYou will get pinged if it is available";
+    public String cmdSplatnetOrderFinished = "%ping%, your Order is now available in Splatnet!";
 
     public String getS1MapName(int mapid) {
         switch (mapid) {

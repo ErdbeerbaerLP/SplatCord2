@@ -5,7 +5,7 @@ import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -21,7 +21,7 @@ public class StatusCommand extends BaseCommand {
     }
 
     @Override
-    public void execute(SlashCommandEvent ev) {
+    public void execute(SlashCommandInteractionEvent ev) {
         Locale lang = Main.translations.get(BotLanguage.ENGLISH);
         final boolean dbAlive = Main.iface.status.isDBAlive();
         if (dbAlive)

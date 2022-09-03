@@ -57,7 +57,6 @@ public class ScheduleUtil {
     }
 
     public static void updateRotationData() throws IOException, JsonParseException {
-        System.out.println("Downloading schedules...");
         final URL sched = new URL("https://splatoon2.ink/data/schedules.json");
         final HttpsURLConnection deConn = (HttpsURLConnection) sched.openConnection();
         deConn.setRequestProperty("User-Agent", Main.USER_AGENT);

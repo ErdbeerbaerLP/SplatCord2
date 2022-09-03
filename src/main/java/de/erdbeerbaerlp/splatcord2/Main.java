@@ -5,12 +5,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import de.erdbeerbaerlp.splatcord2.dc.Bot;
-import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
-import de.erdbeerbaerlp.splatcord2.storage.Config;
-import de.erdbeerbaerlp.splatcord2.storage.Rotation;
+import de.erdbeerbaerlp.splatcord2.storage.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Byml;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Merchandise;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Order;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.SplatNet;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
@@ -18,20 +19,29 @@ import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.BossFileUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+
+import static de.erdbeerbaerlp.splatcord2.commands.Splatnet2Command.repeat;
 
 public class Main {
 
@@ -39,9 +49,8 @@ public class Main {
     public static DatabaseInterface iface = null;
     public static Bot bot = null;
     public static Instant startTime = null;
-
+    public static SplatNet splatNet2 = null;
     public static Byml s1rotations = null;
-
     public static boolean splatoon2inkStatus = false;
 
     public static final HashMap<BotLanguage, Locale> translations = new HashMap<>();
@@ -82,9 +91,13 @@ public class Main {
             String out = new Scanner(deConn.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
             final Locale locale = gson.fromJson(new StringReader(out), Locale.class);
             locale.botLocale = l.botLocale;
+            locale.allGears = new HashMap<>();
+            locale.init();
+            //System.out.println(locale);
             translations.put(l, locale);
+
         }
-        System.out.println("Downloading Weapon Data");
+        System.out.println("Downloading Weapon data");
         final URL wpn = new URL("https://splatoon2.ink/data/weapons.json");
         final HttpsURLConnection wpnConn = (HttpsURLConnection) wpn.openConnection();
         wpnConn.setRequestProperty("User-Agent", USER_AGENT);
@@ -93,6 +106,15 @@ public class Main {
         Type mapType = new TypeToken<Map<String, Weapon>>() {
         }.getType();
         weaponData = gson.fromJson(new StringReader(out), mapType);
+
+        System.out.println("Downloading SplatNet2 data");
+        final URL tworld = new URL("https://splatoon2.ink/data/merchandises.json");
+        final HttpsURLConnection con = (HttpsURLConnection) tworld.openConnection();
+        con.setRequestProperty("User-Agent", Main.USER_AGENT);
+        con.connect();
+        splatNet2 = Main.gson.fromJson(new InputStreamReader(con.getInputStream()), SplatNet.class);
+
+
         try {
             bot = new Bot();
         } catch (LoginException e) {
@@ -148,20 +170,6 @@ public class Main {
             if (iface.status.isDBAlive() && coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
                 if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
                     salmonEndTime = -1;
-                    /*iface.getAllSalmonMessages().forEach((chan, msg) -> {
-                        if (msg != null) {
-                            final TextChannel channel = bot.jda.getTextChannelById(chan);
-                            if (channel == null) return;
-                            Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
-                            channel.retrieveMessageById(msg).submit().thenAccept((message) -> {
-                                final List<MessageEmbed> e = message.getEmbeds();
-                                final EmbedBuilder embedBuilder = new EmbedBuilder(e.get(0));
-                                embedBuilder.setTimestamp(null);
-                                embedBuilder.setFooter(lang.botLocale.footer_closed);
-                                message.editMessageEmbeds(embedBuilder.build()).queue();
-                            });
-                        }
-                    });*/
                 }
                 if (iface.status.isDBAlive() && coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
                     iface.getAllSalmonChannels().forEach((serverid, channel) -> {
@@ -173,6 +181,39 @@ public class Main {
                     });
                     Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
                     Config.instance().saveConfig();
+                }
+            }
+
+            final HashMap<Long, Order[]> allOrders = iface.getAllOrders();
+            for (Merchandise m : splatNet2.merchandises) {
+                for(Long usrid : allOrders.keySet()){
+                    final User user = bot.jda.retrieveUserById(usrid).complete();
+                    final SplatProfile profile = Main.iface.getSplatoonProfiles(user.getIdLong());
+                    final ArrayList<Order> orders = profile.s2orders;
+                    final ArrayList<Order> finishedOrders = new ArrayList<>();
+                    for(Order o : orders){
+                        if((m.gear.kind+"/"+m.gear.id).equals(o.gear)){
+                            final TextChannel channel = bot.jda.getTextChannelById(o.channel);
+                            final Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
+                            final MessageCreateBuilder b = new MessageCreateBuilder();
+                            b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%",user.getAsMention()));
+                            final EmbedBuilder emb = new EmbedBuilder()
+                                    .setTimestamp(Instant.ofEpochSecond(m.end_time))
+                                    .setFooter(lang.botLocale.footer_ends)
+                                    .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image)
+                                    .setAuthor(lang.allGears.get(m.gear.kind+"/"+m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
+                                    .addField(lang.botLocale.skillSlots, Emote.resolveFromAbility(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
+                                    .addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
+                            b.addEmbeds(emb.build());
+                            channel.sendMessage(b.build()).queue();
+                            finishedOrders.add(o);
+                        }
+                    }
+
+                    if(finishedOrders.size() > 0) {
+                        profile.s2orders.removeAll(finishedOrders);
+                        Main.iface.updateSplatProfile(profile);
+                    }
                 }
             }
 
@@ -191,6 +232,12 @@ public class Main {
                     System.err.println("Failed loading splatoon 1 rotations!");
                     e.printStackTrace();
                 }
+                final URL tworld2 = new URL("https://splatoon2.ink/data/merchandises.json");
+                final HttpsURLConnection twcon2 = (HttpsURLConnection) tworld2.openConnection();
+                twcon2.setRequestProperty("User-Agent", Main.USER_AGENT);
+                twcon2.connect();
+                splatNet2 = Main.gson.fromJson(new InputStreamReader(twcon2.getInputStream()), SplatNet.class);
+
                 TimeUnit.MINUTES.sleep(2);
             }
             try {
@@ -198,6 +245,8 @@ public class Main {
                 Config.instance().loadConfig();
             } catch (InterruptedException e) {
                 return;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

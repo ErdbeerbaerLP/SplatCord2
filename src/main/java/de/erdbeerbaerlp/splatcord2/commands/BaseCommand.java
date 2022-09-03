@@ -1,13 +1,13 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class BaseCommand extends CommandData {
+public abstract class BaseCommand extends CommandDataImpl {
     /**
      * Create an command builder.
      *
@@ -25,7 +25,7 @@ public abstract class BaseCommand extends CommandData {
 
     public abstract boolean requiresManageServer();
 
-    public abstract void execute(SlashCommandEvent ev);
+    public abstract void execute(SlashCommandInteractionEvent ev);
 
     private final Pattern forbiddenChars = Pattern.compile("['\"\\\\]");
 

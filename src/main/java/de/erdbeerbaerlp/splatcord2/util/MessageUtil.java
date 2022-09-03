@@ -7,12 +7,13 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RankedModeTranslator;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -81,9 +82,9 @@ public class MessageUtil {
         }
     }
 
-    public static Message getMapMessage(Long serverid, Rotation r) {
+    public static MessageCreateData getMapMessage(Long serverid, Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 2)")
+        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 2)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.stages.get(r.getRegular().stage_a.id).getName() +
@@ -101,9 +102,9 @@ public class MessageUtil {
                         , false)
                 .build()).build();
     }
-    public static Message getMapMessage(Long serverid, Phase currentRotation) {
+    public static MessageCreateData getMapMessage(Long serverid, Phase currentRotation) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 1)")
+        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 1)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
@@ -113,8 +114,7 @@ public class MessageUtil {
                                 lang.game_modes.get("gachi").name + " (" + lang.rules.get(RankedModeTranslator.translateS1(currentRotation.GachiRule.value)).name + ")",
                         lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
                                 ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
-                        , true)
-                .setFooter("Note that this might be wrong. If that's the case, please be patient until I fixed this").build()).build();
+                        , true).build()).build();
     }
 
     public static void sendRotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {

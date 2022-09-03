@@ -1,7 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class InviteCommand extends BaseCommand{
     public InviteCommand(Locale l) {
@@ -14,7 +14,7 @@ public class InviteCommand extends BaseCommand{
     }
 
     @Override
-    public void execute(SlashCommandEvent ev) {
+    public void execute(SlashCommandInteractionEvent ev) {
         ev.reply("<https://discord.com/api/oauth2/authorize?client_id=822228767165644872&permissions=379968&scope=applications.commands%20bot>").queue();
     }
 }

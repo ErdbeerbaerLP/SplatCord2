@@ -2,16 +2,20 @@ package de.erdbeerbaerlp.splatcord2.dc;
 
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
-import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
+import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import net.dv8tion.jda.api.*;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -21,11 +25,16 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
 import java.time.Instant;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -35,7 +44,6 @@ public class Bot implements EventListener {
     public final JDA jda;
     @SuppressWarnings("FieldCanBeLocal")
     private final StatusUpdater presence;
-    public static final HashMap<Long, Long> splatnetCooldown = new HashMap<>();
 
     public Bot() throws LoginException, InterruptedException {
         CommandRegistry.registerAllBaseCommands();
@@ -43,7 +51,7 @@ public class Bot implements EventListener {
         b.setMemberCachePolicy(MemberCachePolicy.DEFAULT);
         b.setAutoReconnect(true);
         b.disableCache(CacheFlag.ONLINE_STATUS);
-        b.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOTE, CacheFlag.CLIENT_STATUS);
+        b.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS);
         b.setChunkingFilter(ChunkingFilter.ALL);
         jda = b.build().awaitReady();
         presence = new StatusUpdater();
@@ -59,24 +67,24 @@ public class Bot implements EventListener {
     }
 
     public void sendMessage(String msg, String channelId) {
-        sendMessage(new MessageBuilder().setContent(msg).build(), channelId);
+        sendMessage(new MessageCreateBuilder().setContent(msg).build(), channelId);
     }
 
-    public CompletableFuture<Message> sendMessage(Message msg, Long channelId) throws InsufficientPermissionException {
+    public CompletableFuture<Message> sendMessage(MessageCreateData msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return null;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
         return null;
     }
 
-    private CompletableFuture<Message> submitMessage(Message msg, Long channelId) throws InsufficientPermissionException {
+    private CompletableFuture<Message> submitMessage(MessageCreateData msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return null;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
         return null;
     }
 
-    public void sendMessage(Message msg, String channelId) {
+    public void sendMessage(MessageCreateData msg, String channelId) {
         if (msg == null || channelId == null) return;
         final TextChannel channel = jda.getTextChannelById(channelId);
         if (channel != null) channel.sendMessage(msg).queue();
@@ -85,28 +93,36 @@ public class Bot implements EventListener {
     @Override
     public void onEvent(@NotNull GenericEvent event) {
 
-        //Guild joining
-        if (event instanceof GuildJoinEvent) {
-            final GuildJoinEvent guildJoinEvent = (GuildJoinEvent) event;
-            Main.iface.addServer(((GuildJoinEvent) event).getGuild().getIdLong());
-            CommandRegistry.setCommands(guildJoinEvent.getGuild());
-        }
-        if (event instanceof UnavailableGuildJoinedEvent) {
+        if (event instanceof CommandAutoCompleteInteractionEvent) {
+            final CommandAutoCompleteInteractionEvent ev = (CommandAutoCompleteInteractionEvent) event;
+            final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+            if(CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName().equals("splatnet2")){
+                final ArrayList<Command.Choice> choices = new ArrayList<>();
+                int count = 0;
+                for(String key : lang.allGears.keySet()){
+                    final String name = lang.allGears.get(key);
+                    if(name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())){
+                        choices.add(new Command.Choice(name,key));
+                        count++;
+                        if(count >= 20) break;
+                    }
+                }
+                ev.replyChoices(choices).queue();
+            }
+        } else if (event instanceof GuildJoinEvent) {
+            final GuildJoinEvent ev = (GuildJoinEvent) event;
+            Main.iface.addServer(ev.getGuild().getIdLong());
+            CommandRegistry.setCommands(ev.getGuild());
+        } else if (event instanceof UnavailableGuildJoinedEvent) {
             Main.iface.addServer(((UnavailableGuildJoinedEvent) event).getGuildIdLong());
-        }
-        if (event instanceof GuildAvailableEvent) {
+        } else if (event instanceof GuildAvailableEvent) {
             CommandRegistry.setCommands(((GuildAvailableEvent) event).getGuild());
-        }
-
-        //Guild leaving
-        if (event instanceof GuildLeaveEvent) Main.iface.delServer(((GuildLeaveEvent) event).getGuild().getIdLong());
-        if (event instanceof UnavailableGuildLeaveEvent)
+        } else if (event instanceof GuildLeaveEvent)
+            Main.iface.delServer(((GuildLeaveEvent) event).getGuild().getIdLong());
+        else if (event instanceof UnavailableGuildLeaveEvent)
             Main.iface.delServer(((UnavailableGuildLeaveEvent) event).getGuildIdLong());
-
-
-        // /slash commands
-        if (event instanceof SlashCommandEvent) {
-            SlashCommandEvent ev = (SlashCommandEvent) event;
+        else if (event instanceof SlashCommandInteractionEvent) {
+            SlashCommandInteractionEvent ev = (SlashCommandInteractionEvent) event;
             if (ev.getChannelType() != ChannelType.TEXT) return;
             final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
             if (cmd != null) {
@@ -116,20 +132,17 @@ public class Bot implements EventListener {
                 }
                 final BaseCommand baseCmd = CommandRegistry.getCommandByName(cmd.getName());
                 if (baseCmd != null)
-                    if ((baseCmd.requiresManageServer() && ev.getMember().hasPermission(MANAGE_SERVER)) ||!baseCmd.requiresManageServer())
+                    if ((baseCmd.requiresManageServer() && ev.getMember().hasPermission(MANAGE_SERVER)) || !baseCmd.requiresManageServer())
                         baseCmd.execute(ev);
-                else{
+                    else {
                         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-                    ev.deferReply(true).setContent(lang.botLocale.noAdminPerms).queue();
+                        ev.deferReply(true).setContent(lang.botLocale.noAdminPerms).queue();
                     }
             }
-        }
-
-        //Update command permissions on role creation / permission change
-        if (event instanceof RoleUpdatePermissionsEvent) {
+            //Update command permissions on role creation / permission change
+        } else if (event instanceof RoleUpdatePermissionsEvent) {
             CommandRegistry.setCommands(((RoleUpdatePermissionsEvent) event).getGuild());
-        }
-        if (event instanceof RoleCreateEvent)
+        } else if (event instanceof RoleCreateEvent)
             CommandRegistry.setCommands(((RoleCreateEvent) event).getGuild());
     }
 
@@ -150,7 +163,7 @@ public class Bot implements EventListener {
 
     public Map.Entry<Long, Long> sendSalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        final CompletableFuture<Message> submitMsg = submitMessage(new MessageBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
+        final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
                         .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
                         .addField(lang.botLocale.weapons,
                                 getWeaponName(lang, Main.coop_schedules.details[0].weapons[0]) + ", " +
