@@ -94,7 +94,6 @@ public class RandomCommand extends BaseCommand {
             amount = Math.min(Integer.parseInt(amountOption.getAsString()), 10);
         } catch (NumberFormatException ignored) {
         }
-        System.out.println(subcmd);
         switch (subcmd) {
             case "weapon":
                 final MessageCreateBuilder mb = new MessageCreateBuilder();

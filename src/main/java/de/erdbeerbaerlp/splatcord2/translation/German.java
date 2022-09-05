@@ -123,6 +123,7 @@ public class German extends EnglishBase {
         cmdProfileMainWeapon = "Hauptwaffen";
         cmdPRofileMainWeaponSet = "Hauptwaffe 1 ist nun ";
         cmdPRofileMainWeaponSet2 = "Hauptwaffe 2 ist nun ";
+        unset = "Nicht Gesetzt";
     }
 
     @Override
