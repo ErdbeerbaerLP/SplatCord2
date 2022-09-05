@@ -132,6 +132,11 @@ public class EnglishBase {
     public String cmdProfileSplatfestSet = "Splatfest team set to ";
     public String cmdSplatnetOrdered = "Ordered %gear%\nYou will get pinged if it is available";
     public String cmdSplatnetOrderFinished = "%ping%, your Order is now available in Splatnet!";
+    public String cmdProfileMainWeaponDesc = "Set your main weapon(s)";
+    public String cmdProfileMainWeapon = "Main Weapons";
+    public String cmdPRofileMainWeaponSet = "Main weapon 1 set to ";
+    public String cmdPRofileMainWeaponSet2 = "Main weapon 2 set to ";
+    public String unset = "Unset";
 
     public String getS1MapName(int mapid) {
         switch (mapid) {

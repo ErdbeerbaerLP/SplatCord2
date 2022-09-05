@@ -73,6 +73,11 @@ public class ViewProfileCommand extends BaseCommand {
                             b.setTitle(m.getEffectiveName() + "'s Splatoon 2 Profile");
                         b.addField(lang.botLocale.cmdProfileLevel, profile.splat2Profile.getLevel(), true);
                         b.addField(lang.botLocale.cmdProfileSRTitle, getSRTitle(profile.splat2Profile.srTitle, lang), true);
+                        StringBuilder mains = new StringBuilder();
+                        mains.append("- "+(profile.splat2Profile.mainWeapon1>0?lang.weapons.get(profile.splat2Profile.mainWeapon1).name:lang.botLocale.unset));
+                        mains.append("\n");
+                        mains.append("- "+(profile.splat2Profile.mainWeapon2>0?lang.weapons.get(profile.splat2Profile.mainWeapon2).name:lang.botLocale.unset));
+                        b.addField(lang.botLocale.cmdProfileMainWeapon, mains.toString(), true);
                         b.addBlankField(false);
                         b.addField(lang.rules.get("rainmaker").name, profile.splat2Profile.rainmaker.toString(), true);
                         b.addField(lang.rules.get("splat_zones").name, profile.splat2Profile.splatzones.toString(), true);

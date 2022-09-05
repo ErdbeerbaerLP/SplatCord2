@@ -27,6 +27,8 @@ public class EditProfileCommand extends BaseCommand {
         final OptionData splatlevel = new OptionData(OptionType.INTEGER, "level", l.botLocale.cmdProfileLevelDesc, false);
         final OptionData splatname = new OptionData(OptionType.STRING, "name", l.botLocale.cmdProfileNameDesc, false);
 
+
+
         //Splatoon 1 and 3 only
         final OptionData rank = new OptionData(OptionType.STRING, "rank", l.botLocale.cmdProfileRankDesc, false);
 
@@ -37,6 +39,12 @@ public class EditProfileCommand extends BaseCommand {
         final OptionData towercontrol = new OptionData(OptionType.STRING, "towercontrol", l.botLocale.cmdProfileRank2Desc.replace("%mode%", l.rules.get("tower_control").name), false);
         final OptionData clamblitz = new OptionData(OptionType.STRING, "clamblitz", l.botLocale.cmdProfileRank2Desc.replace("%mode%", l.rules.get("clam_blitz").name), false);
         final OptionData salmon2Title = new OptionData(OptionType.INTEGER, "salmon-run-title", l.botLocale.cmdProfileSRTitleDesc, false);
+        final OptionData mainWeapon1 = new OptionData(OptionType.INTEGER, "main1", l.botLocale.cmdProfileMainWeaponDesc, false);
+        mainWeapon1.setAutoComplete(true);
+        final OptionData mainWeapon2 = new OptionData(OptionType.INTEGER, "main2", l.botLocale.cmdProfileMainWeaponDesc, false);
+        mainWeapon2.setAutoComplete(true);
+
+
         salmon2Title.addChoice(l.botLocale.salmonRunTitleApprentice, 1);
         salmon2Title.addChoice(l.botLocale.salmonRunTitlePartTimer, 2);
         salmon2Title.addChoice(l.botLocale.salmonRunTitleGoGetter, 3);
@@ -63,7 +71,7 @@ public class EditProfileCommand extends BaseCommand {
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3), 3);
 
         splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
-        splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title);
+        splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1,mainWeapon2);
         splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam);
 
         addSubcommands(splat2, splat1, splat3);
@@ -152,6 +160,15 @@ public class EditProfileCommand extends BaseCommand {
                                 profile.splat2Profile.setLevel(Integer.parseInt(ev.getOption("level").getAsString()));
                                 msg += lang.botLocale.cmdProfileLevel2Set + profile.splat2Profile.getLevel() + "\n";
                             }
+                            if (ev.getOption("main1") != null) {
+                                profile.splat2Profile.mainWeapon1 = Integer.parseInt(ev.getOption("main1").getAsString());
+                                msg += lang.botLocale.cmdPRofileMainWeaponSet + lang.weapons.get(profile.splat2Profile.mainWeapon1).name + "\n";
+                            }
+                            if (ev.getOption("main2") != null) {
+                                profile.splat2Profile.mainWeapon2 = Integer.parseInt(ev.getOption("main2").getAsString());
+                                msg += lang.botLocale.cmdPRofileMainWeaponSet2 + lang.weapons.get(profile.splat2Profile.mainWeapon2).name + "\n";
+                            }
+
                             if (ev.getOption("name") != null) {
                                 final String name = ev.getOption("name").getAsString();
                                 if (name.length() > 10) {

@@ -11,6 +11,8 @@ public class Splat2Profile {
     public Rank towercontrol = new Rank("c-");
     public Rank clamblitz = new Rank("c-");
     public int srTitle = 0;
+    public int mainWeapon1 = -1;
+    public int mainWeapon2 = -1;
 
     public static class Rank {
         public enum RankEnum {
@@ -110,6 +112,8 @@ public class Splat2Profile {
         json.addProperty("splatzones", splatzones.toString().replace("(", "").replace(")", ""));
         json.addProperty("towercontrol", towercontrol.toString().replace("(", "").replace(")", ""));
         json.addProperty("clamblitz", clamblitz.toString().replace("(", "").replace(")", ""));
+        json.addProperty("main1", mainWeapon1);
+        json.addProperty("main2", mainWeapon2);
         return json;
     }
 
@@ -123,6 +127,8 @@ public class Splat2Profile {
         if (obj.get("clamblitz") != null) profile.clamblitz = new Rank(obj.get("clamblitz").getAsString());
         if (obj.get("stars") != null) profile.stars = obj.get("stars").getAsInt();
         if (obj.get("name") != null && !obj.get("name").isJsonNull()) profile.name = obj.get("name").getAsString();
+        if (obj.get("main1") != null) profile.mainWeapon1 = obj.get("main1").getAsInt();
+        if (obj.get("main2") != null) profile.mainWeapon2 = obj.get("main2").getAsInt();
         return profile;
     }
 

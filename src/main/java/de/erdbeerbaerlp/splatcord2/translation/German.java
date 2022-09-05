@@ -49,8 +49,8 @@ public class German extends EnglishBase {
         cmdEditProfile2Desc = "Bearbeitet dein Splatoon 2 Profil";
         cmdProfile3Desc = "Zeigt dein (oder ein anderes) Splatoon 3 Profil";
         cmdEditProfile3Desc = "Bearbeitet dein Splatoon 3 Profil";
-        cmdProfilennidErr = "Um das Profil Feature zu verwenden, musst du erst deine Nintendo Network ID oder Pretendo Network ID festlegen!";
-        cmdProfilefcErr = "Um das Profil Feature zu verwenden, musst du erst deinen Switch Freundes Code!";
+        cmdProfilennidErr = "Um die Profil-Funktion zu verwenden, musst du erst deine Nintendo Network ID oder Pretendo Network ID festlegen!";
+        cmdProfilefcErr = "Um die Profil-Funktion zu verwenden, musst du erst deinen Switch Freundes Code festlegen!";
         cmdProfileRankFormatNotValid = "Das Rang-Format ist fehlerhaft !";
         cmdProfileS1RankSet = "Dein Splatoon 1 Rang wurde auf %rank% gesetzt";
         cmdProfileS2RankSet = "Dein %mode% rang wurde auf %rank% gesetzt";
@@ -119,6 +119,10 @@ public class German extends EnglishBase {
         cmdProfileSplatfestSet = "Dein Splatfest-Team ist nun ";
         cmdSplatnetOrdered = "%gear% wurde Bestellt!\nSobald es verfügbar ist, wirst du erwähnt";
         cmdSplatnetOrderFinished = "%ping%, deine Bestellung ist nun in TentaWorld verfügbar!";
+        cmdProfileMainWeaponDesc = "Setze deine Hauptwaffe(n)";
+        cmdProfileMainWeapon = "Hauptwaffen";
+        cmdPRofileMainWeaponSet = "Hauptwaffe 1 ist nun ";
+        cmdPRofileMainWeaponSet2 = "Hauptwaffe 2 ist nun ";
     }
 
     @Override

@@ -7,6 +7,7 @@ import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -96,18 +97,38 @@ public class Bot implements EventListener {
         if (event instanceof CommandAutoCompleteInteractionEvent) {
             final CommandAutoCompleteInteractionEvent ev = (CommandAutoCompleteInteractionEvent) event;
             final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-            if(CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName().equals("splatnet2")){
-                final ArrayList<Command.Choice> choices = new ArrayList<>();
-                int count = 0;
-                for(String key : lang.allGears.keySet()){
-                    final String name = lang.allGears.get(key);
-                    if(name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())){
-                        choices.add(new Command.Choice(name,key));
-                        count++;
-                        if(count >= 20) break;
+            switch(CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName()){
+                case "splatnet2":
+                    final ArrayList<Command.Choice> choices = new ArrayList<>();
+                    int count = 0;
+                    for(String key : lang.allGears.keySet()){
+                        final String name = lang.allGears.get(key);
+                        if(name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())){
+                            choices.add(new Command.Choice(name,key));
+                            count++;
+                            if(count >= 20) break;
+                        }
                     }
-                }
-                ev.replyChoices(choices).queue();
+                    ev.replyChoices(choices).queue();
+                    break;
+                case "editprofile":
+                    switch(ev.getFocusedOption().getName()){
+                        case "main1":
+                        case "main2":
+                            final ArrayList<Command.Choice> weapons = new ArrayList<>();
+                            int count2 = 0;
+                            for(Integer key : lang.weapons.keySet()){
+                                final Weapon wp = lang.weapons.get(key);
+                                if(wp.name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())){
+                                    weapons.add(new Command.Choice(wp.name,key));
+                                    count2++;
+                                    if(count2 >= 20) break;
+                                }
+                            }
+                            ev.replyChoices(weapons).queue();
+                            break;
+                    }
+                    break;
             }
         } else if (event instanceof GuildJoinEvent) {
             final GuildJoinEvent ev = (GuildJoinEvent) event;
