@@ -61,7 +61,7 @@ public class ViewProfileCommand extends BaseCommand {
 
                         ev.replyEmbeds(b.build()).queue();
                     } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingNID.replace("%s", m.getEffectiveName())).queue();
+                        ev.reply(lang.botLocale.cmdProfileMissingNNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
                 case "splat2":
@@ -88,7 +88,7 @@ public class ViewProfileCommand extends BaseCommand {
 
                         ev.replyEmbeds(b.build()).queue();
                     } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).queue();
+                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
                 case "splat3":
@@ -107,7 +107,7 @@ public class ViewProfileCommand extends BaseCommand {
 
                         ev.replyEmbeds(b.build()).queue();
                     } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).queue();
+                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
                 default:

@@ -11,9 +11,9 @@ public class DelstageCommand extends BaseCommand {
         super("delstage", l.botLocale.cmdDelstageDesc);
         final SubcommandData splat1 = new SubcommandData("splatoon1", l.botLocale.cmdSetstageDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetstageDesc);
-        //final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetstageDesc);
+        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetstageDescTemporary);
 
-        addSubcommands(splat2,splat1);
+        addSubcommands(splat2,splat1,splat3);
     }
 
     @Override
@@ -40,6 +40,14 @@ public class DelstageCommand extends BaseCommand {
                         return;
                     }
                     Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), null);
+                    ev.reply(lang.botLocale.deleteSuccessful).queue();
+                    break;
+                case "splatoon3":
+                    if (!Bot.isAdmin(ev.getMember())) {
+                        ev.reply(lang.botLocale.noAdminPerms).queue();
+                        return;
+                    }
+                    Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), null);
                     ev.reply(lang.botLocale.deleteSuccessful).queue();
                     break;
             }

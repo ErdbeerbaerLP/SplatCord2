@@ -78,7 +78,7 @@ public class Italian extends EnglishBase {
         cmdProfileLevel1Set = "Livello Splatoon 1 impostato a ";
         cmdProfileLevel2Set = "Livello Splatoon 2 impostato a ";
         cmdProfileNameSet = "Nome in gioco impostato a ";
-        cmdProfileMissingNID = "Non hai ancora impostato un Nintendo Network ID o un Pretendo Network ID.";
+        cmdProfileMissingNNID = "Non hai ancora impostato un Nintendo Network ID o un Pretendo Network ID.";
         cmdProfileMissingFC = "Non hai ancora impostato un Codice amico Switch.";
         cmdProfileFCSet = "Codice amico impostato a ";
     }

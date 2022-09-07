@@ -39,7 +39,13 @@ public class DatabaseInterface implements AutoCloseable {
                 "`salchannel` bigint null COMMENT 'Channel ID for automatic Salmon Run rotation updates',\n" +
                 "`lastSalmon` bigint null COMMENT 'Message ID of last salmon run update message',\n" +
                 "`lastStage2` bigint null COMMENT 'Message ID of last Splatoon 2 Stage Notification',\n" +
-                "`deleteMessage` tinyint not null default 1  COMMENT 'Whether or not the bot should delete the old schedule message'\n" +
+                "`deleteMessage` tinyint not null default 1  COMMENT 'Whether or not the bot should delete the old schedule message',\n" +
+                "`s1mapchannel` bigint DEFAULT NULL,\n" +
+                "`lastStage1` bigint DEFAULT NULL,\n" +
+                "`s3mapchannel` bigint DEFAULT NULL,\n" +
+                "`lastStage3` bigint DEFAULT NULL,\n" +
+                "`s3salmonchannel` bigint DEFAULT NULL,\n" +
+                "`s3lastSalmon` bigint DEFAULT NULL\n" +
                 ");");
         runUpdate("CREATE TABLE IF NOT EXISTS `users` (\n" +
                 "`id` BIGINT NOT NULL COMMENT 'Discord User ID',\n" +
@@ -266,11 +272,25 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return 0;
     }
+
+    public long getS3SalmonChannel(long serverID) {
+        try (final ResultSet res = query("SELECT s3rsalchannel FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     public void setDeleteMessage(long serverID, boolean deleteMessage) {
         runUpdate("UPDATE servers SET deleteMessage = " + (deleteMessage ? 1:0) + " WHERE serverid = " + serverID);
     }
     public void setS2StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET mapchannel = " + channelID + " WHERE serverid = " + serverID);
+    }
+    public void setS3StageChannel(long serverID, Long channelID) {
+        runUpdate("UPDATE servers SET s3mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
     public void setS1StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s1mapchannel = " + channelID + " WHERE serverid = " + serverID);
@@ -279,6 +299,20 @@ public class DatabaseInterface implements AutoCloseable {
     public HashMap<Long, Long> getAllS2MapChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,mapchannel FROM servers")) {
+            while (res != null && res.next()) {
+                final long serverid = res.getLong(1);
+                final long channelid = res.getLong(2);
+                if (!res.wasNull())
+                    mapChannels.put(serverid, channelid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapChannels;
+    }
+    public HashMap<Long, Long> getAllS3MapChannels() {
+        final HashMap<Long, Long> mapChannels = new HashMap<>();
+        try (final ResultSet res = query("SELECT serverid,s3mapchannel FROM servers")) {
             while (res != null && res.next()) {
                 final long serverid = res.getLong(1);
                 final long channelid = res.getLong(2);
@@ -333,6 +367,13 @@ public HashMap<Long, Order[]> getAllOrders() {
     public void setSalmonMessage(long serverID, Long messageID) {
         runUpdate("UPDATE servers SET lastSalmon = " + messageID + " WHERE serverid = " + serverID);
     }
+    public void setS3SalmonChannel(long serverID, Long channelID) {
+        runUpdate("UPDATE servers SET s3salmonchannel = " + channelID + " WHERE serverid = " + serverID);
+    }
+
+    public void setS3SalmonMessage(long serverID, Long messageID) {
+        runUpdate("UPDATE servers SET s3lastSalmon = " + messageID + " WHERE serverid = " + serverID);
+    }
     public void setLastS2RotationMessage(long serverID, long msgID) {
         runUpdate("UPDATE servers SET lastStage2 = " + msgID + " WHERE serverid = " + serverID);
     }
@@ -369,6 +410,35 @@ public HashMap<Long, Order[]> getAllOrders() {
         }
         return salmonMessages;
     }
+    public HashMap<Long, Long> getAllS3SalmonChannels() {
+        final HashMap<Long, Long> salmoChannels = new HashMap<>();
+        try (final ResultSet res = query("SELECT serverid,s3salmonchannel FROM servers")) {
+            while (res != null && res.next()) {
+                final long serverid = res.getLong(1);
+                final long channelid = res.getLong(2);
+                if (!res.wasNull())
+                    salmoChannels.put(serverid, channelid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return salmoChannels;
+    }
+
+    public HashMap<Long, Long> getAllS3SalmonMessages() {
+        final HashMap<Long, Long> salmonMessages = new HashMap<>();
+        try (final ResultSet res = query("SELECT s3salmonchannel,s3lastSalmon FROM servers")) {
+            while (res != null && res.next()) {
+                final long channelid = res.getLong(1);
+                final long messageid = res.getLong(2);
+                if (!res.wasNull())
+                    salmonMessages.put(channelid, messageid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return salmonMessages;
+    }
     public long getLastS2RotationMessage(long serverID) {
         try (final ResultSet res = query("SELECT lastStage2 FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -393,6 +463,16 @@ public HashMap<Long, Order[]> getAllOrders() {
 
     public long getLastSalmonMessage(long serverID) {
         try (final ResultSet res = query("SELECT lastSalmon FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public long getLastS3SalmonMessage(long serverID) {
+        try (final ResultSet res = query("SELECT s3lastSalmon FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
             }

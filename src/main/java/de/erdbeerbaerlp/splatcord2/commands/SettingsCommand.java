@@ -65,7 +65,7 @@ public class SettingsCommand extends BaseCommand {
                         CommandRegistry.setCommands(guild);
                         final long stageChannel = Main.iface.getS2StageChannel(guild.getIdLong());
                         if(stageChannel != 0){
-                            MessageUtil.sendRotationFeed(guild.getIdLong(),stageChannel,ScheduleUtil.getCurrentRotation());
+                            MessageUtil.sendS2RotationFeed(guild.getIdLong(),stageChannel,ScheduleUtil.getCurrentRotation());
                         }
                         final long salmonChannel = Main.iface.getSalmonChannel(guild.getIdLong());
                         if(salmonChannel != 0){

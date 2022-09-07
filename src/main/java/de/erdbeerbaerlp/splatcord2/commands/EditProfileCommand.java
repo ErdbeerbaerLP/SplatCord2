@@ -162,11 +162,11 @@ public class EditProfileCommand extends BaseCommand {
                             }
                             if (ev.getOption("main1") != null) {
                                 profile.splat2Profile.mainWeapon1 = Integer.parseInt(ev.getOption("main1").getAsString());
-                                msg += lang.botLocale.cmdPRofileMainWeaponSet + lang.weapons.get(profile.splat2Profile.mainWeapon1).name + "\n";
+                                msg += lang.botLocale.cmdProfileMainWeaponSet + lang.weapons.get(profile.splat2Profile.mainWeapon1).name + "\n";
                             }
                             if (ev.getOption("main2") != null) {
                                 profile.splat2Profile.mainWeapon2 = Integer.parseInt(ev.getOption("main2").getAsString());
-                                msg += lang.botLocale.cmdPRofileMainWeaponSet2 + lang.weapons.get(profile.splat2Profile.mainWeapon2).name + "\n";
+                                msg += lang.botLocale.cmdProfileMainWeaponSet2 + lang.weapons.get(profile.splat2Profile.mainWeapon2).name + "\n";
                             }
 
                             if (ev.getOption("name") != null) {

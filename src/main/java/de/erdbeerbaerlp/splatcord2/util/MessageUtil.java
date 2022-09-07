@@ -54,7 +54,7 @@ public class MessageUtil {
         }
     }
 
-    public static void sendRotationFeed(long serverid, long channel, Rotation currentRotation) {
+    public static void sendS2RotationFeed(long serverid, long channel, Rotation currentRotation) {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
@@ -117,7 +117,7 @@ public class MessageUtil {
                         , true).build()).build();
     }
 
-    public static void sendRotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {
+    public static void sendS1RotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");

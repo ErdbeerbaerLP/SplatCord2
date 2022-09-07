@@ -142,7 +142,7 @@ public class Main {
             if (iface.status.isDBAlive() && currentS1RotationInt != Config.instance().doNotEdit.lastS1Rotation) {
                 iface.getAllS1MapChannels().forEach((serverid, channel) -> {
                     try {
-                        MessageUtil.sendRotationFeed(serverid, channel, currentS1Rotation);
+                        MessageUtil.sendS1RotationFeed(serverid, channel, currentS1Rotation);
                     } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();
                     }
@@ -156,7 +156,7 @@ public class Main {
             if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
                 iface.getAllS2MapChannels().forEach((serverid, channel) -> {
                     try {
-                        MessageUtil.sendRotationFeed(serverid, channel, currentRotation);
+                        MessageUtil.sendS2RotationFeed(serverid, channel, currentRotation);
                     } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();
                     }

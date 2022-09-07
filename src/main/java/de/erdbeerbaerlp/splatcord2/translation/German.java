@@ -78,7 +78,7 @@ public class German extends EnglishBase {
         cmdProfileLevel2Set = "Splatoon 2 level gesetzt auf ";
         cmdProfileLevel3Set = "Splatoon 3 level gesetzt auf ";
         cmdProfileNameSet = "In-Game Name gesetzt auf ";
-        cmdProfileMissingNID = "Du hast noch keine Nintendo Network ID oder eine Pretendo Network ID festgelegt";
+        cmdProfileMissingNNID = "Du hast noch keine Nintendo Network ID oder eine Pretendo Network ID festgelegt";
         cmdProfileMissingFC = "%s hat noch keinen Switch Freundescode festgelegt.";
         cmdProfileFCSet = "Switch Freundescode gesetzt auf ";
         cmdSettingsDesc = "Bearbeite Servereinstellungen (z.B. Sprache)";
@@ -121,9 +121,17 @@ public class German extends EnglishBase {
         cmdSplatnetOrderFinished = "%ping%, deine Bestellung ist nun in TentaWorld verfügbar!";
         cmdProfileMainWeaponDesc = "Setze deine Hauptwaffe(n)";
         cmdProfileMainWeapon = "Hauptwaffen";
-        cmdPRofileMainWeaponSet = "Hauptwaffe 1 ist nun ";
-        cmdPRofileMainWeaponSet2 = "Hauptwaffe 2 ist nun ";
+        cmdProfileMainWeaponSet = "Hauptwaffe 1 ist nun ";
+        cmdProfileMainWeaponSet2 = "Hauptwaffe 2 ist nun ";
         unset = "Nicht Gesetzt";
+        cmdViewFC = "Sendet deinen Freundescode";
+        cmdViewNNID = "Sendet deine Nintendo Network ID";
+        cmdViewPNID = "Sendet deine Pretendo Network ID";
+
+        stageFeedMsgTemporary = "Aktuelle Arenen werden nun, sobald verfügbar, regelmäßig in diesen Kanal gesendet";
+        salmonFeedMsgTemporary = "Aktuelle Salmon Runs werden nun, sobald verfügbar, in diesen Kanal gesendet";
+        cmdSetstageDescTemporary = "Markiert einen Kanal für Arena benachrichtigungen, sobald sie verfügbar sind";
+        cmdSetsalmonDescTemporary = "Markiert einen Kanal für SalmonRun Benachrichtigungen, sobald sie verfügbar sind";
     }
 
     @Override

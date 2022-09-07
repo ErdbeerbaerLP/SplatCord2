@@ -17,6 +17,10 @@ public class EnglishBase {
     public String noAdminPerms = "You need administrative permissions (manage server) to execute this command!";
     public String stageFeedMsg = "New stage rotations will now be sent here";
     public String salmonFeedMsg = "New Salmon Runs will now be sent here";
+    public String stageFeedMsgTemporary = "New stage rotations will now be sent here, as soon as they get implemented!";
+    public String salmonFeedMsgTemporary = "New Salmon Runs will now be sent here, as soon as it gets implemented!";
+    public String cmdSetstageDescTemporary = "Marks this channel for splat 3 rotations as soon as they get available";
+    public String cmdSetsalmonDescTemporary = "Marks this channel for splat 3 salmon runs as soon as they get available";
     public String languageSetMessage = "Your server's language is now set to english";
     public String unknownLanguage = "You did not specify an valid language.";
     public String deleteSuccessful = "Successfully deleted";
@@ -91,7 +95,8 @@ public class EnglishBase {
     public String cmdProfileLevel1Set = "Splatoon 1 level set to ";
     public String cmdProfileLevel2Set = "Splatoon 2 level set to ";
     public String cmdProfileNameSet = "In-Game name set to ";
-    public String cmdProfileMissingNID = "%s did not configure an Nintendo Network ID or an Pretendo Network ID yet.";
+    public String cmdProfileMissingNNID = "%s did not configure an Nintendo Network ID yet.";
+    public String cmdProfileMissingPNID = "%s did not configure an Pretendo Network ID yet.";
     public String cmdProfileMissingFC = "%s did not configure an Switch Friend Code yet.";
     public String cmdProfileFCSet = "Set Friend Code to ";
     public String cmdSettingsDesc = "Edit server settings (ex. language)";
@@ -134,9 +139,12 @@ public class EnglishBase {
     public String cmdSplatnetOrderFinished = "%ping%, your Order is now available in Splatnet!";
     public String cmdProfileMainWeaponDesc = "Set your main weapon(s)";
     public String cmdProfileMainWeapon = "Main Weapons";
-    public String cmdPRofileMainWeaponSet = "Main weapon 1 set to ";
-    public String cmdPRofileMainWeaponSet2 = "Main weapon 2 set to ";
+    public String cmdProfileMainWeaponSet = "Main weapon 1 set to ";
+    public String cmdProfileMainWeaponSet2 = "Main weapon 2 set to ";
     public String unset = "Unset";
+    public String cmdViewFC = "Send your friend code";
+    public String cmdViewNNID = "Send your Nintendo Network ID";
+    public String cmdViewPNID = "Send your Pretendo Network ID";
 
     public String getS1MapName(int mapid) {
         switch (mapid) {

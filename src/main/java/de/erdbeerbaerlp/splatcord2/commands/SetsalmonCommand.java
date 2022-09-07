@@ -13,10 +13,10 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 public class SetsalmonCommand extends BaseCommand {
     public SetsalmonCommand(Locale l) {
         super("setsalmon", l.botLocale.cmdSetsalmonDesc);
-        final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetstageDesc);
-        //final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetstageDesc);
+        final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetsalmonDesc);
+        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetsalmonDescTemporary);
 
-        addSubcommands(splat2);
+        addSubcommands(splat2,splat3);
     }
 
     @Override
@@ -29,15 +29,13 @@ public class SetsalmonCommand extends BaseCommand {
         final Guild guild = ev.getGuild();
         final MessageChannel channel = ev.getChannel();
 
+        final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
-
                 case "splatoon2":
-                    final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
                     if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
-                        final Locale finalLang = lang;
                         ev.getUser().openPrivateChannel().queue((c) -> {
-                            c.sendMessage(finalLang.botLocale.noWritePerms).queue();
+                            c.sendMessage(lang.botLocale.noWritePerms).queue();
                         });
                         return;
                     }
@@ -48,6 +46,21 @@ public class SetsalmonCommand extends BaseCommand {
                     Main.iface.setSalmonChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.salmonFeedMsg).queue();
                     MessageUtil.sendSalmonFeed(guild.getIdLong(), channel.getIdLong());
+                    break;
+                case "splatoon3":
+                    if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
+                        ev.getUser().openPrivateChannel().queue((c) -> {
+                            c.sendMessage(lang.botLocale.noWritePerms).queue();
+                        });
+                        return;
+                    }
+                    if (!Bot.isAdmin(ev.getMember())) {
+                        ev.reply(lang.botLocale.noAdminPerms).queue();
+                        return;
+                    }
+                    Main.iface.setS3SalmonChannel(guild.getIdLong(), channel.getIdLong());
+                    ev.reply(lang.botLocale.salmonFeedMsgTemporary).queue();
+                    //MessageUtil.sendSalmonFeed(guild.getIdLong(), channel.getIdLong());
                     break;
             }
     }

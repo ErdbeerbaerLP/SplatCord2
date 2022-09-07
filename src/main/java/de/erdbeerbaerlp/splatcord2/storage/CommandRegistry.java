@@ -40,6 +40,7 @@ public class CommandRegistry {
         baseCommandClasses.add(RotationCommand.class);
         baseCommandClasses.add(Splatnet2Command.class);
         baseCommandClasses.add(SalmonCommand.class);
+        baseCommandClasses.add(ViewFCCommand.class);
     }
 
     public static void setCommands(Guild g) {
