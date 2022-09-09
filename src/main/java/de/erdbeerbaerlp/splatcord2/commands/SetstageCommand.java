@@ -37,53 +37,38 @@ public class SetstageCommand extends BaseCommand {
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
                 case "splatoon1":
-                    if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
-                        final Locale finalLang = lang;
-                        ev.getUser().openPrivateChannel().queue((c) -> {
-                            c.sendMessage(finalLang.botLocale.noWritePerms).queue();
-                        });
-                        return;
-                    }
-                    if (!Bot.isAdmin(ev.getMember())) {
-                        ev.reply(lang.botLocale.noAdminPerms).queue();
-                        return;
-                    }
+                    if (checkPerms(ev, guild, lang, channel)) return;
                     Main.iface.setS1StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsg).queue();
                     MessageUtil.sendS1RotationFeed(guild.getIdLong(), channel.getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
                     break;
                 case "splatoon2":
-                    if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
-                        final Locale finalLang = lang;
-                        ev.getUser().openPrivateChannel().queue((c) -> {
-                            c.sendMessage(finalLang.botLocale.noWritePerms).queue();
-                        });
-                        return;
-                    }
-                    if (!Bot.isAdmin(ev.getMember())) {
-                        ev.reply(lang.botLocale.noAdminPerms).queue();
-                        return;
-                    }
+                    if (checkPerms(ev, guild, lang, channel)) return;
                     Main.iface.setS2StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsg).queue();
                     MessageUtil.sendS2RotationFeed(guild.getIdLong(), channel.getIdLong(), ScheduleUtil.getCurrentRotation());
                     break;
                 case "splatoon3":
-                    if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
-                        final Locale finalLang = lang;
-                        ev.getUser().openPrivateChannel().queue((c) -> {
-                            c.sendMessage(finalLang.botLocale.noWritePerms).queue();
-                        });
-                        return;
-                    }
-                    if (!Bot.isAdmin(ev.getMember())) {
-                        ev.reply(lang.botLocale.noAdminPerms).queue();
-                        return;
-                    }
+                    if (checkPerms(ev, guild, lang, channel)) return;
                     Main.iface.setS3StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsgTemporary).queue();
                     //MessageUtil.sendRotationFeed(guild.getIdLong(), channel.getIdLong(), ScheduleUtil.getCurrentRotation());
                     break;
             }
+    }
+
+    private boolean checkPerms(SlashCommandInteractionEvent ev, Guild guild, Locale lang, MessageChannel channel) {
+        if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
+            final Locale finalLang = lang;
+            ev.getUser().openPrivateChannel().queue((c) -> {
+                c.sendMessage(finalLang.botLocale.noWritePerms).queue();
+            });
+            return true;
+        }
+        if (!Bot.isAdmin(ev.getMember())) {
+            ev.reply(lang.botLocale.noAdminPerms).queue();
+            return true;
+        }
+        return false;
     }
 }

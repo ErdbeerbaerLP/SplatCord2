@@ -63,6 +63,10 @@ public class Bot implements EventListener {
             if (!knownIDs.contains(g.getIdLong()))
                 Main.iface.addServer(g.getIdLong());
             CommandRegistry.setCommands(g);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ignored) {
+            }
         });
 
     }
@@ -94,8 +98,7 @@ public class Bot implements EventListener {
     @Override
     public void onEvent(@NotNull GenericEvent event) {
 
-        if (event instanceof CommandAutoCompleteInteractionEvent) {
-            final CommandAutoCompleteInteractionEvent ev = (CommandAutoCompleteInteractionEvent) event;
+        if (event instanceof final CommandAutoCompleteInteractionEvent ev) {
             final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
             switch(CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName()){
                 case "splatnet2":
@@ -130,8 +133,7 @@ public class Bot implements EventListener {
                     }
                     break;
             }
-        } else if (event instanceof GuildJoinEvent) {
-            final GuildJoinEvent ev = (GuildJoinEvent) event;
+        } else if (event instanceof final GuildJoinEvent ev) {
             Main.iface.addServer(ev.getGuild().getIdLong());
             CommandRegistry.setCommands(ev.getGuild());
         } else if (event instanceof UnavailableGuildJoinedEvent) {
@@ -142,8 +144,7 @@ public class Bot implements EventListener {
             Main.iface.delServer(((GuildLeaveEvent) event).getGuild().getIdLong());
         else if (event instanceof UnavailableGuildLeaveEvent)
             Main.iface.delServer(((UnavailableGuildLeaveEvent) event).getGuildIdLong());
-        else if (event instanceof SlashCommandInteractionEvent) {
-            SlashCommandInteractionEvent ev = (SlashCommandInteractionEvent) event;
+        else if (event instanceof SlashCommandInteractionEvent ev) {
             if (ev.getChannelType() != ChannelType.TEXT) return;
             final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
             if (cmd != null) {

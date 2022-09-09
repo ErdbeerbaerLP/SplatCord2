@@ -147,42 +147,25 @@ public class EnglishBase {
     public String cmdViewPNID = "Send your Pretendo Network ID";
 
     public String getS1MapName(int mapid) {
-        switch (mapid) {
-            case 0:
-                return "Urchin Underpass";
-            case 1:
-                return "Walleye Warehouse";
-            case 2:
-                return "Saltspray Rig";
-            case 3:
-                return "Arowana Mall";
-            case 4:
-                return "Blackbelly Skatepark";
-            case 5:
-                return "Camp Triggerfish";
-            case 6:
-                return "Port Mackerel";
-            case 7:
-                return "Kelp Dome";
-            case 8:
-                return "Moray Towers";
-            case 9:
-                return "Bluefin Depot";
-            case 10:
-                return "Hammerhead Bridge";
-            case 11:
-                return "Flounder Heights";
-            case 12:
-                return "Museum d'Alfonsino";
-            case 13:
-                return "Ancho-V Games";
-            case 14:
-                return "Piranha Pit";
-            case 15:
-                return "Mahi-Mahi Resort";
-            default:
-                return "Unknown Map #" + mapid;
-        }
+        return switch (mapid) {
+            case 0 -> "Urchin Underpass";
+            case 1 -> "Walleye Warehouse";
+            case 2 -> "Saltspray Rig";
+            case 3 -> "Arowana Mall";
+            case 4 -> "Blackbelly Skatepark";
+            case 5 -> "Camp Triggerfish";
+            case 6 -> "Port Mackerel";
+            case 7 -> "Kelp Dome";
+            case 8 -> "Moray Towers";
+            case 9 -> "Bluefin Depot";
+            case 10 -> "Hammerhead Bridge";
+            case 11 -> "Flounder Heights";
+            case 12 -> "Museum d'Alfonsino";
+            case 13 -> "Ancho-V Games";
+            case 14 -> "Piranha Pit";
+            case 15 -> "Mahi-Mahi Resort";
+            default -> "Unknown Map #" + mapid;
+        };
     }
 
     public String getS3MapName(int mapid) {
@@ -191,39 +174,26 @@ public class EnglishBase {
         }
     }
     public String getS3SRTitle(int title) {
-        switch (title) {
-            case 0:
-                return "Apprentice";
-            case 1:
-                return "Part-Timer";
-            case 2:
-                return "Go-Getter";
-            case 3:
-                return "Overachiever";
-            case 4:
-                return "Profreshional";
-            case 5:
-                return "Profreshional +1";
-            case 6:
-                return "Profreshional +2";
-            case 7:
-                return "Profreshional +3";
-            case 8:
-            default:
-                return "Eggsecutive VP";
-        }
+        return switch (title) {
+            case 0 -> "Apprentice";
+            case 1 -> "Part-Timer";
+            case 2 -> "Go-Getter";
+            case 3 -> "Overachiever";
+            case 4 -> "Profreshional";
+            case 5 -> "Profreshional +1";
+            case 6 -> "Profreshional +2";
+            case 7 -> "Profreshional +3";
+            default-> "Eggsecutive VP";
+        };
     }
 
 
     public String getSplatfestTeam(int id) {
-        switch (id) {
-            case 1:
-                return "Rock";
-            case 2:
-                return "Paper";
-            case 3:
-                return "Scissors";
-            default: return "Unset";
-        }
+        return switch (id) {
+            case 1 -> "Rock";
+            case 2 -> "Paper";
+            case 3 -> "Scissors";
+            default -> "Unset";
+        };
     }
 }

@@ -85,41 +85,24 @@ public class Italian extends EnglishBase {
 
     @Override
     public String getS1MapName(int mapid){
-        switch(mapid){
-            case 0:
-                return "Periferia urbana";
-            case 1:
-                return "Magazzino";
-            case 2:
-                return "Raffineria";
-            case 3:
-                return "Centro commerciale";
-            case 4:
-                return "Pista Polposkate";
-            case 5:
-                return "Campeggio Totan";
-            case 6:
-                return "Porto Polpo";
-            case 7:
-                return "Serra di alghe";
-            case 8:
-                return "Torri cittadine";
-            case 9:
-                return "Molo Mollusco";
-            case 10:
-                return "Ponte Sgombro";
-            case 11:
-                return "Cime sogliolose";
-            case 12:
-                return "Museo di Cefalò";
-            case 13:
-                return "Acciugames";
-            case 14:
-                return "Miniera d'Orata";
-            case 15:
-                return "Villanguilla";
-            default:
-                return super.getS1MapName(mapid);
-        }
+        return switch (mapid) {
+            case 0 -> "Periferia urbana";
+            case 1 -> "Magazzino";
+            case 2 -> "Raffineria";
+            case 3 -> "Centro commerciale";
+            case 4 -> "Pista Polposkate";
+            case 5 -> "Campeggio Totan";
+            case 6 -> "Porto Polpo";
+            case 7 -> "Serra di alghe";
+            case 8 -> "Torri cittadine";
+            case 9 -> "Molo Mollusco";
+            case 10 -> "Ponte Sgombro";
+            case 11 -> "Cime sogliolose";
+            case 12 -> "Museo di Cefalò";
+            case 13 -> "Acciugames";
+            case 14 -> "Miniera d'Orata";
+            case 15 -> "Villanguilla";
+            default -> super.getS1MapName(mapid);
+        };
     }
 }

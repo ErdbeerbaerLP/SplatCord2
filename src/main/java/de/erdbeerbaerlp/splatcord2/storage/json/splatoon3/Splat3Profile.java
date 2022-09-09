@@ -6,15 +6,12 @@ public class Splat3Profile {
     int level = 1;
     int stars = 0;
     String name;
-    public Rank rank = new Rank("c-");
+    public Rank rank = new Rank("b-");
     public int srTitle = 0;
     public int splatfestTeam = 0;
 
     public static class Rank {
         public enum RankEnum {
-            Cminus("c-"),
-            Cplus("c+"),
-            C("c"),
             Bminus("b-"),
             Bplus("b+"),
             B("b"),
@@ -23,7 +20,7 @@ public class Splat3Profile {
             A("a"),
             Splus("s+"),
             S("s");
-            String identifier;
+            final String identifier;
 
             RankEnum(String s) {
                 this.identifier = s;

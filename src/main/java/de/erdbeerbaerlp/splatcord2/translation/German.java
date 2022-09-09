@@ -173,28 +173,18 @@ public class German extends EnglishBase {
     }
 
     public String getS3SRTitle(int title) {
-        switch (title) {
-            case 0:
-                return "Azubi";
-            case 1:
-                return "Teilzeitkraft";
-            case 2:
-                return "Fachpersonal";
-            case 3:
-                return "Führungskraft";
-            case 4:
-                return "Boss";
-            case 5:
-                return "Boss +1";
-            case 6:
-                return "Boss +2";
-            case 7:
-                return "Boss +3";
-            case 8:
-                return "Legende";
-            default:
-                return super.getS3SRTitle(title);
-        }
+        return switch (title) {
+            case 0 -> "Azubi";
+            case 1 -> "Teilzeitkraft";
+            case 2 -> "Fachpersonal";
+            case 3 -> "Führungskraft";
+            case 4 -> "Boss";
+            case 5 -> "Boss +1";
+            case 6 -> "Boss +2";
+            case 7 -> "Boss +3";
+            case 8 -> "Legende";
+            default -> super.getS3SRTitle(title);
+        };
     }
 
     public String getSplatfestTeam(int id) {
