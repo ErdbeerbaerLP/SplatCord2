@@ -86,11 +86,11 @@ public class MessageUtil {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
-            iface.setS2StageChannel(serverid, null);
+            iface.setS3StageChannel(serverid, null);
             return;
         }
         try {
-            final long lastRotationMessageID = iface.getLastS2RotationMessage(serverid);
+            final long lastRotationMessageID = iface.getLastS3RotationMessage(serverid);
             final boolean deleteMessage = iface.getDeleteMessage(serverid);
             if (deleteMessage && lastRotationMessageID != 0) {
                 final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
@@ -102,7 +102,7 @@ public class MessageUtil {
                     getS3MapMessage(
                             serverid,
                             currentRotation), channel);
-            if (msg != null) msg.thenAccept((a) -> iface.setLastS2RotationMessage(serverid, a.getIdLong()));
+            if (msg != null) msg.thenAccept((a) -> iface.setLastS3RotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
             Guild guildById = bot.jda.getGuildById(serverid);

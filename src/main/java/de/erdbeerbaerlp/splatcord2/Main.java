@@ -174,7 +174,7 @@ public class Main {
                         e.printStackTrace();
                     }
                 });
-                Config.instance().doNotEdit.lastS3RotationTimestamp = currentRotation.getRegular().start_time;
+                Config.instance().doNotEdit.lastS3RotationTimestamp = currentS3Rotation.getRegular().getStartTime();
                 Config.instance().saveConfig();
             }
 

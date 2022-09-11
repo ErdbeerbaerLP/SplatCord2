@@ -374,6 +374,9 @@ public HashMap<Long, Order[]> getAllOrders() {
     public void setS3SalmonMessage(long serverID, Long messageID) {
         runUpdate("UPDATE servers SET s3lastSalmon = " + messageID + " WHERE serverid = " + serverID);
     }
+    public void setLastS3RotationMessage(long serverID, long msgID) {
+        runUpdate("UPDATE servers SET lastStage3 = " + msgID + " WHERE serverid = " + serverID);
+    }
     public void setLastS2RotationMessage(long serverID, long msgID) {
         runUpdate("UPDATE servers SET lastStage2 = " + msgID + " WHERE serverid = " + serverID);
     }
@@ -441,6 +444,16 @@ public HashMap<Long, Order[]> getAllOrders() {
     }
     public long getLastS2RotationMessage(long serverID) {
         try (final ResultSet res = query("SELECT lastStage2 FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public long getLastS3RotationMessage(long serverID) {
+        try (final ResultSet res = query("SELECT lastStage3 FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
             }
