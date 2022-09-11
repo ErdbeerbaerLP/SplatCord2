@@ -3,6 +3,7 @@ package de.erdbeerbaerlp.splatcord2.commands;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
+import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
@@ -21,9 +22,9 @@ public class RotationCommand extends BaseCommand {
         super("rotation", l.botLocale.cmdRotationDesc);
         final SubcommandData splat1 = new SubcommandData("splatoon1", l.botLocale.cmdRotationDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdRotationDesc);
-        //final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetstageDesc);
+        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetstageDesc);
 
-        addSubcommands(splat2, splat1);
+        addSubcommands(splat2, splat1, splat3);
     }
 
     @Override
@@ -42,16 +43,16 @@ public class RotationCommand extends BaseCommand {
                 case "splatoon1":
                     final Phase currentS1Rotation = Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())];
                     final ArrayList<Phase> nextS1Rotations = new ArrayList<>();
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(),1)]);
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(),2)]);
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(),3)]);
-                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle+ "(Splatoon 1)");
+                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1)]);
+                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2)]);
+                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3)]);
+                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1)");
                     addS1Rotation(future, currentS1Rotation, lang, -1);
                     future.addBlankField(false);
                     long time = Instant.now().toEpochMilli();
                     for (int i = 0; i < nextS1Rotations.size(); i++) {
-                        time = RotationTimingUtil.getNextRotationStart(time+1);
-                        addS1Rotation(future, nextS1Rotations.get(i), lang, time+1);
+                        time = RotationTimingUtil.getNextRotationStart(time + 1);
+                        addS1Rotation(future, nextS1Rotations.get(i), lang, time + 1);
                         if (i < nextS1Rotations.size() - 1)
                             future.addBlankField(false);
                     }
@@ -63,7 +64,7 @@ public class RotationCommand extends BaseCommand {
                     final Rotation currentS2Rotation = ScheduleUtil.getCurrentRotation();
                     final ArrayList<Rotation> nextS2Rotations = ScheduleUtil.getNext3Rotations();
 
-                    final EmbedBuilder s2EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle+ "(Splatoon 2)");
+                    final EmbedBuilder s2EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 2)");
                     addS2Rotation(s2EmbedBuilder, currentS2Rotation, lang, true);
                     s2EmbedBuilder.addBlankField(false);
                     for (int i = 0; i < nextS2Rotations.size(); i++) {
@@ -73,6 +74,22 @@ public class RotationCommand extends BaseCommand {
                     }
                     ev.replyEmbeds(s2EmbedBuilder.build()).queue();
                     break;
+                case "splatoon3":
+                    final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
+                    System.out.println(currentS3Rotation);
+                    final ArrayList<S3Rotation> nextS3Rotations = ScheduleUtil.getS3Next3Rotations();
+
+                    final EmbedBuilder s3EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 3)");
+                    addS3Rotation(s3EmbedBuilder, currentS3Rotation, lang, true);
+                    s3EmbedBuilder.addBlankField(false);
+                    for (int i = 0; i < nextS3Rotations.size(); i++) {
+                        addS3Rotation(s3EmbedBuilder, nextS3Rotations.get(i), lang);
+                        if (i < nextS3Rotations.size() - 1)
+                            s3EmbedBuilder.addBlankField(false);
+                    }
+                    s3EmbedBuilder.setFooter(lang.botLocale.noTranslations);
+                    ev.replyEmbeds(s3EmbedBuilder.build()).queue();
+                    break;
             }
 
     }
@@ -80,6 +97,10 @@ public class RotationCommand extends BaseCommand {
 
     private static void addS2Rotation(EmbedBuilder future, Rotation currentRotation, Locale lang) {
         addS2Rotation(future, currentRotation, lang, false);
+    }
+
+    private static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang) {
+        addS3Rotation(future, currentRotation, lang, false);
     }
 
     private static void addS1Rotation(EmbedBuilder future, Phase currentRotation, Locale lang, long timestamp) {
@@ -112,6 +133,25 @@ public class RotationCommand extends BaseCommand {
                                 lang.game_modes.get("league").name + " (" + lang.rules.get(currentRotation.getLeague().rule.key).name + ")",
                         lang.stages.get(currentRotation.getLeague().stage_a.id).getName() +
                                 ", " + lang.stages.get(currentRotation.getLeague().stage_b.id).getName()
+                        , true);
+    }
+
+    private static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang, boolean now) {
+        future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + currentRotation.getRegular().getStartTime() + ":t>"), true)
+                .addField(Emote.REGULAR +
+                                lang.game_modes.get("regular").name,
+                        (currentRotation.getRegular().regularMatchSetting.vsStages[0].name) +
+                                ", " + (currentRotation.getRegular().regularMatchSetting.vsStages[1].name)
+                        , true)
+                .addField(Emote.RANKED +
+                                "Anarchy Battle (Series) [" + currentRotation.getBankara().bankaraMatchSettings[0].vsRule.name + "]",
+                        currentRotation.getBankara().bankaraMatchSettings[0].vsStages[0].name +
+                                ", " + currentRotation.getBankara().bankaraMatchSettings[0].vsStages[1].name
+                        , true)
+                .addField(Emote.RANKED +
+                                "Anarchy Battle (Open) [" + currentRotation.getBankara().bankaraMatchSettings[1].vsRule.name + "]",
+                        currentRotation.getBankara().bankaraMatchSettings[1].vsStages[0].name +
+                                ", " + currentRotation.getBankara().bankaraMatchSettings[1].vsStages[1].name
                         , true);
     }
 }

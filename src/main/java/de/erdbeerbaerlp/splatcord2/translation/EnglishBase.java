@@ -145,6 +145,7 @@ public class EnglishBase {
     public String cmdViewFC = "Send your friend code";
     public String cmdViewNNID = "Send your Nintendo Network ID";
     public String cmdViewPNID = "Send your Pretendo Network ID";
+    public String noTranslations = "There are no translations available for Splatoon 3 at the moment";
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {

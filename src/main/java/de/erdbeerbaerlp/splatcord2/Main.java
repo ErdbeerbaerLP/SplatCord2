@@ -135,6 +135,7 @@ public class Main {
 
         while (true) {
             final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
+            final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
             final int currentS1RotationInt = RotationTimingUtil.getRotationForInstant(Instant.now());
             final Phase currentS1Rotation = s1rotations.root.Phases[currentS1RotationInt];
 
@@ -162,6 +163,17 @@ public class Main {
                     }
                 });
                 Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
+                Config.instance().saveConfig();
+            }
+            if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
+                iface.getAllS3MapChannels().forEach((serverid, channel) -> {
+                    try {
+                        MessageUtil.sendS3RotationFeed(serverid, channel, currentS3Rotation);
+                    } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                        e.printStackTrace();
+                    }
+                });
+                Config.instance().doNotEdit.lastS3RotationTimestamp = currentRotation.getRegular().start_time;
                 Config.instance().saveConfig();
             }
 

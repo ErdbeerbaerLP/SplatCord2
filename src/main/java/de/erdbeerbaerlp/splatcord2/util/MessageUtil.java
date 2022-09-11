@@ -3,6 +3,7 @@ package de.erdbeerbaerlp.splatcord2.util;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
+import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RankedModeTranslator;
@@ -81,6 +82,33 @@ public class MessageUtil {
             System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
+    public static void sendS3RotationFeed(long serverid, long channel, S3Rotation currentRotation) {
+        final TextChannel ch = bot.jda.getTextChannelById(channel);
+        if (ch == null) {
+            System.out.println(serverid + " : Channel " + channel + " is null, removing...");
+            iface.setS2StageChannel(serverid, null);
+            return;
+        }
+        try {
+            final long lastRotationMessageID = iface.getLastS2RotationMessage(serverid);
+            final boolean deleteMessage = iface.getDeleteMessage(serverid);
+            if (deleteMessage && lastRotationMessageID != 0) {
+                final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
+                message.submit().thenAccept((msg) -> {
+                    msg.delete().queue();
+                });
+            }
+            final CompletableFuture<Message> msg = bot.sendMessage(
+                    getS3MapMessage(
+                            serverid,
+                            currentRotation), channel);
+            if (msg != null) msg.thenAccept((a) -> iface.setLastS2RotationMessage(serverid, a.getIdLong()));
+
+        } catch (InsufficientPermissionException e) {
+            Guild guildById = bot.jda.getGuildById(serverid);
+            System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
+        }
+    }
 
     public static MessageCreateData getMapMessage(Long serverid, Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
@@ -100,6 +128,27 @@ public class MessageUtil {
                         lang.stages.get(r.getLeague().stage_a.id).getName() +
                                 ", " + lang.stages.get(r.getLeague().stage_b.id).getName()
                         , false)
+                .build()).build();
+    }
+    public static MessageCreateData getS3MapMessage(Long serverid, S3Rotation r) {
+        Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 3)")
+                .addField(Emote.REGULAR +
+                                lang.game_modes.get("regular").name,
+                        (r.getRegular().regularMatchSetting.vsStages[0].name) +
+                                ", " + (r.getRegular().regularMatchSetting.vsStages[1].name)
+                        , true)
+                .addField(Emote.RANKED +
+                                "Anarchy Battle (Series) [" + r.getBankara().bankaraMatchSettings[0].vsRule.name + "]",
+                        r.getBankara().bankaraMatchSettings[0].vsStages[0].name +
+                                ", " + r.getBankara().bankaraMatchSettings[0].vsStages[1].name
+                        , true)
+                .addField(Emote.RANKED +
+                                "Anarchy Battle (Open) [" + r.getBankara().bankaraMatchSettings[1].vsRule.name + "]",
+                        r.getBankara().bankaraMatchSettings[1].vsStages[0].name +
+                                ", " + r.getBankara().bankaraMatchSettings[1].vsStages[1].name
+                        , true)
+                        .setFooter(lang.botLocale.noTranslations)
                 .build()).build();
     }
     public static MessageCreateData getMapMessage(Long serverid, Phase currentRotation) {

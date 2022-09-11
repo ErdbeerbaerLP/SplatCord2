@@ -51,8 +51,8 @@ public class SetstageCommand extends BaseCommand {
                 case "splatoon3":
                     if (checkPerms(ev, guild, lang, channel)) return;
                     Main.iface.setS3StageChannel(guild.getIdLong(), channel.getIdLong());
-                    ev.reply(lang.botLocale.stageFeedMsgTemporary).queue();
-                    //MessageUtil.sendRotationFeed(guild.getIdLong(), channel.getIdLong(), ScheduleUtil.getCurrentRotation());
+                    ev.reply(lang.botLocale.stageFeedMsg).queue();
+                    MessageUtil.sendS3RotationFeed(guild.getIdLong(), channel.getIdLong(), ScheduleUtil.getCurrentS3Rotation());
                     break;
             }
     }

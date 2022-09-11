@@ -132,6 +132,8 @@ public class German extends EnglishBase {
         salmonFeedMsgTemporary = "Aktuelle Salmon Runs werden nun, sobald verfügbar, in diesen Kanal gesendet";
         cmdSetstageDescTemporary = "Markiert einen Kanal für Arena benachrichtigungen, sobald sie verfügbar sind";
         cmdSetsalmonDescTemporary = "Markiert einen Kanal für SalmonRun Benachrichtigungen, sobald sie verfügbar sind";
+        noTranslations = "Für Splatoon 3 gibt es momentan noch keine Übersetzungen";
+
     }
 
     @Override
