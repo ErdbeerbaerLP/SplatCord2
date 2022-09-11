@@ -64,7 +64,7 @@ public class Bot implements EventListener {
                 Main.iface.addServer(g.getIdLong());
             CommandRegistry.setCommands(g);
             try {
-                Thread.sleep(500);
+                Thread.sleep(50);
             } catch (InterruptedException ignored) {
             }
         });

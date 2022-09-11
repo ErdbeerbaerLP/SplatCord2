@@ -165,7 +165,8 @@ public class Main {
                 Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
                 Config.instance().saveConfig();
             }
-            if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
+
+            if (iface.status.isDBAlive() && currentS3Rotation.getRegular().getStartTime() != Config.instance().doNotEdit.lastS3RotationTimestamp) {
                 iface.getAllS3MapChannels().forEach((serverid, channel) -> {
                     try {
                         MessageUtil.sendS3RotationFeed(serverid, channel, currentS3Rotation);
