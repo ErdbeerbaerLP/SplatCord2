@@ -146,6 +146,12 @@ public class EnglishBase {
     public String cmdViewNNID = "Send your Nintendo Network ID";
     public String cmdViewPNID = "Send your Pretendo Network ID";
     public String noTranslations = "There are no translations available for Splatoon 3 at the moment";
+    public String cmdProfileCatalogLevelDesc = "Your catalog level";
+    public String cmdProfileTableturfLevelSet = "Table-turf level set to ";
+    public String cmdProfileCatalogLevelSet = "Catalog level set to ";
+    public String cmdProfileTableturfLevelDesc = "Your tableturf level";
+    public String cmdProfileCatalogLevel = "Catalog level";
+    public String cmdProfileTableturfLevel = "Tableturf level";
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {

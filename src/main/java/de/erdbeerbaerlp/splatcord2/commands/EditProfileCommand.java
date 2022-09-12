@@ -63,6 +63,8 @@ public class EditProfileCommand extends BaseCommand {
         salmon3Title.addChoice(l.botLocale.getS3SRTitle(6), 6);
         salmon3Title.addChoice(l.botLocale.getS3SRTitle(7), 7);
         salmon3Title.addChoice(l.botLocale.getS3SRTitle(8), 8);
+        final OptionData catalogLevel = new OptionData(OptionType.INTEGER, "catalog-level", l.botLocale.cmdProfileCatalogLevelDesc, false);
+        final OptionData tableturfLevel = new OptionData(OptionType.INTEGER, "tableturf-level", l.botLocale.cmdProfileTableturfLevelDesc, false);
 
         final OptionData splatfestTeam = new OptionData(OptionType.INTEGER, "splatfest-team", l.botLocale.cmdProfileSplatfest, false);
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(0), 0);
@@ -72,7 +74,7 @@ public class EditProfileCommand extends BaseCommand {
 
         splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
         splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1,mainWeapon2);
-        splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam);
+        splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam, tableturfLevel,catalogLevel);
 
         addSubcommands(splat2, splat1, splat3);
     }
@@ -242,6 +244,14 @@ public class EditProfileCommand extends BaseCommand {
                             if (ev.getOption("level") != null) {
                                 profile.splat3Profile.setLevel(Integer.parseInt(ev.getOption("level").getAsString()));
                                 msg += lang.botLocale.cmdProfileLevel3Set + profile.splat3Profile.getLevel() + "\n";
+                            }
+                            if (ev.getOption("catalog-level") != null) {
+                                profile.splat3Profile.catalogLevel = Integer.parseInt(ev.getOption("catalog-level").getAsString());
+                                msg += lang.botLocale.cmdProfileCatalogLevelSet + profile.splat3Profile.catalogLevel + "\n";
+                            }
+                            if (ev.getOption("tableturf-level") != null) {
+                                profile.splat3Profile.tableturfLevel = Integer.parseInt(ev.getOption("tableturf-level").getAsString());
+                                msg += lang.botLocale.cmdProfileTableturfLevelSet + profile.splat3Profile.tableturfLevel + "\n";
                             }
                             if (ev.getOption("name") != null) {
                                 final String name = ev.getOption("name").getAsString();

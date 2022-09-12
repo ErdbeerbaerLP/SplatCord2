@@ -99,6 +99,8 @@ public class ViewProfileCommand extends BaseCommand {
                         else
                             b.setTitle(m.getEffectiveName() + "'s Splatoon 3 Profile");
                         b.addField(lang.botLocale.cmdProfileLevel, profile.splat3Profile.getLevel(), true);
+                        b.addField(lang.botLocale.cmdProfileCatalogLevel, profile.splat3Profile.catalogLevel+"", true);
+                        b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel+"", true);
                         b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
                         b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
                         b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.getSplatfestTeam(profile.splat3Profile.splatfestTeam), true);

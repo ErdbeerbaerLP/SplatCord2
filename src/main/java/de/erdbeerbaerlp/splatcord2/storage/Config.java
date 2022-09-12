@@ -104,5 +104,6 @@ public class Config {
         public long lastRotationTimestamp = 0;
         public long lastS1Rotation = 0;
         public long lastS3RotationTimestamp = 0;
+        public long lastS3SalmonTimestamp = 0;
     }
 }

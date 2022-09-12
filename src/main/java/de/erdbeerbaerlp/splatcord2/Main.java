@@ -197,6 +197,25 @@ public class Main {
                 }
             }
 
+
+            if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() != Config.instance().doNotEdit.lastS3SalmonTimestamp) {
+                if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
+                    salmonEndTime = -1;
+                }
+                if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() <= (System.currentTimeMillis() / 1000)) {
+                    iface.getAllS3SalmonChannels().forEach((serverid, channel) -> {
+                        try {
+                            MessageUtil.sendS3SalmonFeed(serverid, channel);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    Config.instance().doNotEdit.lastS3SalmonTimestamp = currentS3Rotation.getCoop().getStartTime();
+                    Config.instance().saveConfig();
+                }
+            }
+
+
             final HashMap<Long, Order[]> allOrders = iface.getAllOrders();
             for (Merchandise m : splatNet2.merchandises) {
                 for(Long usrid : allOrders.keySet()){

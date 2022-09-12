@@ -14,7 +14,7 @@ public class SetsalmonCommand extends BaseCommand {
     public SetsalmonCommand(Locale l) {
         super("setsalmon", l.botLocale.cmdSetsalmonDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetsalmonDesc);
-        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetsalmonDescTemporary);
+        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetsalmonDesc);
 
         addSubcommands(splat2,splat3);
     }
@@ -59,8 +59,8 @@ public class SetsalmonCommand extends BaseCommand {
                         return;
                     }
                     Main.iface.setS3SalmonChannel(guild.getIdLong(), channel.getIdLong());
-                    ev.reply(lang.botLocale.salmonFeedMsgTemporary).queue();
-                    //MessageUtil.sendSalmonFeed(guild.getIdLong(), channel.getIdLong());
+                    ev.reply(lang.botLocale.salmonFeedMsg).queue();
+                    MessageUtil.sendS3SalmonFeed(guild.getIdLong(), channel.getIdLong());
                     break;
             }
     }

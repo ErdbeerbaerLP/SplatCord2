@@ -16,6 +16,8 @@ public class Schedules3 {
         public SchedulesRoot xSchedules = new SchedulesRoot();
         public SchedulesRoot leagueSchedules = new SchedulesRoot();
 
+        public CoopRoot coopGroupingSchedule  = new CoopRoot();
+
         @Override
         public String toString() {
             return "SchDat{" +

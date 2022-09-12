@@ -133,6 +133,12 @@ public class German extends EnglishBase {
         cmdSetstageDescTemporary = "Markiert einen Kanal für Arena benachrichtigungen, sobald sie verfügbar sind";
         cmdSetsalmonDescTemporary = "Markiert einen Kanal für SalmonRun Benachrichtigungen, sobald sie verfügbar sind";
         noTranslations = "Für Splatoon 3 gibt es momentan noch keine Übersetzungen";
+        cmdProfileCatalogLevelDesc = "Dein Katalog-Level";
+        cmdProfileTableturfLevelSet = "Revierdecks-Level gesetzt auf ";
+        cmdProfileCatalogLevelSet = "Katalog-Level gesetzt auf ";
+        cmdProfileTableturfLevelDesc = "Dein Revierdecks-Level";
+        cmdProfileCatalogLevel = "Katalog-Level";
+        cmdProfileTableturfLevel = "Revierdecks-Level";
 
     }
 

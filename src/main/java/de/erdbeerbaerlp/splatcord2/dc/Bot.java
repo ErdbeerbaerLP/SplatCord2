@@ -5,9 +5,11 @@ import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
+import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
+import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -100,32 +102,32 @@ public class Bot implements EventListener {
 
         if (event instanceof final CommandAutoCompleteInteractionEvent ev) {
             final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-            switch(CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName()){
+            switch (CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName()) {
                 case "splatnet2":
                     final ArrayList<Command.Choice> choices = new ArrayList<>();
                     int count = 0;
-                    for(String key : lang.allGears.keySet()){
+                    for (String key : lang.allGears.keySet()) {
                         final String name = lang.allGears.get(key);
-                        if(name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())){
-                            choices.add(new Command.Choice(name,key));
+                        if (name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                            choices.add(new Command.Choice(name, key));
                             count++;
-                            if(count >= 20) break;
+                            if (count >= 20) break;
                         }
                     }
                     ev.replyChoices(choices).queue();
                     break;
                 case "editprofile":
-                    switch(ev.getFocusedOption().getName()){
+                    switch (ev.getFocusedOption().getName()) {
                         case "main1":
                         case "main2":
                             final ArrayList<Command.Choice> weapons = new ArrayList<>();
                             int count2 = 0;
-                            for(Integer key : lang.weapons.keySet()){
+                            for (Integer key : lang.weapons.keySet()) {
                                 final Weapon wp = lang.weapons.get(key);
-                                if(wp.name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())){
-                                    weapons.add(new Command.Choice(wp.name,key));
+                                if (wp.name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                                    weapons.add(new Command.Choice(wp.name, key));
                                     count2++;
-                                    if(count2 >= 20) break;
+                                    if (count2 >= 20) break;
                                 }
                             }
                             ev.replyChoices(weapons).queue();
@@ -183,9 +185,9 @@ public class Bot implements EventListener {
         }
     }
 
-    public Map.Entry<Long, Long> sendSalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
+    public Map.Entry<Long, Long> sendS2SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle)
+        final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 2)")
                         .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
                         .addField(lang.botLocale.weapons,
                                 getWeaponName(lang, Main.coop_schedules.details[0].weapons[0]) + ", " +
@@ -196,6 +198,29 @@ public class Bot implements EventListener {
                         .setImage("https://splatoon2.ink/assets/splatnet/" + Main.coop_schedules.details[0].stage.image)
                         .setFooter(lang.botLocale.footer_ends)
                         .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[0].end_time))
+                        .build()
+                ).build(),
+                channel);
+        if (submitMsg != null)
+            return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
+        else return null;
+    }
+
+    public Map.Entry<Long, Long> sendS3SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
+        final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
+        Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
+        final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
+                        .addField(lang.botLocale.salmonStage, currentS3Rotation.getCoop().setting.coopStage.name, true)
+                        .addField(lang.botLocale.weapons,
+                                currentS3Rotation.getCoop().setting.weapons[0].name + ", " +
+                                        currentS3Rotation.getCoop().setting.weapons[1].name + ", " +
+                                        currentS3Rotation.getCoop().setting.weapons[2].name + ", " +
+                                        currentS3Rotation.getCoop().setting.weapons[3].name
+                                , true)
+                        .setImage(currentS3Rotation.getCoop().setting.coopStage.image.url)
+                        .setFooter(lang.botLocale.footer_ends)
+                        .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
+                        .setDescription(lang.botLocale.noTranslations)
                         .build()
                 ).build(),
                 channel);

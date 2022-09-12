@@ -7,6 +7,7 @@ import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedules;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Coop3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Schedule3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Schedules3;
 
@@ -47,6 +48,7 @@ public class ScheduleUtil {
     }
     private static S3Rotation getS3RotationForTimestamp(long timestamp){
         Schedule3 regular = null, bankara = null, xBattle = null;
+        Coop3 coop = null;
 
         for (Schedule3 s : schedules3.data.regularSchedules.nodes) {
             if (s.getStartTime()<= timestamp && s.getEndTime() > timestamp) {
@@ -67,13 +69,33 @@ public class ScheduleUtil {
             }
         }
 
-        return new S3Rotation(regular, bankara, xBattle);
+        for (Coop3 s :schedules3.data.coopGroupingSchedule.regularSchedules.nodes)  {
+            if (s.getStartTime()<= timestamp && s.getEndTime() > timestamp) {
+                coop = s;
+                break;
+            }
+        }
+
+        return new S3Rotation(regular, bankara, xBattle,coop);
     }
     public static Rotation getCurrentRotation() {
         return getRotationForTimestamp(System.currentTimeMillis()/1000);
     }
     public static S3Rotation getCurrentS3Rotation() {
         return getS3RotationForTimestamp(System.currentTimeMillis()/1000);
+    }
+    public static Coop3 getNextS3Coop() {
+        long time = System.currentTimeMillis()/1000;
+        boolean next =false;
+        for (Coop3 s :schedules3.data.coopGroupingSchedule.regularSchedules.nodes)  {
+            if (s.getStartTime()<= time && s.getEndTime() > time) {
+                next = true;
+                continue;
+            }
+            if(next)
+                return s;
+        }
+        return null;
     }
 
     public static ArrayList<Rotation> getNext3Rotations() {

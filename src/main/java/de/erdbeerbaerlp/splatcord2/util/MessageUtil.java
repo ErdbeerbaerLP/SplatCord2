@@ -44,9 +44,39 @@ public class MessageUtil {
                     }
                 });
             }
-            Map.Entry<Long, Long> msg = bot.sendSalmonMessage(serverid, channel);
+            Map.Entry<Long, Long> msg = bot.sendS2SalmonMessage(serverid, channel);
             if (msg != null)
                 iface.setSalmonMessage(msg.getKey(), msg.getValue());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        } catch (InsufficientPermissionException e) {
+            Guild guildById = bot.jda.getGuildById(serverid);
+            System.err.println("Failed to send salmon to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
+        }
+    }
+    public static void sendS3SalmonFeed(Long serverid, Long channel) {
+        final TextChannel ch = bot.jda.getTextChannelById(channel);
+        if (ch == null) {
+            System.out.println(serverid + " : Channel " + channel + " is null, removing...");
+            iface.setSalmonChannel(serverid, null);
+            return;
+        }
+        try {
+            final long lastRotationMessageID = iface.getLastS3SalmonMessage(serverid);
+            final boolean deleteMessage = iface.getDeleteMessage(serverid);
+            if (deleteMessage && lastRotationMessageID != 0) {
+                final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
+                message.submit().thenAccept((msg) -> {
+                    msg.delete().queue();
+                }).whenComplete((v, error) -> {
+                    if (error != null) {
+                        System.out.println("Failed deleting S3 salmon " + error.getMessage());
+                    }
+                });
+            }
+            Map.Entry<Long, Long> msg = bot.sendS3SalmonMessage(serverid, channel);
+            if (msg != null)
+                iface.setS3SalmonMessage(msg.getKey(), msg.getValue());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         } catch (InsufficientPermissionException e) {
