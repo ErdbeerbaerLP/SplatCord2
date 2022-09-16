@@ -22,7 +22,7 @@ public class RotationCommand extends BaseCommand {
         super("rotation", l.botLocale.cmdRotationDesc);
         final SubcommandData splat1 = new SubcommandData("splatoon1", l.botLocale.cmdRotationDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdRotationDesc);
-        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetstageDesc);
+        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdRotationDesc);
 
         addSubcommands(splat2, splat1, splat3);
     }
