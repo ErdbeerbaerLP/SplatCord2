@@ -87,7 +87,6 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS3Rotations.size() - 1)
                             s3EmbedBuilder.addBlankField(false);
                     }
-                    s3EmbedBuilder.setFooter(lang.botLocale.noTranslations);
                     ev.replyEmbeds(s3EmbedBuilder.build()).queue();
                     break;
             }
