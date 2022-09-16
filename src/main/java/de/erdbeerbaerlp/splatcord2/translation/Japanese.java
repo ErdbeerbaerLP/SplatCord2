@@ -28,9 +28,21 @@ public class Japanese  extends EnglishBase{
     }
 
     public String getS3MapName(int mapid) {
-        switch (mapid) {
-            default: return null;
-        }
+        return switch (mapid) {
+            case 1 -> "ユノハナ大渓谷";
+            case 2 -> "ゴンズイ地区";
+            case 3 -> "ヤガラ市場";
+            case 4 -> "マテガイ放水路";
+            case 6 -> "ナメロウ金属";
+            case 10 -> "マサバ海峡大橋";
+            case 11 -> "キンメダイ美術館";
+            case 12 -> "マヒマヒリゾート＆スパ";
+            case 13 -> "海女美術大学";
+            case 14 -> "チョウザメ造船";
+            case 15 -> "ザトウマーケット";
+            case 16 -> "スメーシーワールド";
+            default -> super.getS3MapName(mapid);
+        };
     }
     public String getS3SRTitle(int title) {
         return switch (title) {

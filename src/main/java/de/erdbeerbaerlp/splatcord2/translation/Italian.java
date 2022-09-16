@@ -83,6 +83,23 @@ public class Italian extends EnglishBase {
         cmdProfileFCSet = "Codice amico impostato a ";
     }
 
+    public String getS3MapName(int mapid) {
+        return switch (mapid) {
+            case 1 -> "Grank Canyon";
+            case 2 -> "Sobborgo Siluriano";
+            case 3 -> "Mercato Fruttato";
+            case 4 -> "Cisterna Cernia";
+            case 6 -> "Discarica Tritatutto";
+            case 10 -> "Ponte Sgombro";
+            case 11 -> "Museo di Cefalò";
+            case 12 -> "Villanguilla";
+            case 13 -> "Campus Hippocampus";
+            case 14 -> "Sturgeon Shipyard";
+            case 15 -> "Mercatotano";
+            case 16 -> "Soglioland";
+            default -> super.getS3MapName(mapid);
+        };
+    }
     @Override
     public String getS1MapName(int mapid){
         return switch (mapid) {

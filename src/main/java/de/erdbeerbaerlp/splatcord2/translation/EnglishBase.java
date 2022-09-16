@@ -176,10 +176,23 @@ public class EnglishBase {
     }
 
     public String getS3MapName(int mapid) {
-        switch (mapid) {
-            default: return null;
-        }
+        return switch (mapid) {
+            case 1 -> "Scorch Gorge";
+            case 2 -> "Eeltail Alley";
+            case 3 -> "Hagglefish Market";
+            case 4 -> "Undertow Spillway";
+            case 6 -> "Mincemeat Metalworks";
+            case 10 -> "Hammerhead Bridge";
+            case 11 -> "Museum d'Alfonsino";
+            case 12 -> "Mahi-Mahi Resort";
+            case 13 -> "Inkblot Art Academy";
+            case 14 -> "Sturgeon Shipyard";
+            case 15 -> "MakoMart";
+            case 16 -> "Wahoo World";
+            default -> "???";
+        };
     }
+
     public String getS3SRTitle(int title) {
         return switch (title) {
             case 0 -> "Apprentice";
@@ -190,7 +203,7 @@ public class EnglishBase {
             case 5 -> "Profreshional +1";
             case 6 -> "Profreshional +2";
             case 7 -> "Profreshional +3";
-            default-> "Eggsecutive VP";
+            default -> "Eggsecutive VP";
         };
     }
 

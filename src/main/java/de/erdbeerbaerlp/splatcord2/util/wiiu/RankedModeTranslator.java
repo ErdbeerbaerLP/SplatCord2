@@ -1,8 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.util.wiiu;
 
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import de.erdbeerbaerlp.splatcord2.translation.EnglishBase;
-
 public class RankedModeTranslator {
     public static String translateS1(String name){
         return switch (name) {
@@ -10,6 +7,16 @@ public class RankedModeTranslator {
             case "cVar" -> "splat_zones";
             case "cVgl" -> "rainmaker";
             case "cVlf" -> "tower_control";
+            default -> "unknown";
+        };
+    }
+    public static String translateS3(String name){
+        return switch (name) {
+            case "TURF_WAR" -> "turf_war";
+            case "AREA" -> "splat_zones";
+            case "GOAL" -> "rainmaker";
+            case "LOFT" -> "tower_control";
+            case "CLAM" -> "clam_blitz";
             default -> "unknown";
         };
     }

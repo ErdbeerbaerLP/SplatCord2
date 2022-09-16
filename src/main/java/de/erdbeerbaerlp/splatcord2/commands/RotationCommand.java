@@ -140,18 +140,18 @@ public class RotationCommand extends BaseCommand {
         future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + currentRotation.getRegular().getStartTime() + ":t>"), true)
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
-                        (currentRotation.getRegular().regularMatchSetting.vsStages[0].name) +
-                                ", " + (currentRotation.getRegular().regularMatchSetting.vsStages[1].name)
+                        (lang.botLocale.getS3MapName(currentRotation.getRegular().regularMatchSetting.vsStages[0].vsStageId)) +
+                                ", " + (lang.botLocale.getS3MapName(currentRotation.getRegular().regularMatchSetting.vsStages[1].vsStageId))
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Series) [" + currentRotation.getBankara().bankaraMatchSettings[0].vsRule.name + "]",
-                        currentRotation.getBankara().bankaraMatchSettings[0].vsStages[0].name +
-                                ", " + currentRotation.getBankara().bankaraMatchSettings[0].vsStages[1].name
+                                "Anarchy Battle (Series) [" + lang.rules.get(RankedModeTranslator.translateS3(currentRotation.getBankara().bankaraMatchSettings[0].vsRule.rule)) + "]",
+                        lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[0].vsStages[0].vsStageId) +
+                                ", " + lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[0].vsStages[1].vsStageId)
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Open) [" + currentRotation.getBankara().bankaraMatchSettings[1].vsRule.name + "]",
-                        currentRotation.getBankara().bankaraMatchSettings[1].vsStages[0].name +
-                                ", " + currentRotation.getBankara().bankaraMatchSettings[1].vsStages[1].name
+                                "Anarchy Battle (Open) [" + lang.rules.get(RankedModeTranslator.translateS3(currentRotation.getBankara().bankaraMatchSettings[1].vsRule.rule)) + "]",
+                        lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[1].vsStages[0].vsStageId) +
+                                ", " + lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[1].vsStages[1].vsStageId)
                         , true);
     }
 }

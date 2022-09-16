@@ -180,6 +180,23 @@ public class German extends EnglishBase {
         }
     }
 
+    public String getS3MapName(int mapid) {
+        return switch (mapid) {
+            case 1 -> "Sengkluft";
+            case 2 -> "Streifenaal-Straße";
+            case 3 -> "Schnapperchen-Basar";
+            case 4 -> "Schwertmuschel-Reservoir";
+            case 6 -> "Aalstahl-Metallwerk";
+            case 10 -> "Makrelenbrücke";
+            case 11 -> "Pinakoithek";
+            case 12 -> "Mahi-Mahi-Resort";
+            case 13 -> "Perlmutt-Akademie";
+            case 14 -> "Störwerft";
+            case 15 -> "Cetacea-Markt";
+            case 16 -> "Flunder-Funpark";
+            default -> super.getS3MapName(mapid);
+        };
+    }
     public String getS3SRTitle(int title) {
         return switch (title) {
             case 0 -> "Azubi";

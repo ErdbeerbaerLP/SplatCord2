@@ -165,20 +165,19 @@ public class MessageUtil {
         return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 3)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
-                        (r.getRegular().regularMatchSetting.vsStages[0].name) +
-                                ", " + (r.getRegular().regularMatchSetting.vsStages[1].name)
+                        (lang.botLocale.getS3MapName(r.getRegular().regularMatchSetting.vsStages[0].vsStageId)) +
+                                ", " + (lang.botLocale.getS3MapName(r.getRegular().regularMatchSetting.vsStages[1].vsStageId))
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Series) [" + r.getBankara().bankaraMatchSettings[0].vsRule.name + "]",
-                        r.getBankara().bankaraMatchSettings[0].vsStages[0].name +
-                                ", " + r.getBankara().bankaraMatchSettings[0].vsStages[1].name
+                                "Anarchy Battle (Series) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[0].vsRule.rule)) + "]",
+                        lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[0].vsStages[0].vsStageId) +
+                                ", " + lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[0].vsStages[1].vsStageId)
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Open) [" + r.getBankara().bankaraMatchSettings[1].vsRule.name + "]",
-                        r.getBankara().bankaraMatchSettings[1].vsStages[0].name +
-                                ", " + r.getBankara().bankaraMatchSettings[1].vsStages[1].name
+                                "Anarchy Battle (Open) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[1].vsRule.rule)) + "]",
+                        lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[1].vsStages[0].vsStageId) +
+                                ", " + lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[1].vsStages[1].vsStageId)
                         , true)
-                        .setFooter(lang.botLocale.noTranslations)
                 .build()).build();
     }
     public static MessageCreateData getMapMessage(Long serverid, Phase currentRotation) {
