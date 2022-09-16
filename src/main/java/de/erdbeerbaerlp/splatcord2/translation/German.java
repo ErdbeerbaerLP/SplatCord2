@@ -139,7 +139,9 @@ public class German extends EnglishBase {
         cmdProfileTableturfLevelDesc = "Dein Revierdecks-Level";
         cmdProfileCatalogLevel = "Katalog-Level";
         cmdProfileTableturfLevel = "Revierdecks-Level";
-
+        anarchyBattleSeries = "Anarchiekampf (Serie)";
+        anarchyBattleOpen = "Anarchiekampf (Offen)";
+        xBattle = "X-Kampf";
     }
 
     @Override

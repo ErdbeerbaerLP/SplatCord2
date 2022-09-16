@@ -6,6 +6,7 @@ import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RankedModeTranslator;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
@@ -136,21 +137,7 @@ public class RotationCommand extends BaseCommand {
     }
 
     private static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang, boolean now) {
-        future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + currentRotation.getRegular().getStartTime() + ":t>"), true)
-                .addField(Emote.REGULAR +
-                                lang.game_modes.get("regular").name,
-                        (lang.botLocale.getS3MapName(currentRotation.getRegular().regularMatchSetting.vsStages[0].vsStageId)) +
-                                ", " + (lang.botLocale.getS3MapName(currentRotation.getRegular().regularMatchSetting.vsStages[1].vsStageId))
-                        , true)
-                .addField(Emote.RANKED +
-                                "Anarchy Battle (Series) [" + lang.rules.get(RankedModeTranslator.translateS3(currentRotation.getBankara().bankaraMatchSettings[0].vsRule.rule)).name + "]",
-                        lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[0].vsStages[0].vsStageId) +
-                                ", " + lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[0].vsStages[1].vsStageId)
-                        , true)
-                .addField(Emote.RANKED +
-                                "Anarchy Battle (Open) [" + lang.rules.get(RankedModeTranslator.translateS3(currentRotation.getBankara().bankaraMatchSettings[1].vsRule.rule)).name + "]",
-                        lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[1].vsStages[0].vsStageId) +
-                                ", " + lang.botLocale.getS3MapName(currentRotation.getBankara().bankaraMatchSettings[1].vsStages[1].vsStageId)
-                        , true);
+        future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + currentRotation.getRegular().getStartTime() + ":t>"), true);
+        MessageUtil.addS3Embed(lang,currentRotation,future);
     }
 }

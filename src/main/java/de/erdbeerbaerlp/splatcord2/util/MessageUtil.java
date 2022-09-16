@@ -54,6 +54,7 @@ public class MessageUtil {
             System.err.println("Failed to send salmon to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
+
     public static void sendS3SalmonFeed(Long serverid, Long channel) {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
         if (ch == null) {
@@ -112,6 +113,7 @@ public class MessageUtil {
             System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
+
     public static void sendS3RotationFeed(long serverid, long channel, S3Rotation currentRotation) {
         final TextChannel ch = bot.jda.getTextChannelById(channel);
         if (ch == null) {
@@ -142,7 +144,7 @@ public class MessageUtil {
 
     public static MessageCreateData getMapMessage(Long serverid, Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 2)")
+        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 2)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.stages.get(r.getRegular().stage_a.id).getName() +
@@ -160,29 +162,36 @@ public class MessageUtil {
                         , false)
                 .build()).build();
     }
+
     public static MessageCreateData getS3MapMessage(Long serverid, S3Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 3)")
-                .addField(Emote.REGULAR +
+        final EmbedBuilder emb = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 3)");
+        addS3Embed(lang, r, emb);
+        return new MessageCreateBuilder().setEmbeds(emb.build()).build();
+    }
+
+    public static void addS3Embed(Locale lang, S3Rotation r, EmbedBuilder b) {
+        b.addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         (lang.botLocale.getS3MapName(r.getRegular().regularMatchSetting.vsStages[0].vsStageId)) +
                                 ", " + (lang.botLocale.getS3MapName(r.getRegular().regularMatchSetting.vsStages[1].vsStageId))
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Series) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[0].vsRule.rule)).name + "]",
+                                lang.botLocale.anarchyBattleSeries + " [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[0].vsRule.rule)).name + "]",
                         lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[0].vsStages[0].vsStageId) +
                                 ", " + lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[0].vsStages[1].vsStageId)
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Open) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[1].vsRule.rule)).name + "]",
+                                lang.botLocale.anarchyBattleOpen + " [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[1].vsRule.rule)).name + "]",
                         lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[1].vsStages[0].vsStageId) +
                                 ", " + lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[1].vsStages[1].vsStageId)
-                        , true)
-                .build()).build();
+                        , true);
+
     }
+
     public static MessageCreateData getMapMessage(Long serverid, Phase currentRotation) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle+ "(Splatoon 1)")
+        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 1)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +

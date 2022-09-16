@@ -152,6 +152,10 @@ public class EnglishBase {
     public String cmdProfileTableturfLevelDesc = "Your tableturf level";
     public String cmdProfileCatalogLevel = "Catalog level";
     public String cmdProfileTableturfLevel = "Tableturf level";
+    public String anarchyBattleSeries = "Anarchy Battle (Series)";
+    public String anarchyBattleOpen = "Anarchy Battle (Open)";
+    public String xBattle = "X-Battle";
+
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {
