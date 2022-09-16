@@ -169,12 +169,12 @@ public class MessageUtil {
                                 ", " + (lang.botLocale.getS3MapName(r.getRegular().regularMatchSetting.vsStages[1].vsStageId))
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Series) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[0].vsRule.rule)) + "]",
+                                "Anarchy Battle (Series) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[0].vsRule.rule)).name + "]",
                         lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[0].vsStages[0].vsStageId) +
                                 ", " + lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[0].vsStages[1].vsStageId)
                         , true)
                 .addField(Emote.RANKED +
-                                "Anarchy Battle (Open) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[1].vsRule.rule)) + "]",
+                                "Anarchy Battle (Open) [" + lang.rules.get(RankedModeTranslator.translateS3(r.getBankara().bankaraMatchSettings[1].vsRule.rule)).name + "]",
                         lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[1].vsStages[0].vsStageId) +
                                 ", " + lang.botLocale.getS3MapName(r.getBankara().bankaraMatchSettings[1].vsStages[1].vsStageId)
                         , true)
