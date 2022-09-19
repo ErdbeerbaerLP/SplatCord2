@@ -143,7 +143,14 @@ public class German extends EnglishBase {
         anarchyBattleOpen = "Anarchiekampf (Offen)";
         xBattle = "X-Kampf";
     }
-
+    public String getS3SalmonMap(int mapid) {
+        return switch (mapid) {
+            case 1 -> "Salmoniden-Damm";
+            case 2 -> "Fort Nautilax";
+            case 7 -> "Wasserkraftwerk Stromschnell";
+            default -> super.getS3SalmonMap(mapid);
+        };
+    }
     @Override
     public String getS1MapName(int mapid) {
         switch (mapid) {

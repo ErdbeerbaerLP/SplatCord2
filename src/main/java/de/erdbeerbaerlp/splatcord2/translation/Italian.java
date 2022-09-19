@@ -100,6 +100,14 @@ public class Italian extends EnglishBase {
             default -> super.getS3MapName(mapid);
         };
     }
+    public String getS3SalmonMap(int mapid) {
+        return switch (mapid) {
+            case 1 -> "Diga salmonoide";
+            case 2 -> "Fortezza Spiralsalmone";
+            case 7 -> "Centrale Anguilla Elettrica";
+            default -> super.getS3SalmonMap(mapid);
+        };
+    }
     @Override
     public String getS1MapName(int mapid){
         return switch (mapid) {

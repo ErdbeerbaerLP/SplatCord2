@@ -26,7 +26,14 @@ public class Japanese  extends EnglishBase{
             default -> super.getS1MapName(mapid);
         };
     }
-
+    public String getS3SalmonMap(int mapid) {
+        return switch (mapid) {
+            case 1 -> "シェケナダム";
+            case 2 -> "アラマキ砦";
+            case 7 -> "ムニ・エ―ル海洋発電所";
+            default -> super.getS3SalmonMap(mapid);
+        };
+    }
     public String getS3MapName(int mapid) {
         return switch (mapid) {
             case 1 -> "ユノハナ大渓谷";

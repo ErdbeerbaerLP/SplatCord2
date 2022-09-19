@@ -197,6 +197,14 @@ public class EnglishBase {
         };
     }
 
+    public String getS3SalmonMap(int mapid) {
+        return switch (mapid) {
+            case 1 -> "Spawning Grounds";
+            case 2 -> "Sockeye Station";
+            case 7 -> "Gone Fission Hydroplant";
+            default -> "???";
+        };
+    }
     public String getS3SRTitle(int title) {
         return switch (title) {
             case 0 -> "Apprentice";
