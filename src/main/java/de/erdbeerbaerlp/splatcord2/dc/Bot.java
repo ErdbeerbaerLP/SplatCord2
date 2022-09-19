@@ -210,7 +210,7 @@ public class Bot implements EventListener {
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
         final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
-                        .addField(lang.botLocale.salmonStage, currentS3Rotation.getCoop().setting.coopStage.name, true)
+                        .addField(lang.botLocale.salmonStage, lang.botLocale.getS3SalmonMap(currentS3Rotation.getCoop().setting.coopStage.coopStageId), true)
                         .addField(lang.botLocale.weapons,
                                 currentS3Rotation.getCoop().setting.weapons[0].name + ", " +
                                         currentS3Rotation.getCoop().setting.weapons[1].name + ", " +

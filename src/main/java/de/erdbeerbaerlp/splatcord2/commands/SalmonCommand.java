@@ -60,9 +60,9 @@ public class SalmonCommand extends BaseCommand {
                     break;
                 case "splatoon3":
                     final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
-                    final Coop3 next3Rotations = ScheduleUtil.getNextS3Coop();
+                    final Coop3 nextRotation = ScheduleUtil.getNextS3Coop();
                     ev.replyEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
-                            .addField(lang.botLocale.salmonStage, currentS3Rotation.getCoop().setting.coopStage.name, true)
+                            .addField(lang.botLocale.salmonStage, lang.botLocale.getS3SalmonMap(currentS3Rotation.getCoop().setting.coopStage.coopStageId), true)
                             .addField(lang.botLocale.weapons,
                                     currentS3Rotation.getCoop().setting.weapons[0].name + ", " +
                                             currentS3Rotation.getCoop().setting.weapons[1].name + ", " +
@@ -74,16 +74,16 @@ public class SalmonCommand extends BaseCommand {
                             .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
                             .setDescription(lang.botLocale.noTranslations)
                             .build(), new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
-                            .addField(lang.botLocale.salmonStage, next3Rotations.setting.coopStage.name, true)
+                            .addField(lang.botLocale.salmonStage, lang.botLocale.getS3SalmonMap(nextRotation.setting.coopStage.coopStageId), true)
                             .addField(lang.botLocale.weapons,
-                                    next3Rotations.setting.weapons[0].name + ", " +
-                                            next3Rotations.setting.weapons[1].name + ", " +
-                                            next3Rotations.setting.weapons[2].name + ", " +
-                                            next3Rotations.setting.weapons[3].name
+                                    nextRotation.setting.weapons[0].name + ", " +
+                                            nextRotation.setting.weapons[1].name + ", " +
+                                            nextRotation.setting.weapons[2].name + ", " +
+                                            nextRotation.setting.weapons[3].name
                                     , true)
-                            .setImage(next3Rotations.setting.coopStage.image.url)
+                            .setImage(nextRotation.setting.coopStage.image.url)
                             .setFooter(lang.botLocale.footer_starts)
-                            .setTimestamp(Instant.ofEpochSecond(next3Rotations.getEndTime()))
+                            .setTimestamp(Instant.ofEpochSecond(nextRotation.getEndTime()))
                             .setDescription(lang.botLocale.noTranslations)
                             .build()).queue();
                     break;
