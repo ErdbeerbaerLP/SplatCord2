@@ -222,9 +222,14 @@ public class EnglishBase {
 
     public String getSplatfestTeam(int id) {
         return switch (id) {
+            /* Keeping old fests here to return to them later
             case 1 -> "Rock";
             case 2 -> "Paper";
             case 3 -> "Scissors";
+            */
+            case 4 -> "Gear";
+            case 5 -> "Grub";
+            case 6 -> "Fun";
             default -> "Unset";
         };
     }

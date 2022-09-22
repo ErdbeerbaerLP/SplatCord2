@@ -143,6 +143,7 @@ public class German extends EnglishBase {
         anarchyBattleOpen = "Anarchiekampf (Offen)";
         xBattle = "X-Kampf";
     }
+
     public String getS3SalmonMap(int mapid) {
         return switch (mapid) {
             case 1 -> "Salmoniden-Damm";
@@ -151,6 +152,7 @@ public class German extends EnglishBase {
             default -> super.getS3SalmonMap(mapid);
         };
     }
+
     @Override
     public String getS1MapName(int mapid) {
         switch (mapid) {
@@ -206,6 +208,7 @@ public class German extends EnglishBase {
             default -> super.getS3MapName(mapid);
         };
     }
+
     public String getS3SRTitle(int title) {
         return switch (title) {
             case 0 -> "Azubi";
@@ -222,15 +225,17 @@ public class German extends EnglishBase {
     }
 
     public String getSplatfestTeam(int id) {
-        switch (id) {
-            case 1:
-                return "Stein";
-            case 2:
-                return "Papier";
-            case 3:
-                return "Schere";
-            default:
-                return "Nicht Gesetzt";
-        }
+        return switch (id) {
+
+/*
+            case 1 -> "Stein";
+            case 2 -> "Papier";
+            case 3 -> "Schere";
+*/
+            case 4 -> "Werkzeug";
+            case 5 -> "Futter";
+            case 6 -> "Spaß";
+            default -> "Nicht Gesetzt";
+        };
     }
 }
