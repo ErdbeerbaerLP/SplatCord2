@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 public class EditProfileCommand extends BaseCommand {
+
     public EditProfileCommand(Locale l) {
         super("editprofile", l.botLocale.cmdEditProfileDesc);
         final SubcommandData splat1 = new SubcommandData("splat1", l.botLocale.cmdEditProfile1Desc);
@@ -68,9 +69,10 @@ public class EditProfileCommand extends BaseCommand {
 
         final OptionData splatfestTeam = new OptionData(OptionType.INTEGER, "splatfest-team", l.botLocale.cmdProfileSplatfest, false);
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(0), 0);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(1), 1);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(2), 2);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3), 3);
+        int splatfestOffset = 3;
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(1+ splatfestOffset), 1+ splatfestOffset);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(2+ splatfestOffset), 2+ splatfestOffset);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3+ splatfestOffset), 3+ splatfestOffset);
 
         splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
         splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1,mainWeapon2);

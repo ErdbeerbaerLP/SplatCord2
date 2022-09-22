@@ -68,9 +68,6 @@ public class Japanese  extends EnglishBase{
 
     public String getSplatfestTeam(int id) {
         return switch (id) {
-            case 1 -> "石";
-            case 2 -> "紙";
-            case 3 -> "はさみ";
             default -> super.getSplatfestTeam(id);
         };
     }
