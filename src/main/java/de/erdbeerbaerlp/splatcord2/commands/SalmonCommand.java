@@ -4,7 +4,7 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Coop3;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

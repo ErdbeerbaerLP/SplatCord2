@@ -7,9 +7,9 @@ import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedules;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Coop3;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Schedule3;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Schedules3;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Schedule3;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Schedules3;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class ScheduleUtil {
         return new Rotation(regular, ranked, league);
     }
     private static S3Rotation getS3RotationForTimestamp(long timestamp){
-        Schedule3 regular = null, bankara = null, xBattle = null;
+        Schedule3 regular = null, bankara = null, xBattle = null, fest = null;
         Coop3 coop = null;
 
         for (Schedule3 s : schedules3.data.regularSchedules.nodes) {
@@ -75,8 +75,14 @@ public class ScheduleUtil {
                 break;
             }
         }
+        for (Schedule3 s :schedules3.data.festSchedules.nodes)  {
+            if (s.getStartTime()<= timestamp && s.getEndTime() > timestamp) {
+                fest = s;
+                break;
+            }
+        }
 
-        return new S3Rotation(regular, bankara, xBattle,coop);
+        return new S3Rotation(regular, bankara, xBattle,coop, fest);
     }
     public static Rotation getCurrentRotation() {
         return getRotationForTimestamp(System.currentTimeMillis()/1000);

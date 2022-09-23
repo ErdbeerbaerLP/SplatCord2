@@ -1,4 +1,4 @@
-package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3;
+package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation;
 
 public class CoopSetting {
     public CoopWeapon[] weapons;

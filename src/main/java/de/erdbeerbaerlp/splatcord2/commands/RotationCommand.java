@@ -137,7 +137,7 @@ public class RotationCommand extends BaseCommand {
     }
 
     private static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang, boolean now) {
-        future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + currentRotation.getRegular().getStartTime() + ":t>"), true);
+        future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + (currentRotation.getFest() != null? currentRotation.getFest().getStartTime():currentRotation.getRegular().getStartTime()) + ":t>"), true);
         MessageUtil.addS3Embed(lang,currentRotation,future);
     }
 }

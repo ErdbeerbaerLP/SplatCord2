@@ -171,7 +171,14 @@ public class MessageUtil {
     }
 
     public static void addS3Embed(Locale lang, S3Rotation r, EmbedBuilder b) {
-        b.addField(Emote.REGULAR +
+        if(r.getFest().festMatchSetting != null){
+            b.addField(Emote.SPLATFEST +
+                                    lang.game_modes.get("regular").name,
+                            (lang.botLocale.getS3MapName(r.getFest().festMatchSetting.vsStages[0].vsStageId)) +
+                                    ", " + (lang.botLocale.getS3MapName(r.getFest().festMatchSetting.vsStages[1].vsStageId))
+                            , true);
+        }else
+            b.addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         (lang.botLocale.getS3MapName(r.getRegular().regularMatchSetting.vsStages[0].vsStageId)) +
                                 ", " + (lang.botLocale.getS3MapName(r.getRegular().regularMatchSetting.vsStages[1].vsStageId))
