@@ -15,6 +15,6 @@ public class SupportCommand extends BaseCommand{
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        ev.reply("https://discord.gg/DBH9FSFCXb").queue();
+        ev.reply("https://discord.gg/DBH9FSFCXb").setEphemeral(true).queue();
     }
 }

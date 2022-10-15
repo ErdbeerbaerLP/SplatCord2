@@ -1,8 +1,14 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
+import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
+
 public class Japanese  extends EnglishBase{
     {
         languageSetMessage = "Your server's language is now set to japanese\nFor now, only game data will be translated";
+    }
+
+    public Japanese(S3Translation l) {
+        super(l);
     }
 
     public String getS1MapName(int mapid) {
@@ -24,31 +30,6 @@ public class Japanese  extends EnglishBase{
             case 14 -> "ショッツル鉱山";
             case 15 -> "マヒマヒリゾート＆スパ";
             default -> super.getS1MapName(mapid);
-        };
-    }
-    public String getS3SalmonMap(int mapid) {
-        return switch (mapid) {
-            case 1 -> "シェケナダム";
-            case 2 -> "アラマキ砦";
-            case 7 -> "ムニ・エ―ル海洋発電所";
-            default -> super.getS3SalmonMap(mapid);
-        };
-    }
-    public String getS3MapName(int mapid) {
-        return switch (mapid) {
-            case 1 -> "ユノハナ大渓谷";
-            case 2 -> "ゴンズイ地区";
-            case 3 -> "ヤガラ市場";
-            case 4 -> "マテガイ放水路";
-            case 6 -> "ナメロウ金属";
-            case 10 -> "マサバ海峡大橋";
-            case 11 -> "キンメダイ美術館";
-            case 12 -> "マヒマヒリゾート＆スパ";
-            case 13 -> "海女美術大学";
-            case 14 -> "チョウザメ造船";
-            case 15 -> "ザトウマーケット";
-            case 16 -> "スメーシーワールド";
-            default -> super.getS3MapName(mapid);
         };
     }
     public String getS3SRTitle(int title) {

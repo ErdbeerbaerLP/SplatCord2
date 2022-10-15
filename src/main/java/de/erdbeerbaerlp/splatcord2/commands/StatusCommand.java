@@ -31,6 +31,7 @@ public class StatusCommand extends BaseCommand {
 
         b.addField(lang.botLocale.cmdStatusDB, dbAlive ? ":green_circle: " + lang.botLocale.online : ":red_circle: " + lang.botLocale.offline, true);
         b.addField("splatoon2.ink", Main.splatoon2inkStatus ? ":green_circle: " + lang.botLocale.online : ":red_circle: " + lang.botLocale.offline, true);
+        b.addField("splatoon3.ink", Main.splatoon3inkStatus ? ":green_circle: " + lang.botLocale.online : ":red_circle: " + lang.botLocale.offline, true);
 
         if (dbAlive) {
             b.addBlankField(false);

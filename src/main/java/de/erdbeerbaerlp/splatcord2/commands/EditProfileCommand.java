@@ -6,6 +6,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
+import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -69,7 +70,7 @@ public class EditProfileCommand extends BaseCommand {
 
         final OptionData splatfestTeam = new OptionData(OptionType.INTEGER, "splatfest-team", l.botLocale.cmdProfileSplatfest, false);
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(0), 0);
-        int splatfestOffset = 3;
+        int splatfestOffset = 3* ScheduleUtil.getSplatfestData().US.data.festRecords.nodes.length;
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(1+ splatfestOffset), 1+ splatfestOffset);
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(2+ splatfestOffset), 2+ splatfestOffset);
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3+ splatfestOffset), 3+ splatfestOffset);

@@ -52,6 +52,7 @@ public class Main {
     public static SplatNet splatNet2 = null;
     public static Byml s1rotations = null;
     public static boolean splatoon2inkStatus = false;
+    public static boolean splatoon3inkStatus = false;
 
     public static final HashMap<BotLanguage, Locale> translations = new HashMap<>();
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -116,6 +117,20 @@ public class Main {
 
 
         try {
+            ScheduleUtil.updateS2RotationData();
+            splatoon2inkStatus = true;
+        } catch (IOException | JsonParseException e) {
+            splatoon2inkStatus = false;
+            e.printStackTrace();
+        }
+        try {
+            ScheduleUtil.updateS3RotationData();
+            splatoon3inkStatus = true;
+        } catch (IOException | JsonParseException e) {
+            splatoon3inkStatus = false;
+            e.printStackTrace();
+        }
+        try {
             bot = new Bot();
         } catch (LoginException e) {
             System.err.println("Cannot login to discord!");
@@ -123,13 +138,6 @@ public class Main {
         }
         if (bot == null) return;
         startTime = Instant.now();
-        try {
-            ScheduleUtil.updateRotationData();
-            splatoon2inkStatus = true;
-        } catch (IOException | JsonParseException e) {
-            splatoon2inkStatus = false;
-            e.printStackTrace();
-        }
 
         long salmonEndTime = coop_schedules.details[0].end_time;
 
@@ -234,7 +242,7 @@ public class Main {
                                     .setFooter(lang.botLocale.footer_ends)
                                     .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image)
                                     .setAuthor(lang.allGears.get(m.gear.kind+"/"+m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
-                                    .addField(lang.botLocale.skillSlots, Emote.resolveFromAbility(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
+                                    .addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
                                     .addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
                             b.addEmbeds(emb.build());
                             channel.sendMessage(b.build()).queue();
@@ -252,11 +260,18 @@ public class Main {
             //Try to update data
             if (LocalTime.now().getMinute() == 0 && LocalTime.now().getSecond() >= 30) {
                 try {
-                    ScheduleUtil.updateRotationData();
+                    ScheduleUtil.updateS2RotationData();
                     splatoon2inkStatus = true;
                 } catch (IOException | JsonParseException e) {
                     e.printStackTrace();
                     splatoon2inkStatus = false;
+                }
+                try {
+                    ScheduleUtil.updateS3RotationData();
+                    splatoon3inkStatus = true;
+                } catch (IOException | JsonParseException e) {
+                    e.printStackTrace();
+                    splatoon3inkStatus = false;
                 }
                 try {
                     s1rotations = BossFileUtil.getStageByml();

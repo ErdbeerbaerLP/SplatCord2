@@ -15,6 +15,6 @@ public class InviteCommand extends BaseCommand{
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        ev.reply("<https://discord.com/api/oauth2/authorize?client_id=822228767165644872&permissions=379968&scope=applications.commands%20bot>").queue();
+        ev.reply("<https://discord.com/api/oauth2/authorize?client_id=822228767165644872&permissions=379968&scope=applications.commands%20bot>").setEphemeral(true).queue();
     }
 }

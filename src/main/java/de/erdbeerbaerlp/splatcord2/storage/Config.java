@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class Config {
-    private static final Random r = new Random();
     private static final File configFile = new File("./SplatCord2.toml");
     @TomlIgnore
     private static Config INSTANCE;
@@ -52,7 +51,7 @@ public class Config {
     public Database database = new Database();
     @TomlComment("Wii U keys used to download splatoon 1 schedules")
     public WiiUKeys wiiuKeys = new WiiUKeys();
-    @TomlComment("Do not edit theese vars, they are used by the bot itself to store stuff between restarts")
+    @TomlComment("Do not edit these vars, they are used by the bot itself to store stuff between restarts")
     public DoNotEdit doNotEdit = new DoNotEdit();
 
     public static class Discord {
@@ -105,5 +104,6 @@ public class Config {
         public long lastS1Rotation = 0;
         public long lastS3RotationTimestamp = 0;
         public long lastS3SalmonTimestamp = 0;
+        public long lastSplatfestIndex = -1;
     }
 }

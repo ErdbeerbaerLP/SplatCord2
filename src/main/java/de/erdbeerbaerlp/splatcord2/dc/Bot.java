@@ -2,13 +2,14 @@ package de.erdbeerbaerlp.splatcord2.dc;
 
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
-import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
-import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
-import de.erdbeerbaerlp.splatcord2.storage.Config;
-import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
+import de.erdbeerbaerlp.splatcord2.commands.PrivateCommand;
+import de.erdbeerbaerlp.splatcord2.commands.RotationCommand;
+import de.erdbeerbaerlp.splatcord2.storage.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
+import de.erdbeerbaerlp.splatcord2.util.S3TranslationFile;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -19,10 +20,12 @@ import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
@@ -40,6 +43,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static net.dv8tion.jda.api.Permission.MANAGE_SERVER;
 
@@ -134,6 +138,19 @@ public class Bot implements EventListener {
                             break;
                     }
                     break;
+                case "splatfest":
+                    final ArrayList<Command.Choice> splatfests = new ArrayList<>();
+                    int count3 = 0;
+                    for (FestRecord f : ScheduleUtil.getSplatfestData().US.data.festRecords.nodes) {
+                        final String title = lang.botLocale.getSplatfestTitle(f.getSplatfestID());
+                        if (title.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                            splatfests.add(new Command.Choice(title, f.getSplatfestID()));
+                            count3++;
+                            if (count3 >= 20) break;
+                        }
+                    }
+                    ev.replyChoices(splatfests).queue();
+                    break;
             }
         } else if (event instanceof final GuildJoinEvent ev) {
             Main.iface.addServer(ev.getGuild().getIdLong());
@@ -162,6 +179,41 @@ public class Bot implements EventListener {
                         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
                         ev.deferReply(true).setContent(lang.botLocale.noAdminPerms).queue();
                     }
+            }
+        } else if (event instanceof final ButtonInteractionEvent ev) {
+            final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+
+            if (ev.getComponentId().equals("delete")) {
+                if (ev.getMessage().getInteraction().getUser().getIdLong() == ev.getUser().getIdLong())
+                    ev.getMessage().delete().queue();
+            } else if (ev.getComponentId().equals("regenprivate")) {
+                PrivateCommand.generatePrivate(ev);
+            } else if (ev.getComponentId().startsWith("loadmore")) {
+                final EmbedBuilder b = new EmbedBuilder();
+                long time = System.currentTimeMillis() / 1000;
+                time += (TimeUnit.HOURS.toSeconds(2) + 1) * 3;
+                final CompletableFuture<InteractionHook> submit = ev.deferReply(true).submit();
+
+                if (ev.getComponentId().equals("loadmore3")) {
+                    for (int i = 0; i < 6; i++) {
+                        time += TimeUnit.HOURS.toSeconds(2) + 1;
+                        RotationCommand.addS3Rotation(b, ScheduleUtil.getS3RotationForTimestamp(time), lang);
+                        if (i < 6 - 1)
+                            b.addBlankField(false);
+                    }
+                }
+                if (ev.getComponentId().equals("loadmore2")) {
+                    for (int i = 0; i < 6; i++) {
+                        time += TimeUnit.HOURS.toSeconds(2) + 1;
+                        RotationCommand.addS2Rotation(b, ScheduleUtil.getS2RotationForTimestamp(time), lang);
+                        if (i < 6 - 1)
+                            b.addBlankField(false);
+                    }
+                }
+
+                submit.thenAccept((m) -> {
+                    m.editOriginalEmbeds(b.build()).queue();
+                });
             }
             //Update command permissions on role creation / permission change
         } else if (event instanceof RoleUpdatePermissionsEvent) {
@@ -209,8 +261,9 @@ public class Bot implements EventListener {
     public Map.Entry<Long, Long> sendS3SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
+        final S3TranslationFile stages = lang.botLocale.s3lang.getSalmonStages();
         final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
-                        .addField(lang.botLocale.salmonStage, lang.botLocale.getS3SalmonMap(currentS3Rotation.getCoop().setting.coopStage.coopStageId), true)
+                        .addField(lang.botLocale.salmonStage, stages.getString(S3Translation.s3MapIDToLabel((currentS3Rotation.getCoop().setting.coopStage.coopStageId))), true)
                         .addField(lang.botLocale.weapons,
                                 currentS3Rotation.getCoop().setting.weapons[0].name + ", " +
                                         currentS3Rotation.getCoop().setting.weapons[1].name + ", " +

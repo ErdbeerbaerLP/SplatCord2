@@ -39,15 +39,20 @@ public enum Emote {
     ABILITY_OBJECT_SHREDDER(931638748691710024L),
     ABILITY_DROP_ROLLER(931639280000979035L),
     ABILITY_BOMB_DEFENSE_UP_DX(931632133288632411L),
+    X_BATTLE(1019342332396580974L),
+    CLAMBLITZ(1028776391472324678L),
+    SPLATZONES(1028776389962387536L),
+    TOWERCONTROL(1028776388347564062L),
+    RAINMAKER(1028776392931942530L)
     ;
-    long id;
+    final long id;
     Emote(long id){
         this.id = id;
     }
     public String toString(){
         return "<:"+name().toLowerCase()+":"+id+">";
     }
-    public static Emote resolveFromAbility(int id){
+    public static Emote resolveFromS2Ability(int id){
         switch(id){
             case 0: return ABILITY_INK_SAVER_MAIN;
             case 1: return ABILITY_INK_SAVER_SUB;

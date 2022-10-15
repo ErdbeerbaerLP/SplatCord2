@@ -1,5 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
+import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
+
 public class German extends EnglishBase {
     {
         salmonStage = "Arenen:";
@@ -142,14 +144,17 @@ public class German extends EnglishBase {
         anarchyBattleSeries = "Anarchiekampf (Serie)";
         anarchyBattleOpen = "Anarchiekampf (Offen)";
         xBattle = "X-Kampf";
+        tricolorBattle ="Dreifarbkampf";
     }
 
-    public String getS3SalmonMap(int mapid) {
-        return switch (mapid) {
-            case 1 -> "Salmoniden-Damm";
-            case 2 -> "Fort Nautilax";
-            case 7 -> "Wasserkraftwerk Stromschnell";
-            default -> super.getS3SalmonMap(mapid);
+    public German(S3Translation l) {
+        super(l);
+    }
+
+    public String getSplatfestTitle(int id){
+        return switch (id) {
+            case 1 -> "Was muss mit auf eine einsame Insel?";
+            default -> super.getSplatfestTitle(id);
         };
     }
 
@@ -191,23 +196,6 @@ public class German extends EnglishBase {
         }
     }
 
-    public String getS3MapName(int mapid) {
-        return switch (mapid) {
-            case 1 -> "Sengkluft";
-            case 2 -> "Streifenaal-Straße";
-            case 3 -> "Schnapperchen-Basar";
-            case 4 -> "Schwertmuschel-Reservoir";
-            case 6 -> "Aalstahl-Metallwerk";
-            case 10 -> "Makrelenbrücke";
-            case 11 -> "Pinakoithek";
-            case 12 -> "Mahi-Mahi-Resort";
-            case 13 -> "Perlmutt-Akademie";
-            case 14 -> "Störwerft";
-            case 15 -> "Cetacea-Markt";
-            case 16 -> "Flunder-Funpark";
-            default -> super.getS3MapName(mapid);
-        };
-    }
 
     public String getS3SRTitle(int title) {
         return switch (title) {
@@ -226,7 +214,6 @@ public class German extends EnglishBase {
 
     public String getSplatfestTeam(int id) {
         return switch (id) {
-
 /*
             case 1 -> "Stein";
             case 2 -> "Papier";
@@ -235,7 +222,7 @@ public class German extends EnglishBase {
             case 4 -> "Werkzeug";
             case 5 -> "Futter";
             case 6 -> "Spaß";
-            default -> "Nicht Gesetzt";
+            default -> super.getSplatfestTeam(id);
         };
     }
 }

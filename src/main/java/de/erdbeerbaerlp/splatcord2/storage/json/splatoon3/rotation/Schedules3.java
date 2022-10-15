@@ -19,6 +19,8 @@ public class Schedules3 {
 
         public CoopRoot coopGroupingSchedule  = new CoopRoot();
 
+        public CurrentSplatfest currentFest = null;
+
         @Override
         public String toString() {
             return "SchDat{" +

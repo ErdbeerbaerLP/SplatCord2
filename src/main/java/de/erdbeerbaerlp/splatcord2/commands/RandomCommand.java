@@ -6,11 +6,13 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
@@ -201,7 +203,7 @@ public class RandomCommand extends BaseCommand {
                 if (players == 7) privateString.append("[" + playerArray[6] + "]\n");
                 if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
                 if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
-                ev.reply(privateString.toString().trim()).queue();
+                ev.reply(privateString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                 break;
             case "mode":
                 final StringBuilder modeString = new StringBuilder();

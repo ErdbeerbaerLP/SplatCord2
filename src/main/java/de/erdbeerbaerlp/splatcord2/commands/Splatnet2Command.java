@@ -52,7 +52,7 @@ public class Splatnet2Command extends BaseCommand {
                             .setFooter(lang.botLocale.footer_ends)
                             .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image)
                             .setAuthor(lang.allGears.get(m.gear.kind+"/"+m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
-                            .addField(lang.botLocale.skillSlots, Emote.resolveFromAbility(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
+                            .addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
                             .addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
                     embeds.add(b.build());
                 }

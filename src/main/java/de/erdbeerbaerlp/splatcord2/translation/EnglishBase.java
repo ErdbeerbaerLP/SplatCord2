@@ -1,5 +1,9 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
+import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
+import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
+
 /**
  * Using english as base, extend other localizations from this class
  */
@@ -10,6 +14,7 @@ public class EnglishBase {
     public String stagesTitle = "Current Stages";
     public String futureStagesTitle = "Future Stages";
     public String footer_ends = "Ends";
+    public String footer_ended = "Ended";
     public String footer_starts = "Starts";
     public String footer_closed = "Closed";
     public String salmonRunTitle = "Salmon Run";
@@ -155,7 +160,24 @@ public class EnglishBase {
     public String anarchyBattleSeries = "Anarchy Battle (Series)";
     public String anarchyBattleOpen = "Anarchy Battle (Open)";
     public String xBattle = "X-Battle";
+    public String tricolorBattle ="Tricolor Battle";
+    public String newSplatfestTitle = "New Splatfest detected!";
+    public String runningSplatfestTitle = "Currently active Splatfest";
+    public String splatfestEmbedTitle = "Splatfest information";
+    public String splatfestTeams = "Teams:";
+    public String cmdSplatfestDesc = "Shows splatfest data";
+    public String splatfestTeamWinner = "Winning Team";
+    public String regenerateButton = "Regenerate";
+    public String cmdRotationLoadAll = "Show more";
 
+    public EnglishBase(S3Translation l){
+        s3lang = l;
+    }
+
+    public final S3Translation s3lang;
+    public String getSplatfestTitle(int id){
+        return ScheduleUtil.getSplatfestByID(id).title;
+    }
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {
@@ -179,32 +201,7 @@ public class EnglishBase {
         };
     }
 
-    public String getS3MapName(int mapid) {
-        return switch (mapid) {
-            case 1 -> "Scorch Gorge";
-            case 2 -> "Eeltail Alley";
-            case 3 -> "Hagglefish Market";
-            case 4 -> "Undertow Spillway";
-            case 6 -> "Mincemeat Metalworks";
-            case 10 -> "Hammerhead Bridge";
-            case 11 -> "Museum d'Alfonsino";
-            case 12 -> "Mahi-Mahi Resort";
-            case 13 -> "Inkblot Art Academy";
-            case 14 -> "Sturgeon Shipyard";
-            case 15 -> "MakoMart";
-            case 16 -> "Wahoo World";
-            default -> "???";
-        };
-    }
 
-    public String getS3SalmonMap(int mapid) {
-        return switch (mapid) {
-            case 1 -> "Spawning Grounds";
-            case 2 -> "Sockeye Station";
-            case 7 -> "Gone Fission Hydroplant";
-            default -> "???";
-        };
-    }
     public String getS3SRTitle(int title) {
         return switch (title) {
             case 0 -> "Apprentice";
@@ -230,7 +227,26 @@ public class EnglishBase {
             case 4 -> "Gear";
             case 5 -> "Grub";
             case 6 -> "Fun";
-            default -> "Unset";
+            default -> {
+                if(id < 6)
+                yield "Unset";
+                else{
+                    int tmpId = id;
+                    int fest = 0;
+                    while(tmpId > 3){
+                        tmpId -= 3;
+                        fest++;
+                    }
+                    int teamId = id%3;
+                    if(teamId == 1) teamId = 0;
+                    if(teamId == 2) teamId = 1;
+                    if(teamId == 0) teamId = 2;
+                    final FestRecord sf = ScheduleUtil.getSplatfestByID(fest);
+                    if(sf != null)
+                    yield sf.teams[teamId].teamName;
+                    else yield "Unknown"+ fest+"-"+teamId;
+                }
+            }
         };
     }
 }

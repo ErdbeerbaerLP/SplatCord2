@@ -1,12 +1,9 @@
 package de.erdbeerbaerlp.splatcord2.storage;
 
-import de.erdbeerbaerlp.splatcord2.translation.EnglishBase;
-import de.erdbeerbaerlp.splatcord2.translation.German;
-import de.erdbeerbaerlp.splatcord2.translation.Italian;
-import de.erdbeerbaerlp.splatcord2.translation.Japanese;
+import de.erdbeerbaerlp.splatcord2.translation.*;
 
 public enum BotLanguage {
-    ENGLISH(0, "en", new EnglishBase()), GERMAN(1, "de", new German()), ITALIAN(2, "it", new Italian()), JAPANESE(3,"ja",new Japanese());
+    ENGLISH(0, "en", new EnglishBase(new S3Translation("en"))), GERMAN(1, "de", new German(new S3Translation("de"))), ITALIAN(2, "it", new Italian(new S3Translation("it"))), JAPANESE(3,"ja",new Japanese(new S3Translation("ja")));
     public final int val;
     public final String key;
     public final EnglishBase botLocale;

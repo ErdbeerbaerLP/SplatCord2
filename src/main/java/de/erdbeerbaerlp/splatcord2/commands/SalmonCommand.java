@@ -2,13 +2,17 @@ package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
+import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
+import de.erdbeerbaerlp.splatcord2.util.S3TranslationFile;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.time.Instant;
 
@@ -61,8 +65,9 @@ public class SalmonCommand extends BaseCommand {
                 case "splatoon3":
                     final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
                     final Coop3 nextRotation = ScheduleUtil.getNextS3Coop();
+                    final S3TranslationFile stages = lang.botLocale.s3lang.getSalmonStages();
                     ev.replyEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
-                            .addField(lang.botLocale.salmonStage, lang.botLocale.getS3SalmonMap(currentS3Rotation.getCoop().setting.coopStage.coopStageId), true)
+                            .addField(lang.botLocale.salmonStage, stages.getString(S3Translation.s3MapIDToLabel(currentS3Rotation.getCoop().setting.coopStage.coopStageId)), true)
                             .addField(lang.botLocale.weapons,
                                     currentS3Rotation.getCoop().setting.weapons[0].name + ", " +
                                             currentS3Rotation.getCoop().setting.weapons[1].name + ", " +
@@ -74,7 +79,7 @@ public class SalmonCommand extends BaseCommand {
                             .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
                             .setDescription(lang.botLocale.noTranslations)
                             .build(), new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
-                            .addField(lang.botLocale.salmonStage, lang.botLocale.getS3SalmonMap(nextRotation.setting.coopStage.coopStageId), true)
+                            .addField(lang.botLocale.salmonStage, stages.getString(S3Translation.s3MapIDToLabel(nextRotation.setting.coopStage.coopStageId)), true)
                             .addField(lang.botLocale.weapons,
                                     nextRotation.setting.weapons[0].name + ", " +
                                             nextRotation.setting.weapons[1].name + ", " +
@@ -85,7 +90,7 @@ public class SalmonCommand extends BaseCommand {
                             .setFooter(lang.botLocale.footer_starts)
                             .setTimestamp(Instant.ofEpochSecond(nextRotation.getEndTime()))
                             .setDescription(lang.botLocale.noTranslations)
-                            .build()).queue();
+                            .build()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     break;
             }
 

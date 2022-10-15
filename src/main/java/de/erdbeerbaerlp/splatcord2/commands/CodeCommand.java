@@ -1,9 +1,11 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.Random;
 
@@ -30,6 +32,6 @@ public class CodeCommand extends BaseCommand{
         final int c = r.nextInt(10);
         final int d = r.nextInt(10);
 
-        ev.deferReply(hide).submit().thenAccept((msg)-> msg.editOriginal(a + "" + b + "" + c + "" + d).queue());
+        ev.deferReply(hide).submit().thenAccept((msg)-> msg.editOriginal(a + "" + b + "" + c + "" + d).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue());
     }
 }

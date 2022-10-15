@@ -1,11 +1,10 @@
 package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation;
 
+import de.erdbeerbaerlp.splatcord2.storage.json.Image;
+
 public class CoopSetting {
     public CoopWeapon[] weapons;
     public CoopStage coopStage;
-    public static class Image{
-        public String url;
-    }
     public static class CoopWeapon{
         public String name;
         public Image image;

@@ -8,11 +8,13 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
-import de.erdbeerbaerlp.splatcord2.util.wiiu.RankedModeTranslator;
+import de.erdbeerbaerlp.splatcord2.util.GameModeUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -57,7 +59,6 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS1Rotations.size() - 1)
                             future.addBlankField(false);
                     }
-                    future.setFooter("Note that this might be wrong. If that's the case, please be patient until I fixed this");
                     ev.replyEmbeds(future.build()).queue();
 
                     break;
@@ -73,7 +74,7 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS2Rotations.size() - 1)
                             s2EmbedBuilder.addBlankField(false);
                     }
-                    ev.replyEmbeds(s2EmbedBuilder.build()).queue();
+                    ev.replyEmbeds(s2EmbedBuilder.build()).setActionRow(Button.primary("loadmore2", lang.botLocale.cmdRotationLoadAll),Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     break;
                 case "splatoon3":
                     final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
@@ -88,18 +89,18 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS3Rotations.size() - 1)
                             s3EmbedBuilder.addBlankField(false);
                     }
-                    ev.replyEmbeds(s3EmbedBuilder.build()).queue();
+                    ev.replyEmbeds(s3EmbedBuilder.build()).setActionRow(Button.primary("loadmore3", lang.botLocale.cmdRotationLoadAll),Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     break;
             }
 
     }
 
 
-    private static void addS2Rotation(EmbedBuilder future, Rotation currentRotation, Locale lang) {
+    public static void addS2Rotation(EmbedBuilder future, Rotation currentRotation, Locale lang) {
         addS2Rotation(future, currentRotation, lang, false);
     }
 
-    private static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang) {
+    public static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang) {
         addS3Rotation(future, currentRotation, lang, false);
     }
 
@@ -111,7 +112,7 @@ public class RotationCommand extends BaseCommand {
                                 ", " + lang.botLocale.getS1MapName(currentRotation.RegularStages[1].MapID.value)
                         , true)
                 .addField(Emote.RANKED +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(RankedModeTranslator.translateS1(currentRotation.GachiRule.value)).name + ")",
+                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang,currentRotation.GachiRule.value) + ")",
                         lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
                                 ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
                         , true);
@@ -125,19 +126,24 @@ public class RotationCommand extends BaseCommand {
                                 ", " + lang.stages.get(currentRotation.getRegular().stage_b.id).getName()
                         , true)
                 .addField(Emote.RANKED +
-                                lang.game_modes.get("gachi").name + " (" + lang.rules.get(currentRotation.getRanked().rule.key).name + ")",
+                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS2(lang,currentRotation.getRanked().rule.key) + ")",
                         lang.stages.get(currentRotation.getRanked().stage_a.id).getName() +
                                 ", " + lang.stages.get(currentRotation.getRanked().stage_b.id).getName()
                         , true)
                 .addField(Emote.LEAGUE +
-                                lang.game_modes.get("league").name + " (" + lang.rules.get(currentRotation.getLeague().rule.key).name + ")",
+                                lang.game_modes.get("league").name + " (" + GameModeUtil.translateS2(lang,currentRotation.getLeague().rule.key) + ")",
                         lang.stages.get(currentRotation.getLeague().stage_a.id).getName() +
                                 ", " + lang.stages.get(currentRotation.getLeague().stage_b.id).getName()
                         , true);
     }
 
     private static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang, boolean now) {
-        future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + (currentRotation.getFest() != null? currentRotation.getFest().getStartTime():currentRotation.getRegular().getStartTime()) + ":t>"), true);
-        MessageUtil.addS3Embed(lang,currentRotation,future);
+        if (currentRotation.getRegular() == null && currentRotation.getFest() == null) {
+            future.addField("Error", "There was an error getting this rotation, please contact developer", true);
+            future.addField("Description", "currentRotation.getRegular() == null", true);
+        } else {
+            future.addField(":alarm_clock: ", now ? ("`" + lang.botLocale.now + "`") : ("<t:" + (currentRotation.getFest() != null ? currentRotation.getFest().getStartTime() : currentRotation.getRegular().getStartTime()) + ":t>"), true);
+            MessageUtil.addS3Embed(lang, currentRotation, future);
+        }
     }
 }

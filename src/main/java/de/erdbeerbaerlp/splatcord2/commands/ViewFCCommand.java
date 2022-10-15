@@ -4,11 +4,13 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 public class ViewFCCommand extends BaseCommand {
     public ViewFCCommand(Locale l) {
@@ -40,23 +42,22 @@ public class ViewFCCommand extends BaseCommand {
         if (subcommandName != null)
             switch (subcommandName) {
                 case "switch":
-
                     if (profile.switch_fc != -1) {
-                        ev.reply("Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc)).queue();
+                        ev.reply("Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     }else{
                         ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
                 case "wiiu":
                     if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isEmpty()) {
-                        ev.reply("NNID: " + profile.wiiu_nnid).queue();
+                        ev.reply("NNID: " + profile.wiiu_nnid).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     }else{
                         ev.reply(lang.botLocale.cmdProfileMissingNNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
                 case "wiiu-pretendo":
                     if (profile.wiiu_pnid != null && !profile.wiiu_pnid.isEmpty()) {
-                        ev.reply("PNID: "+profile.wiiu_pnid).queue();
+                        ev.reply("PNID: "+profile.wiiu_pnid).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     }else{
                         ev.reply(lang.botLocale.cmdProfileMissingPNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
