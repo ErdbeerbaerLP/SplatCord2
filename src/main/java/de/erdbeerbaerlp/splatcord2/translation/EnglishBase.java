@@ -169,6 +169,16 @@ public class EnglishBase {
     public String splatfestTeamWinner = "Winning Team";
     public String regenerateButton = "Regenerate";
     public String cmdRotationLoadAll = "Show more";
+    public String cmdPrivateGenerateDesc = "Generates an match for your current room";
+    public String cmdPrivateDeleteDesc = "Deletes the private room you created";
+    public String cmdPrivateCreateDesc = "Creates an private battle room";
+    public String targetUser = "Target User";
+    public String cmdPrivateJoinDesc = "Joins a private room";
+    public String cmdPrivateLeaveDesc = "Leaves your current private room";
+    public String cmdPrivateAddDesc = "Adds a player to your private room";
+    public String cmdPrivateRemoveDesc = "Removes a player from your private room";
+    public String cmdPrivateAdded = "Player added to your private room";
+    public String cmdPrivateRemove = "Player removed from your private room";
 
     public EnglishBase(S3Translation l){
         s3lang = l;

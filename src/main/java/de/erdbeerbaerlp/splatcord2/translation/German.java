@@ -144,14 +144,32 @@ public class German extends EnglishBase {
         anarchyBattleSeries = "Anarchiekampf (Serie)";
         anarchyBattleOpen = "Anarchiekampf (Offen)";
         xBattle = "X-Kampf";
-        tricolorBattle ="Dreifarbkampf";
+        tricolorBattle = "Dreifarbkampf";
+        newSplatfestTitle = "Neues Splatfest erkannt!";
+        runningSplatfestTitle = "Aktuell aktives Splatfest";
+        splatfestEmbedTitle = "Splatfest informationen";
+        splatfestTeams = "Teams:";
+        cmdSplatfestDesc = "Zeigt Splatfest-Daten an";
+        splatfestTeamWinner = "Gewinner-Team";
+        regenerateButton = "Neu-Generiern";
+        cmdRotationLoadAll = "Mehr...";
+        cmdPrivateGenerateDesc = "Generiert ein Match für deinen aktuellen Raum";
+        cmdPrivateDeleteDesc = "Löscht deinen erstellten Raum";
+        cmdPrivateCreateDesc = "Erstellt einen Privatraum";
+        targetUser = "Zielnutzer";
+        cmdPrivateJoinDesc = "Tritt einem Privatraum bei";
+        cmdPrivateLeaveDesc = "Verlässt deinen aktuellen Privatraum";
+        cmdPrivateAddDesc = "Fügt einen Spieler zum Privatraum hinzu";
+        cmdPrivateRemoveDesc = "Entfernt einen Spieler vom Privatraum";
+        cmdPrivateAdded = "Spieler zum Privatraum hinzugefügt";
+        cmdPrivateRemove = "Spieler vom Privatraum entfernt";
     }
 
     public German(S3Translation l) {
         super(l);
     }
 
-    public String getSplatfestTitle(int id){
+    public String getSplatfestTitle(int id) {
         return switch (id) {
             case 1 -> "Was muss mit auf eine einsame Insel?";
             default -> super.getSplatfestTitle(id);

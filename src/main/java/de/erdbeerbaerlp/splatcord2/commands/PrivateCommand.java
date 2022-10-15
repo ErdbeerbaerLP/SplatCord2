@@ -26,18 +26,18 @@ public class PrivateCommand extends BaseCommand {
     public PrivateCommand(Locale l) {
         super("private", l.botLocale.cmdPrivateDesc);//
 
-        final SubcommandData join = new SubcommandData("join", "Joins a private room");
-        join.addOption(OptionType.STRING, "id", "Room ID", true);
+        final SubcommandData join = new SubcommandData("join", l.botLocale.cmdPrivateJoinDesc);
+        join.addOption(OptionType.STRING, "id", l.botLocale.cmdPrivateRoomID, true);
 
-        final SubcommandData leave = new SubcommandData("leave", "Leaves your current private room");
-        final OptionData userOption = new OptionData(OptionType.USER, "user", "Target user", true);
-        final SubcommandData add = new SubcommandData("add", "Adds a player to your private room");
+        final SubcommandData leave = new SubcommandData("leave", l.botLocale.cmdPrivateLeaveDesc);
+        final OptionData userOption = new OptionData(OptionType.USER, "user", l.botLocale.targetUser, true);
+        final SubcommandData add = new SubcommandData("add", l.botLocale.cmdPrivateAddDesc);
         add.addOptions(userOption);
-        final SubcommandData remove = new SubcommandData("remove", "Removes a player from your private room");
+        final SubcommandData remove = new SubcommandData("remove", l.botLocale.cmdPrivateRemoveDesc);
         remove.addOptions(userOption);
-        final SubcommandData create = new SubcommandData("create", "Creates an private battle room");
-        final SubcommandData delete = new SubcommandData("delete", "Deletes the private room you created");
-        final SubcommandData generate = new SubcommandData("generate", "Generates an match for your current room");
+        final SubcommandData create = new SubcommandData("create", l.botLocale.cmdPrivateCreateDesc);
+        final SubcommandData delete = new SubcommandData("delete", l.botLocale.cmdPrivateDeleteDesc);
+        final SubcommandData generate = new SubcommandData("generate", l.botLocale.cmdPrivateGenerateDesc);
         addSubcommands(join, leave, add,remove, create, delete, generate);
     }
 
@@ -82,7 +82,7 @@ public class PrivateCommand extends BaseCommand {
             spectator.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
             curPlayer++;
         }
-        b.setTitle(lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
+        b.setTitle(lang.botLocale.cmdRandomPrivateMode + ": "+lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
         b.addField(lang.botLocale.cmdRandomPrivateAlpha, alpha.toString(), true);
         b.addField(lang.botLocale.cmdRandomPrivateBravo, bravo.toString(), true);
         if(!spectator.toString().isEmpty())b.addField(lang.botLocale.cmdRandomPrivateSpec, spectator.toString(), true);
@@ -109,10 +109,10 @@ public class PrivateCommand extends BaseCommand {
                                 ev.reply(lang.botLocale.cmdPrivateNonExisting).setEphemeral(true).queue();
                             } else {
                                 if (Main.iface.getPlayersInRoom(roomToJoin).size() >= 10) {
-                                    ev.reply(lang.botLocale.cmdPrivateFull).queue();
+                                    ev.reply(lang.botLocale.cmdPrivateFull).setEphemeral(true).queue();
                                 } else {
                                     Main.iface.setPlayerRoom(roomToJoin, ev.getUser().getIdLong());
-                                    ev.reply(lang.botLocale.cmdPrivateJoin).queue();
+                                    ev.reply(lang.botLocale.cmdPrivateJoin).setEphemeral(true).queue();
                                 }
 
                             }
@@ -126,7 +126,7 @@ public class PrivateCommand extends BaseCommand {
                         ev.reply(lang.botLocale.cmdPrivateCannotLeaveOwn).setEphemeral(true).queue();
                     } else {
                         Main.iface.setPlayerRoom(0, ev.getUser().getIdLong());
-                        ev.reply(lang.botLocale.cmdPrivateLeave).queue();
+                        ev.reply(lang.botLocale.cmdPrivateLeave).setEphemeral(true).queue();
                     }
                     break;
                 case "create":
@@ -145,7 +145,7 @@ public class PrivateCommand extends BaseCommand {
                 case "delete":
                     long ownedRoom = Main.iface.getOwnedRoom(ev.getUser().getIdLong());
                     if (ownedRoom != 0) {
-                        ev.reply(Main.iface.deleteRoom(ownedRoom)?lang.botLocale.cmdPrivateDeleted:lang.botLocale.cmdPrivateError + "").queue();
+                        ev.reply(Main.iface.deleteRoom(ownedRoom)?lang.botLocale.cmdPrivateDeleted:lang.botLocale.cmdPrivateError + "").setEphemeral(true).queue();
                     } else {
                         ev.reply(lang.botLocale.cmdPrivateNotOwning).setEphemeral(true).queue();
                     }
@@ -164,10 +164,10 @@ public class PrivateCommand extends BaseCommand {
                                 ev.reply(lang.botLocale.cmdPrivateNonExisting).setEphemeral(true).queue();
                             } else {
                                 if (Main.iface.getPlayersInRoom(roomToJoin).size() >= 10) {
-                                    ev.reply(lang.botLocale.cmdPrivateFull).queue();
+                                    ev.reply(lang.botLocale.cmdPrivateFull).setEphemeral(true).queue();
                                 } else {
                                     Main.iface.setPlayerRoom(roomToJoin, usr.getIdLong());
-                                    ev.reply(lang.botLocale.cmdPrivateJoin).queue();
+                                    ev.reply(lang.botLocale.cmdPrivateAdded).setEphemeral(true).queue();
                                 }
 
                             }
@@ -182,7 +182,7 @@ public class PrivateCommand extends BaseCommand {
                         ev.reply(lang.botLocale.cmdPrivateCannotLeaveOwn).setEphemeral(true).queue();
                     } else {
                         Main.iface.setPlayerRoom(0, usr.getIdLong());
-                        ev.reply(lang.botLocale.cmdPrivateLeave).queue();
+                        ev.reply(lang.botLocale.cmdPrivateRemove).setEphemeral(true).queue();
                     }
                     break;
             }
