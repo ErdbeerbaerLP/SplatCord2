@@ -30,8 +30,6 @@ public class S3TranslationFile {
                     backend.put(lineInArray[0], lineInArray[1].replace("\0", ""));
                 }
             }
-            System.out.println(Arrays.toString(backend.keySet().toArray()));
-            System.out.println(Arrays.toString(backend.values().toArray()));
         }else{
             System.err.println("Could not find CSV file "+lang+"/"+name+".csv");
             System.err.println("Please extract the MSBT file from the game as CSV and restart the bot");
