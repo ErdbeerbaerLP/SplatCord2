@@ -134,6 +134,7 @@ public class ScheduleUtil {
     }
 
     public static void updateS2RotationData() throws IOException, JsonParseException {
+        System.out.println("Downloading S2 Rotations...");
         final URL sched = new URL("https://splatoon2.ink/data/schedules.json");
         final HttpsURLConnection deConn = (HttpsURLConnection) sched.openConnection();
         deConn.setRequestProperty("User-Agent", Main.USER_AGENT);
@@ -149,6 +150,7 @@ public class ScheduleUtil {
     }
 
     public static void updateS3RotationData() throws IOException, JsonParseException {
+        System.out.println("Downloading S3 Rotations...");
         final URL sched3 = new URL("https://splatoon3.ink/data/schedules.json");
         final HttpsURLConnection deConn3 = (HttpsURLConnection) sched3.openConnection();
         deConn3.setRequestProperty("User-Agent", Main.USER_AGENT);
@@ -160,7 +162,7 @@ public class ScheduleUtil {
         deConnSF.connect();
         sf3 = Main.gson.fromJson(new InputStreamReader(deConnSF.getInputStream()), SplatfestData.class);
 
-
+        System.out.println("S3 Rotations updated successfully");
     }
 
 

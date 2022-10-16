@@ -137,7 +137,7 @@ public class RotationCommand extends BaseCommand {
                         , true);
     }
 
-    private static void addS3Rotation(EmbedBuilder future, S3Rotation currentRotation, Locale lang, boolean now) {
+    private static void addS3Rotation(EmbedBuilder future, final S3Rotation currentRotation, Locale lang, boolean now) {
         if (currentRotation.getRegular() == null && currentRotation.getFest() == null) {
             future.addField("Error", "There was an error getting this rotation, please contact developer", true);
             future.addField("Description", "currentRotation.getRegular() == null", true);

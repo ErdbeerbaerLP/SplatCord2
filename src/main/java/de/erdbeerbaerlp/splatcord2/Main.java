@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import static de.erdbeerbaerlp.splatcord2.commands.Splatnet2Command.repeat;
 
@@ -142,121 +143,11 @@ public class Main {
         long salmonEndTime = coop_schedules.details[0].end_time;
 
         while (true) {
+
             final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
             final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
             final int currentS1RotationInt = RotationTimingUtil.getRotationForInstant(Instant.now());
             final Phase currentS1Rotation = s1rotations.root.Phases[currentS1RotationInt];
-
-            //Splatoon 1 Rotations
-            if (iface.status.isDBAlive() && currentS1RotationInt != Config.instance().doNotEdit.lastS1Rotation) {
-                iface.getAllS1MapChannels().forEach((serverid, channel) -> {
-                    try {
-                        MessageUtil.sendS1RotationFeed(serverid, channel, currentS1Rotation);
-                    } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
-                        e.printStackTrace();
-                    }
-                });
-                Config.instance().doNotEdit.lastS1Rotation = currentS1RotationInt;
-                Config.instance().saveConfig();
-            }
-
-
-            //Map rotation data
-            if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
-                iface.getAllS2MapChannels().forEach((serverid, channel) -> {
-                    try {
-                        MessageUtil.sendS2RotationFeed(serverid, channel, currentRotation);
-                    } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
-                        e.printStackTrace();
-                    }
-                });
-                Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
-                Config.instance().saveConfig();
-            }
-
-            if (iface.status.isDBAlive() && currentS3Rotation.getRegular().getStartTime() != Config.instance().doNotEdit.lastS3RotationTimestamp) {
-                iface.getAllS3MapChannels().forEach((serverid, channel) -> {
-                    try {
-                        MessageUtil.sendS3RotationFeed(serverid, channel, currentS3Rotation);
-                    } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
-                        e.printStackTrace();
-                    }
-                });
-                Config.instance().doNotEdit.lastS3RotationTimestamp = currentS3Rotation.getRegular().getStartTime();
-                Config.instance().saveConfig();
-            }
-
-
-            //Salmon run data
-            if (iface.status.isDBAlive() && coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
-                if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
-                    salmonEndTime = -1;
-                }
-                if (iface.status.isDBAlive() && coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
-                    iface.getAllSalmonChannels().forEach((serverid, channel) -> {
-                        try {
-                            MessageUtil.sendSalmonFeed(serverid, channel);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
-                    Config.instance().saveConfig();
-                }
-            }
-
-
-            if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() != Config.instance().doNotEdit.lastS3SalmonTimestamp) {
-                if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
-                    salmonEndTime = -1;
-                }
-                if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() <= (System.currentTimeMillis() / 1000)) {
-                    iface.getAllS3SalmonChannels().forEach((serverid, channel) -> {
-                        try {
-                            MessageUtil.sendS3SalmonFeed(serverid, channel);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    Config.instance().doNotEdit.lastS3SalmonTimestamp = currentS3Rotation.getCoop().getStartTime();
-                    Config.instance().saveConfig();
-                }
-            }
-
-
-            final HashMap<Long, Order[]> allOrders = iface.getAllOrders();
-            for (Merchandise m : splatNet2.merchandises) {
-                for(Long usrid : allOrders.keySet()){
-                    final User user = bot.jda.retrieveUserById(usrid).complete();
-                    final SplatProfile profile = Main.iface.getSplatoonProfiles(user.getIdLong());
-                    final ArrayList<Order> orders = profile.s2orders;
-                    final ArrayList<Order> finishedOrders = new ArrayList<>();
-                    for(Order o : orders){
-                        if((m.gear.kind+"/"+m.gear.id).equals(o.gear)){
-                            final TextChannel channel = bot.jda.getTextChannelById(o.channel);
-                            final Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
-                            final MessageCreateBuilder b = new MessageCreateBuilder();
-                            b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%",user.getAsMention()));
-                            final EmbedBuilder emb = new EmbedBuilder()
-                                    .setTimestamp(Instant.ofEpochSecond(m.end_time))
-                                    .setFooter(lang.botLocale.footer_ends)
-                                    .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image)
-                                    .setAuthor(lang.allGears.get(m.gear.kind+"/"+m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
-                                    .addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
-                                    .addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
-                            b.addEmbeds(emb.build());
-                            channel.sendMessage(b.build()).queue();
-                            finishedOrders.add(o);
-                        }
-                    }
-
-                    if(finishedOrders.size() > 0) {
-                        profile.s2orders.removeAll(finishedOrders);
-                        Main.iface.updateSplatProfile(profile);
-                    }
-                }
-            }
-
             //Try to update data
             if (LocalTime.now().getMinute() == 0 && LocalTime.now().getSecond() >= 30) {
                 try {
@@ -284,13 +175,143 @@ public class Main {
                 twcon2.setRequestProperty("User-Agent", Main.USER_AGENT);
                 twcon2.connect();
                 splatNet2 = Main.gson.fromJson(new InputStreamReader(twcon2.getInputStream()), SplatNet.class);
+            }
+            try {
+                //Splatoon 1 Rotations
+                if (iface.status.isDBAlive() && currentS1RotationInt != Config.instance().doNotEdit.lastS1Rotation) {
+                    iface.getAllS1MapChannels().forEach((serverid, channel) -> {
+                        try {
+                            MessageUtil.sendS1RotationFeed(serverid, channel, currentS1Rotation);
+                        } catch (
+                                Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                            e.printStackTrace();
+                        }
+                    });
+                    Config.instance().doNotEdit.lastS1Rotation = currentS1RotationInt;
+                    Config.instance().saveConfig();
+                }
 
-                TimeUnit.MINUTES.sleep(2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                //Map rotation data
+                if (iface.status.isDBAlive() && currentRotation.getRegular().start_time != Config.instance().doNotEdit.lastRotationTimestamp) {
+                    iface.getAllS2MapChannels().forEach((serverid, channel) -> {
+                        try {
+                            MessageUtil.sendS2RotationFeed(serverid, channel, currentRotation);
+                        } catch (
+                                Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                            e.printStackTrace();
+                        }
+                    });
+                    Config.instance().doNotEdit.lastRotationTimestamp = currentRotation.getRegular().start_time;
+                    Config.instance().saveConfig();
+                }
+
+                if (iface.status.isDBAlive() && currentS3Rotation.getRegular().getStartTime() != Config.instance().doNotEdit.lastS3RotationTimestamp) {
+                    iface.getAllS3MapChannels().forEach((serverid, channel) -> {
+                        try {
+                            MessageUtil.sendS3RotationFeed(serverid, channel, currentS3Rotation);
+                        } catch (
+                                Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                            e.printStackTrace();
+                        }
+                    });
+                    Config.instance().doNotEdit.lastS3RotationTimestamp = currentS3Rotation.getRegular().getStartTime();
+                    Config.instance().saveConfig();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                //Salmon run data
+                if (iface.status.isDBAlive() && coop_schedules.details[0].start_time != Config.instance().doNotEdit.lastSalmonTimestamp) {
+                    if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
+                        salmonEndTime = -1;
+                    }
+                    if (iface.status.isDBAlive() && coop_schedules.details[0].start_time <= (System.currentTimeMillis() / 1000)) {
+                        iface.getAllSalmonChannels().forEach((serverid, channel) -> {
+                            try {
+                                MessageUtil.sendSalmonFeed(serverid, channel);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        Config.instance().doNotEdit.lastSalmonTimestamp = coop_schedules.details[0].start_time;
+                        Config.instance().saveConfig();
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() != Config.instance().doNotEdit.lastS3SalmonTimestamp) {
+                    if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
+                        salmonEndTime = -1;
+                    }
+                    if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() <= (System.currentTimeMillis() / 1000)) {
+                        iface.getAllS3SalmonChannels().forEach((serverid, channel) -> {
+                            try {
+                                MessageUtil.sendS3SalmonFeed(serverid, channel);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        Config.instance().doNotEdit.lastS3SalmonTimestamp = currentS3Rotation.getCoop().getStartTime();
+                        Config.instance().saveConfig();
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                final HashMap<Long, Order[]> allOrders = iface.getAllOrders();
+                for (Merchandise m : splatNet2.merchandises) {
+                    for (Long usrid : allOrders.keySet()) {
+
+                        final SplatProfile profile = Main.iface.getSplatoonProfiles(usrid);
+                        final ArrayList<Order> orders = profile.s2orders;
+                        if (orders.size() > 0) {
+                            final Consumer<? super User> action = (user) -> {
+                                final ArrayList<Order> finishedOrders = new ArrayList<>();
+                                for (Order o : orders) {
+                                    if ((m.gear.kind + "/" + m.gear.id).equals(o.gear)) {
+                                        final TextChannel channel = bot.jda.getTextChannelById(o.channel);
+                                        final Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
+                                        final MessageCreateBuilder b = new MessageCreateBuilder();
+                                        b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%", user.getAsMention()));
+                                        final EmbedBuilder emb = new EmbedBuilder().setTimestamp(Instant.ofEpochSecond(m.end_time)).setFooter(lang.botLocale.footer_ends).setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image).setAuthor(lang.allGears.get(m.gear.kind + "/" + m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image).addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true).addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
+                                        b.addEmbeds(emb.build());
+                                        channel.sendMessage(b.build()).queue();
+                                        finishedOrders.add(o);
+                                    }
+                                }
+
+                                if (finishedOrders.size() > 0) {
+                                    profile.s2orders.removeAll(finishedOrders);
+                                    Main.iface.updateSplatProfile(profile);
+                                }
+                            };
+
+                            final User u = bot.jda.getUserById(usrid);
+                            if (u != null) action.accept(u);
+                            else bot.jda.retrieveUserById(usrid).submit().thenAccept(action);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 TimeUnit.SECONDS.sleep(15);
                 Config.instance().loadConfig();
             } catch (InterruptedException e) {
+                e.printStackTrace();
                 return;
             } catch (Exception e) {
                 e.printStackTrace();

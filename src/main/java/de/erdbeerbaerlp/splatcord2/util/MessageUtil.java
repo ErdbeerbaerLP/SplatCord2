@@ -154,7 +154,7 @@ public class MessageUtil {
         return new MessageCreateBuilder().setEmbeds(b.build()).build();
     }
 
-    public static MessageCreateData getS3MapMessage(Long serverid, S3Rotation r) {
+    public static MessageCreateData getS3MapMessage(Long serverid, final S3Rotation r) {
         Locale lang = Main.translations.get(iface.getServerLang(serverid));
         final EmbedBuilder emb = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 3)");
         addS3Embed(lang, r, emb);
@@ -178,7 +178,7 @@ public class MessageUtil {
                                 ", " + lang.stages.get(r.getLeague().stage_b.id).getName()
                         , false);
     }
-    public static void addS3Embed(Locale lang, S3Rotation r, EmbedBuilder b) {
+    public static void addS3Embed(Locale lang, final S3Rotation r, EmbedBuilder b) {
         final S3TranslationFile stages = lang.botLocale.s3lang.getStages();
         if(r.getFest().festMatchSetting != null){
             b.addField(Emote.SPLATFEST +

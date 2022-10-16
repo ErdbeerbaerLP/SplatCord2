@@ -198,7 +198,7 @@ public class Bot implements EventListener {
                     for (int i = 0; i < 6; i++) {
                         time += TimeUnit.HOURS.toSeconds(2) + 1;
                         RotationCommand.addS3Rotation(b, ScheduleUtil.getS3RotationForTimestamp(time), lang);
-                        if (i < 6 - 1)
+                        if (i < 5)
                             b.addBlankField(false);
                     }
                 }
