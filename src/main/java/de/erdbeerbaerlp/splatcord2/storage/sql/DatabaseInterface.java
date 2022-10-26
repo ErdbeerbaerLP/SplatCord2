@@ -73,7 +73,7 @@ public class DatabaseInterface implements AutoCloseable {
 
     public SplatProfile getSplatoonProfiles(long userID) {
         final SplatProfile profile = new SplatProfile(userID);
-        try (final ResultSet res = query("SELECT `wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`snet2orders`,`pb-id` FROM users WHERE `id` = " + userID)) {
+        try (final ResultSet res = query("SELECT `wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`,`snet2orders`,`snet3orders`,`pb-id` FROM users WHERE `id` = " + userID)) {
             while (res != null && res.next()) {
                 if (res.wasNull())
                     return profile;
@@ -89,11 +89,15 @@ public class DatabaseInterface implements AutoCloseable {
                 profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(splat1str).next().getAsJsonObject());
                 profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(splat2str).next().getAsJsonObject());
                 profile.splat3Profile = Splat3Profile.fromJson(new JsonStreamParser(splat3str).next().getAsJsonObject());
-                String orderString = res.getString(7);
-                if(orderString == null) orderString = "[]";
-                final Order[] ordr = Main.gson.fromJson(orderString, Order[].class);
-                profile.s2orders = new ArrayList<>(List.of(ordr));
-                profile.pbID = res.getLong(8);
+                String order2String = res.getString(7);
+                if(order2String == null) order2String = "[]";
+                final Order[] ordr2 = Main.gson.fromJson(order2String, Order[].class);
+                profile.s2orders = new ArrayList<>(List.of(ordr2));
+                String order3String = res.getString(8);
+                if(order3String == null) order3String = "[]";
+                final Order[] ordr3 = Main.gson.fromJson(order3String, Order[].class);
+                profile.s3orders = new ArrayList<>(List.of(ordr3));
+                profile.pbID = res.getLong(9);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -102,7 +106,7 @@ public class DatabaseInterface implements AutoCloseable {
     }
 
     public void updateSplatProfile(SplatProfile profile) {
-        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`, `snet2orders`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '"+profile.splat3Profile.toJson().toString() +"','"+ Main.gson.toJson(profile.s2orders.toArray())+"',"+profile.pbID+")");
+        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`, `snet2orders`, `snet3orders`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '"+profile.splat3Profile.toJson().toString() +"','"+ Main.gson.toJson(profile.s2orders.toArray())+"','"+ Main.gson.toJson(profile.s3orders.toArray())+"',"+profile.pbID+")");
     }
     public long getUserRoom(long user){
         try (final ResultSet res = query("SELECT `pb-id` FROM users WHERE id = " + user)){
@@ -213,15 +217,15 @@ public class DatabaseInterface implements AutoCloseable {
         }
     }
 
-    public void addServer(long id) {
+    public void addServer(final long id) {
         runUpdate("INSERT INTO servers (serverid) values (" + id + ")");
     }
 
-    public void setServerLang(long serverID, BotLanguage lang) {
+    public void setServerLang(final long serverID, final BotLanguage lang) {
         runUpdate("UPDATE servers SET lang = " + lang.val + " WHERE serverid = " + serverID);
     }
 
-    public BotLanguage getServerLang(long serverID) {
+    public BotLanguage getServerLang(final long serverID) {
         try (final ResultSet res = query("SELECT lang FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return BotLanguage.fromInt(res.getInt(1));
@@ -231,7 +235,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return BotLanguage.ENGLISH;
     }
-    public boolean getDeleteMessage(long serverID) {
+    public boolean getDeleteMessage(final long serverID) {
         try (final ResultSet res = query("SELECT deleteMessage FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getBoolean(1);
@@ -242,7 +246,7 @@ public class DatabaseInterface implements AutoCloseable {
         return true;
     }
 
-    public long getS2StageChannel(long serverID) {
+    public long getS2StageChannel(final long serverID) {
         try (final ResultSet res = query("SELECT mapchannel FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
@@ -252,7 +256,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return 0;
     }
-    public long getS1StageChannel(long serverID) {
+    public long getS1StageChannel(final long serverID) {
         try (final ResultSet res = query("SELECT s1mapchannel FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
@@ -262,7 +266,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return 0;
     }
-    public long getSalmonChannel(long serverID) {
+    public long getSalmonChannel(final long serverID) {
         try (final ResultSet res = query("SELECT salchannel FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
@@ -273,7 +277,7 @@ public class DatabaseInterface implements AutoCloseable {
         return 0;
     }
 
-    public long getS3SalmonChannel(long serverID) {
+    public long getS3SalmonChannel(final long serverID) {
         try (final ResultSet res = query("SELECT s3rsalchannel FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
@@ -338,9 +342,30 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return mapChannels;
     }
-public HashMap<Long, Order[]> getAllOrders() {
+public HashMap<Long, Order[]> getAllS2Orders() {
         final HashMap<Long, Order[]> ret = new HashMap<>();
         try (final ResultSet res = query("SELECT id,snet2orders FROM users")) {
+            while (res != null && res.next()) {
+                final long userid = res.getLong(1);
+                if (!res.wasNull()) {
+                    final ArrayList<Order> orders = new ArrayList<>();
+                    String orderString = res.getString(2);
+                    if(orderString == null) orderString = "[]";
+                    final JsonArray jsonElements = Main.gson.fromJson(orderString, JsonArray.class);
+                    for(JsonElement i : jsonElements){
+                        orders.add(Main.gson.fromJson(i,Order.class));
+                    }
+                    ret.put(userid, orders.toArray(new Order[0]));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+    public HashMap<Long, Order[]> getAllS3Orders() {
+        final HashMap<Long, Order[]> ret = new HashMap<>();
+        try (final ResultSet res = query("SELECT id,snet3orders FROM users")) {
             while (res != null && res.next()) {
                 final long userid = res.getLong(1);
                 if (!res.wasNull()) {

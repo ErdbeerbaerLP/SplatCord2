@@ -91,7 +91,7 @@ public class EditProfileCommand extends BaseCommand {
     public void execute(SlashCommandInteractionEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         final String subcommandName = ev.getSubcommandName();
-        final SplatProfile profile = Main.iface.getSplatoonProfiles(ev.getUser().getIdLong());
+        final SplatProfile profile = Main.getUserProfile(ev.getUser().getIdLong());
         if (subcommandName != null)
             switch (subcommandName) {
                 case "splat1":

@@ -38,7 +38,7 @@ public class ViewFCCommand extends BaseCommand {
         final String subcommandName = ev.getSubcommandName();
         final OptionMapping userOption = ev.getOption("user");
         final Member m = userOption != null ? userOption.getAsMember() : ev.getMember();
-        final SplatProfile profile = Main.iface.getSplatoonProfiles(m.getIdLong());
+        final SplatProfile profile = Main.getUserProfile(m.getIdLong());
         if (subcommandName != null)
             switch (subcommandName) {
                 case "switch":

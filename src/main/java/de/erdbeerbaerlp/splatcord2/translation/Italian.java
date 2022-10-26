@@ -1,7 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
-
 public class Italian extends EnglishBase {
     {
         salmonStage = "Arene:";
@@ -85,9 +83,6 @@ public class Italian extends EnglishBase {
         cmdProfileFCSet = "Codice amico impostato a ";
     }
 
-    public Italian(S3Translation l) {
-        super(l);
-    }
 
     @Override
     public String getS1MapName(int mapid){

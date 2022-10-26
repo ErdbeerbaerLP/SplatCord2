@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations;
 
 import com.google.gson.JsonElement;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.translation.EnglishBase;
 
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 public class Locale {
     public EnglishBase botLocale;
+    public S3Locale s3locales;
     public HashMap<Integer, Stage> stages;
     public HashMap<String, GameMode> game_modes;
     public HashMap<String, GameRule> rules;

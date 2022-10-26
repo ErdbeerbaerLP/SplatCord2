@@ -1,6 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 
@@ -179,12 +178,6 @@ public class EnglishBase {
     public String cmdPrivateRemoveDesc = "Removes a player from your private room";
     public String cmdPrivateAdded = "Player added to your private room";
     public String cmdPrivateRemove = "Player removed from your private room";
-
-    public EnglishBase(S3Translation l){
-        s3lang = l;
-    }
-
-    public final S3Translation s3lang;
     public String getSplatfestTitle(int id){
         return ScheduleUtil.getSplatfestByID(id).title;
     }

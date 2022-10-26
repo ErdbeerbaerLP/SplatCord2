@@ -3,15 +3,17 @@ package de.erdbeerbaerlp.splatcord2.storage;
 import de.erdbeerbaerlp.splatcord2.translation.*;
 
 public enum BotLanguage {
-    ENGLISH(0, "en", new EnglishBase(new S3Translation("en"))), GERMAN(1, "de", new German(new S3Translation("de"))), ITALIAN(2, "it", new Italian(new S3Translation("it"))), JAPANESE(3,"ja",new Japanese(new S3Translation("ja")));
+    ENGLISH(0, "en", new EnglishBase(), "en-US"), GERMAN(1, "de", new German(), "de-DE"), ITALIAN(2, "it", new Italian(), "it-IT"), JAPANESE(3,"ja",new Japanese(), "ja-JP");
     public final int val;
     public final String key;
     public final EnglishBase botLocale;
+    public final String s3Key;
 
-    BotLanguage(int val, String key, EnglishBase botLocale) {
+    BotLanguage(int val, String key, EnglishBase botLocale,String s3Key) {
         this.val = val;
         this.key = key;
         this.botLocale = botLocale;
+        this.s3Key = s3Key;
     }
 
     public static BotLanguage fromInt(int val) {

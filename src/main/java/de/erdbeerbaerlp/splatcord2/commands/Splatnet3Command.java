@@ -3,9 +3,9 @@ package de.erdbeerbaerlp.splatcord2.commands;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Merchandise;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Order;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.LimitedGear;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -20,9 +20,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
-public class Splatnet2Command extends BaseCommand {
-    public Splatnet2Command(Locale l) {
-        super("splatnet2", l.botLocale.cmdSplatnetDesc);
+public class Splatnet3Command extends BaseCommand {
+    public Splatnet3Command(Locale l) {
+        super("splatnet3", l.botLocale.cmdSplatnetDesc);
         final SubcommandData list = new SubcommandData("list", l.botLocale.cmdSplatnetDesc);
         final SubcommandData order = new SubcommandData("order", l.botLocale.cmdSplatnetDesc);
         final OptionData d = new OptionData(OptionType.STRING, "gear", l.botLocale.cmdSplatnetDesc, true);
@@ -46,14 +46,14 @@ public class Splatnet2Command extends BaseCommand {
         switch(subcmd){
             case "list":
                 final ArrayList<MessageEmbed> embeds = new ArrayList<>();
-                for (Merchandise m : Main.splatNet2.merchandises) {
+                for (final LimitedGear g : Main.splatNet3.data.gesotown.limitedGears) {
                     final EmbedBuilder b = new EmbedBuilder()
-                            .setTimestamp(Instant.ofEpochSecond(m.end_time))
+                            .setTimestamp(Instant.ofEpochSecond(g.getEndTime()))
                             .setFooter(lang.botLocale.footer_ends)
-                            .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image)
-                            .setAuthor(lang.allGears.get(m.gear.kind+"/"+m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
-                            .addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
-                            .addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
+                            .setThumbnail(g.gear.image.url)
+                            .setAuthor(lang.s3locales.gear.get(g.gear.__splatoon3ink_id).name + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url)
+                            .addField(lang.botLocale.skillSlots, lang.s3locales.powers.get(g.gear.primaryGearPower.__splatoon3ink_id).name + repeat(g.gear.additionalGearPowers.length, Emote.ABILITY_LOCKED.toString()), true)
+                            .addField(lang.botLocale.price, Emote.SPLATCASH + g.price, true);
                     embeds.add(b.build());
                 }
                 submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.splatNetShop).setEmbeds(embeds).build()).queue());
@@ -62,15 +62,15 @@ public class Splatnet2Command extends BaseCommand {
                 final OptionMapping gearOpt = ev.getOption("gear");
                 final String asString = gearOpt.getAsString();
                 final SplatProfile profile = Main.getUserProfile(ev.getUser().getIdLong());
-                for(Order o : profile.s2orders){
+                for(Order o : profile.s3orders){
                     if(o.gear.equals(asString)){
                         submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent("Already Ordered").build()).queue());
                         return;
                     }
                 }
-                profile.s2orders.add(new Order(ev.getChannel().getId(),asString));
+                profile.s3orders.add(new Order(ev.getChannel().getId(),asString));
                 Main.iface.updateSplatProfile(profile);
-                submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%",lang.allGears.get(asString))).build()).queue());
+                submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%",lang.s3locales.gear.get(asString).name)).build()).queue());
                 break;
         }
 

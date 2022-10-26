@@ -1,7 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
-
 public class German extends EnglishBase {
     {
         salmonStage = "Arenen:";
@@ -165,9 +163,6 @@ public class German extends EnglishBase {
         cmdPrivateRemove = "Spieler vom Privatraum entfernt";
     }
 
-    public German(S3Translation l) {
-        super(l);
-    }
 
     public String getSplatfestTitle(int id) {
         return switch (id) {

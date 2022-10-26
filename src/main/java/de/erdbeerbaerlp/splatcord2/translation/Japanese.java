@@ -1,15 +1,10 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
-
 public class Japanese  extends EnglishBase{
     {
         languageSetMessage = "Your server's language is now set to japanese\nFor now, only game data will be translated";
     }
 
-    public Japanese(S3Translation l) {
-        super(l);
-    }
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {

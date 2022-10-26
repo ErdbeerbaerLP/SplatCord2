@@ -68,17 +68,17 @@ public class PrivateCommand extends BaseCommand {
         final StringBuilder bravo = new StringBuilder();
         final StringBuilder spectator = new StringBuilder();
         for (int i = 0; i < players / 2; i++) {
-            final Splat2Profile profile = Main.iface.getSplatoonProfiles(playerArray[curPlayer]).splat2Profile;
+            final Splat2Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat2Profile;
             alpha.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
             curPlayer++;
         }
         for (int i = 0; i < players / 2; i++) {
-            final Splat2Profile profile = Main.iface.getSplatoonProfiles(playerArray[curPlayer]).splat2Profile;
+            final Splat2Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat2Profile;
             bravo.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
             curPlayer++;
         }
         for (int i = 0; i < specs; i++) {
-            final Splat2Profile profile = Main.iface.getSplatoonProfiles(playerArray[curPlayer]).splat2Profile;
+            final Splat2Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat2Profile;
             spectator.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
             curPlayer++;
         }

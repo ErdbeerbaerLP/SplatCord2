@@ -39,6 +39,7 @@ public class CommandRegistry {
         baseCommandClasses.add(CodeCommand.class);
         baseCommandClasses.add(RotationCommand.class);
         baseCommandClasses.add(Splatnet2Command.class);
+        baseCommandClasses.add(Splatnet3Command.class);
         baseCommandClasses.add(SalmonCommand.class);
         baseCommandClasses.add(ViewFCCommand.class);
         baseCommandClasses.add(SplatfestCommand.class);

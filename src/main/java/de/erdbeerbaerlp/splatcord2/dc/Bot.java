@@ -4,12 +4,14 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
 import de.erdbeerbaerlp.splatcord2.commands.PrivateCommand;
 import de.erdbeerbaerlp.splatcord2.commands.RotationCommand;
-import de.erdbeerbaerlp.splatcord2.storage.*;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
+import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
+import de.erdbeerbaerlp.splatcord2.storage.Config;
+import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
-import de.erdbeerbaerlp.splatcord2.util.S3TranslationFile;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -29,6 +31,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -120,6 +123,19 @@ public class Bot implements EventListener {
                     }
                     ev.replyChoices(choices).queue();
                     break;
+                case "splatnet3":
+                    final ArrayList<Command.Choice> choices3 = new ArrayList<>();
+                    int count3 = 0;
+                    for (String key : lang.s3locales.gear.keySet()) {
+                        final String name = lang.s3locales.gear.get(key).name;
+                        if (name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                            choices3.add(new Command.Choice(name, key));
+                            count3++;
+                            if (count3 >= 20) break;
+                        }
+                    }
+                    ev.replyChoices(choices3).queue();
+                    break;
                 case "editprofile":
                     switch (ev.getFocusedOption().getName()) {
                         case "main1":
@@ -140,13 +156,13 @@ public class Bot implements EventListener {
                     break;
                 case "splatfest":
                     final ArrayList<Command.Choice> splatfests = new ArrayList<>();
-                    int count3 = 0;
+                    int countsplatfest = 0;
                     for (FestRecord f : ScheduleUtil.getSplatfestData().US.data.festRecords.nodes) {
                         final String title = lang.botLocale.getSplatfestTitle(f.getSplatfestID());
                         if (title.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
                             splatfests.add(new Command.Choice(title, f.getSplatfestID()));
-                            count3++;
-                            if (count3 >= 20) break;
+                            countsplatfest++;
+                            if (countsplatfest >= 20) break;
                         }
                     }
                     ev.replyChoices(splatfests).queue();
@@ -261,22 +277,22 @@ public class Bot implements EventListener {
     public Map.Entry<Long, Long> sendS3SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        final S3TranslationFile stages = lang.botLocale.s3lang.getSalmonStages();
-        final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
-                        .addField(lang.botLocale.salmonStage, stages.getString(S3Translation.s3MapIDToLabel((currentS3Rotation.getCoop().setting.coopStage.coopStageId))), true)
-                        .addField(lang.botLocale.weapons,
-                                currentS3Rotation.getCoop().setting.weapons[0].name + ", " +
-                                        currentS3Rotation.getCoop().setting.weapons[1].name + ", " +
-                                        currentS3Rotation.getCoop().setting.weapons[2].name + ", " +
-                                        currentS3Rotation.getCoop().setting.weapons[3].name
-                                , true)
-                        .setImage(currentS3Rotation.getCoop().setting.coopStage.image.url)
-                        .setFooter(lang.botLocale.footer_ends)
-                        .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
-                        .setDescription(lang.botLocale.noTranslations)
-                        .build()
-                ).build(),
-                channel);
+        final TextChannel ch = jda.getTextChannelById(channel);
+        CompletableFuture<Message> submitMsg = null;
+        if (ch != null)
+            submitMsg = ch.sendMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
+                    .addField(lang.botLocale.salmonStage, lang.s3locales.stages.get(currentS3Rotation.getCoop().setting.coopStage.id).name, true)
+                    .addField(lang.botLocale.weapons,
+                            lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[0].__splatoon3ink_id).name + ", " +
+                                    lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[1].__splatoon3ink_id).name + ", " +
+                                    lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[2].__splatoon3ink_id).name + ", " +
+                                    lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[3].__splatoon3ink_id).name
+                            , true)
+                    .setImage("attachment://current.png")
+                    .setFooter(lang.botLocale.footer_ends)
+                    .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
+                    .build()
+            ).build()).addFiles(FileUpload.fromData(currentS3Rotation.getCoop().outImage, "current.png")).submit();
         if (submitMsg != null)
             return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
         else return null;

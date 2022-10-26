@@ -4,7 +4,6 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
-import de.erdbeerbaerlp.splatcord2.storage.S3Translation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
@@ -131,9 +130,7 @@ public class MessageUtil {
             final boolean deleteMessage = iface.getDeleteMessage(serverid);
             if (deleteMessage && lastRotationMessageID != 0) {
                 final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
-                message.submit().thenAccept((msg) -> {
-                    msg.delete().queue();
-                });
+                message.submit().thenAccept((msg) -> msg.delete().queue());
             }
             final CompletableFuture<Message> msg = bot.sendMessage(
                     getS3MapMessage(
@@ -147,21 +144,21 @@ public class MessageUtil {
         }
     }
 
-    public static MessageCreateData getMapMessage(Long serverid, Rotation r) {
-        Locale lang = Main.translations.get(iface.getServerLang(serverid));
+    public static MessageCreateData getMapMessage(final Long serverid, final Rotation r) {
+        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
         final EmbedBuilder b = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 2)");
         addS2Embed(lang,r,b);
         return new MessageCreateBuilder().setEmbeds(b.build()).build();
     }
 
-    public static MessageCreateData getS3MapMessage(Long serverid, final S3Rotation r) {
-        Locale lang = Main.translations.get(iface.getServerLang(serverid));
+    public static MessageCreateData getS3MapMessage(final Long serverid, final S3Rotation r) {
+        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
         final EmbedBuilder emb = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 3)");
         addS3Embed(lang, r, emb);
         return new MessageCreateBuilder().setEmbeds(emb.build()).build();
     }
 
-    public static void addS2Embed(Locale lang, Rotation r, EmbedBuilder b) {
+    public static void addS2Embed(final Locale lang, final Rotation r, final EmbedBuilder b) {
         b.addField(Emote.REGULAR +
                         lang.game_modes.get("regular").name,
                 lang.stages.get(r.getRegular().stage_a.id).getName() +
@@ -179,37 +176,36 @@ public class MessageUtil {
                         , false);
     }
     public static void addS3Embed(Locale lang, final S3Rotation r, EmbedBuilder b) {
-        final S3TranslationFile stages = lang.botLocale.s3lang.getStages();
         if(r.getFest().festMatchSetting != null){
             b.addField(Emote.SPLATFEST +
                                     lang.game_modes.get("regular").name,
-                            (stages.getString(S3Translation.s3MapIDToLabel(r.getFest().festMatchSetting.vsStages[0].vsStageId))) +
-                                    ", " + (stages.getString(S3Translation.s3MapIDToLabel(r.getFest().festMatchSetting.vsStages[1].vsStageId)))
+                            (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[0].id).name +
+                                    ", " + (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[1].id)).name)
                             , true);
             if(r.getSplatfest() != null && r.getSplatfest().getMidtermTime()<= System.currentTimeMillis()/1000 && r.getSplatfest().tricolorStage != null){
-                b.addField(Emote.SPLATFEST+lang.botLocale.tricolorBattle, stages.getString(S3Translation.s3MapIDToLabel( MessageUtil.convertIdToVsStageId(r.getSplatfest().tricolorStage.id))), true);
+                b.addField(Emote.SPLATFEST+lang.botLocale.tricolorBattle, lang.s3locales.stages.get( r.getSplatfest().tricolorStage.id).name, true);
             }
         }else
             b.addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
-                        (stages.getString(S3Translation.s3MapIDToLabel(r.getRegular().regularMatchSetting.vsStages[0].vsStageId))) +
-                                ", " + (stages.getString(S3Translation.s3MapIDToLabel(r.getRegular().regularMatchSetting.vsStages[1].vsStageId)))
+                        (lang.s3locales.stages.get(r.getRegular().regularMatchSetting.vsStages[0].id).name +
+                                ", " + lang.s3locales.stages.get(r.getRegular().regularMatchSetting.vsStages[1].id).name)
                         , true)
                 .addField(Emote.RANKED +
-                                lang.botLocale.anarchyBattleSeries + " [" + GameModeUtil.translateS3(lang,r.getBankara().bankaraMatchSettings[0].vsRule.rule) + "]",
-                        stages.getString(S3Translation.s3MapIDToLabel(r.getBankara().bankaraMatchSettings[0].vsStages[0].vsStageId)) +
-                                ", " + stages.getString(S3Translation.s3MapIDToLabel(r.getBankara().bankaraMatchSettings[0].vsStages[1].vsStageId))
+                                lang.botLocale.anarchyBattleSeries + " [" + GameModeUtil.translateS3(lang,r.getBankara().bankaraMatchSettings[0].vsRule.id) + "]",
+                        lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[0].vsStages[0].id).name +
+                                ", " + lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[0].vsStages[1].id).name
                         , true)
                 .addField(Emote.RANKED +
-                                lang.botLocale.anarchyBattleOpen + " [" + GameModeUtil.translateS3(lang,r.getBankara().bankaraMatchSettings[1].vsRule.rule) + "]",
-                        stages.getString(S3Translation.s3MapIDToLabel(r.getBankara().bankaraMatchSettings[1].vsStages[0].vsStageId)) +
-                                ", " + stages.getString(S3Translation.s3MapIDToLabel(r.getBankara().bankaraMatchSettings[1].vsStages[1].vsStageId))
+                                lang.botLocale.anarchyBattleOpen + " [" + GameModeUtil.translateS3(lang,r.getBankara().bankaraMatchSettings[1].vsRule.id) + "]",
+                lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[0].id).name +
+                                ", " + lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[1].id).name
                         , true);
 
     }
 
     public static MessageCreateData getMapMessage(Long serverid, Phase currentRotation) {
-        Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
         return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 1)")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,

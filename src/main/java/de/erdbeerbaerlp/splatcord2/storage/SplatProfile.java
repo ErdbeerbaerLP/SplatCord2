@@ -14,6 +14,7 @@ public class SplatProfile {
 
     public long pbID = 0;
     public ArrayList<Order> s2orders = new ArrayList<>();
+    public ArrayList<Order> s3orders = new ArrayList<>();
     public Splat3Profile splat3Profile = new Splat3Profile();
     public Splat2Profile splat2Profile = new Splat2Profile();
     public Splat1Profile splat1Profile = new Splat1Profile();

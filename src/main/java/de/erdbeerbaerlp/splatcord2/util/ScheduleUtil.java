@@ -156,12 +156,17 @@ public class ScheduleUtil {
         deConn3.setRequestProperty("User-Agent", Main.USER_AGENT);
         deConn3.connect();
         schedules3 = Main.gson.fromJson(new InputStreamReader(deConn3.getInputStream()), Schedules3.class);
+
+        System.out.println("Generating sr images...");
+        for (Coop3 node : schedules3.data.coopGroupingSchedule.regularSchedules.nodes) {
+            node.genImage();
+        }
+
         final URL sfSched = new URL("https://splatoon3.ink/data/festivals.json");
         final HttpsURLConnection deConnSF = (HttpsURLConnection) sfSched.openConnection();
         deConnSF.setRequestProperty("User-Agent", Main.USER_AGENT);
         deConnSF.connect();
         sf3 = Main.gson.fromJson(new InputStreamReader(deConnSF.getInputStream()), SplatfestData.class);
-
         System.out.println("S3 Rotations updated successfully");
     }
 

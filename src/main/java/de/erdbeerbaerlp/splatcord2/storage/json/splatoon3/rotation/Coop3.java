@@ -1,5 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation;
 
+import de.erdbeerbaerlp.splatcord2.util.ImageUtil;
+
 import java.time.Instant;
 
 public class Coop3 {
@@ -7,6 +9,12 @@ public class Coop3 {
     public String endTime;
 
     public CoopSetting setting;
+    public byte[] outImage = new byte[0];
+
+
+    public void genImage(){
+        outImage = ImageUtil.generateSRImage(this);
+    }
 
     public long getStartTime(){
         return Instant.parse(startTime).toEpochMilli()/1000;
