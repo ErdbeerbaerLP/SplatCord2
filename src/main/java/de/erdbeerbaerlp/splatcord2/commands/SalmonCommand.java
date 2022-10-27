@@ -21,8 +21,16 @@ public class SalmonCommand extends BaseCommand {
         super("salmon", l.botLocale.cmdSalmonDesc);
 
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetsalmonDesc);
-        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetsalmonDesc);
-        addSubcommands(splat2,splat3);
+        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetsalmonDesc);
+        addSubcommands(splat2, splat3);
+    }
+
+    private static String getWeaponName(Locale lang, Weapons w) {
+        if (w.weapon == null && w.coop_special_weapon != null) {
+            return lang.coop_special_weapons.get(w.coop_special_weapon.image).name;
+        } else {
+            return lang.weapons.get(w.id).name;
+        }
     }
 
     @Override
@@ -87,16 +95,9 @@ public class SalmonCommand extends BaseCommand {
                             .setImage("attachment://next.png")
                             .setFooter(lang.botLocale.footer_starts)
                             .setTimestamp(Instant.ofEpochSecond(nextRotation.getStartTime()))
-                            .build()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).addFiles(FileUpload.fromData(currentS3Rotation.getCoop().outImage,"current.png"), FileUpload.fromData(nextRotation.outImage,"next.png")).queue();
+                            .build()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).addFiles(FileUpload.fromData(currentS3Rotation.getCoop().outImage, "current.png"), FileUpload.fromData(nextRotation.outImage, "next.png")).queue();
                     break;
             }
 
-    }
-    private static String getWeaponName(Locale lang, Weapons w) {
-        if (w.weapon == null && w.coop_special_weapon != null) {
-            return lang.coop_special_weapons.get(w.coop_special_weapon.image).name;
-        } else {
-            return lang.weapons.get(w.id).name;
-        }
     }
 }

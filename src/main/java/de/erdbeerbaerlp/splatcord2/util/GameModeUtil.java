@@ -5,28 +5,29 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 
 public class GameModeUtil {
     public static String translateS1(final Locale l, String lbl) {
-        lbl = switch(lbl) {
+        lbl = switch (lbl) {
             case "cPnt" -> "VnNSdWxlLTA=";
             case "cVar" -> "VnNSdWxlLTE=";
             case "cVgl" -> "VnNSdWxlLTM=";
             case "cVlf" -> "VnNSdWxlLTI=";
             default -> "VnNSdWxlLTA=";
         };
-        return translateS3(l,lbl);
+        return translateS3(l, lbl);
     }
+
     public static String translateS2Raw(final String lbl) {
         return switch (lbl) {
-                    case "turf_war" -> "VnNSdWxlLTA=";
-                    case "splat_zones" -> "VnNSdWxlLTE=";
-                    case "rainmaker" -> "VnNSdWxlLTM=";
-                    case "tower_control" -> "VnNSdWxlLTI=";
-                    case "clam_blitz" -> "VnNSdWxlLTQ=";
-                    default -> "unknown";
-                };
+            case "turf_war" -> "VnNSdWxlLTA=";
+            case "splat_zones" -> "VnNSdWxlLTE=";
+            case "rainmaker" -> "VnNSdWxlLTM=";
+            case "tower_control" -> "VnNSdWxlLTI=";
+            case "clam_blitz" -> "VnNSdWxlLTQ=";
+            default -> "unknown";
+        };
     }
 
     public static String translateS2(final Locale l, final String lbl) {
-        return translateS3(l,translateS2Raw(lbl));
+        return translateS3(l, translateS2Raw(lbl));
     }
 
     public static String translateS3(final Locale l, String lbl) {

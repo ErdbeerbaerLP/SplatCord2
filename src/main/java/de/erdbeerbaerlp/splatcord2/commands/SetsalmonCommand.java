@@ -6,7 +6,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
@@ -14,9 +14,9 @@ public class SetsalmonCommand extends BaseCommand {
     public SetsalmonCommand(Locale l) {
         super("setsalmon", l.botLocale.cmdSetsalmonDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetsalmonDesc);
-        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetsalmonDesc);
+        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetsalmonDesc);
 
-        addSubcommands(splat2,splat3);
+        addSubcommands(splat2, splat3);
     }
 
     @Override

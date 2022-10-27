@@ -10,14 +10,14 @@ public class Schedules3 {
                 '}';
     }
 
-    public static class SchDat{
+    public static class SchDat {
         public SchedulesRoot regularSchedules = new SchedulesRoot();
         public SchedulesRoot bankaraSchedules = new SchedulesRoot();
         public SchedulesRoot xSchedules = new SchedulesRoot();
         public SchedulesRoot leagueSchedules = new SchedulesRoot();
         public SchedulesRoot festSchedules = new SchedulesRoot();
 
-        public CoopRoot coopGroupingSchedule  = new CoopRoot();
+        public CoopRoot coopGroupingSchedule = new CoopRoot();
 
         public CurrentSplatfest currentFest = null;
 

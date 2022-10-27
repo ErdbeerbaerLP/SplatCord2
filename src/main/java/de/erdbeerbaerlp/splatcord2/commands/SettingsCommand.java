@@ -49,7 +49,7 @@ public class SettingsCommand extends BaseCommand {
             if (deleteMsgOpt != null) {
                 final boolean deleteMsgs = deleteMsgOpt.getAsBoolean();
                 Main.iface.setDeleteMessage(guild.getIdLong(), deleteMsgs);
-                b.append(deleteMsgs?lang[0].botLocale.cmdSettingsDelEnable:lang[0].botLocale.cmdSettingsDelDisable).append("\n");
+                b.append(deleteMsgs ? lang[0].botLocale.cmdSettingsDelEnable : lang[0].botLocale.cmdSettingsDelDisable).append("\n");
             }
             if (languageOpt != null) {
                 if (!Bot.isAdmin(ev.getMember())) {
@@ -64,12 +64,12 @@ public class SettingsCommand extends BaseCommand {
                         b.append(lang[0].botLocale.languageSetMessage).append("\n");
                         CommandRegistry.setCommands(guild);
                         final long stageChannel = Main.iface.getS2StageChannel(guild.getIdLong());
-                        if(stageChannel != 0){
-                            MessageUtil.sendS2RotationFeed(guild.getIdLong(),stageChannel,ScheduleUtil.getCurrentRotation());
+                        if (stageChannel != 0) {
+                            MessageUtil.sendS2RotationFeed(guild.getIdLong(), stageChannel, ScheduleUtil.getCurrentRotation());
                         }
                         final long salmonChannel = Main.iface.getSalmonChannel(guild.getIdLong());
-                        if(salmonChannel != 0){
-                            MessageUtil.sendSalmonFeed(guild.getIdLong(),salmonChannel);
+                        if (salmonChannel != 0) {
+                            MessageUtil.sendSalmonFeed(guild.getIdLong(), salmonChannel);
                         }
                     }
                 }

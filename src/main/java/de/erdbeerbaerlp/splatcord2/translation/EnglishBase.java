@@ -159,7 +159,7 @@ public class EnglishBase {
     public String anarchyBattleSeries = "Anarchy Battle (Series)";
     public String anarchyBattleOpen = "Anarchy Battle (Open)";
     public String xBattle = "X-Battle";
-    public String tricolorBattle ="Tricolor Battle";
+    public String tricolorBattle = "Tricolor Battle";
     public String newSplatfestTitle = "New Splatfest detected!";
     public String runningSplatfestTitle = "Currently active Splatfest";
     public String splatfestEmbedTitle = "Splatfest information";
@@ -178,7 +178,9 @@ public class EnglishBase {
     public String cmdPrivateRemoveDesc = "Removes a player from your private room";
     public String cmdPrivateAdded = "Player added to your private room";
     public String cmdPrivateRemove = "Player removed from your private room";
-    public String getSplatfestTitle(int id){
+    public String cmdSplatnet3theDailyDrop = "The Daily Drop";
+
+    public String getSplatfestTitle(int id) {
         return ScheduleUtil.getSplatfestByID(id).title;
     }
 
@@ -231,23 +233,23 @@ public class EnglishBase {
             case 5 -> "Grub";
             case 6 -> "Fun";
             default -> {
-                if(id < 6)
-                yield "Unset";
-                else{
+                if (id < 6)
+                    yield "Unset";
+                else {
                     int tmpId = id;
                     int fest = 0;
-                    while(tmpId > 3){
+                    while (tmpId > 3) {
                         tmpId -= 3;
                         fest++;
                     }
-                    int teamId = id%3;
-                    if(teamId == 1) teamId = 0;
-                    if(teamId == 2) teamId = 1;
-                    if(teamId == 0) teamId = 2;
+                    int teamId = id % 3;
+                    if (teamId == 1) teamId = 0;
+                    if (teamId == 2) teamId = 1;
+                    if (teamId == 0) teamId = 2;
                     final FestRecord sf = ScheduleUtil.getSplatfestByID(fest);
-                    if(sf != null)
-                    yield sf.teams[teamId].teamName;
-                    else yield "Unknown"+ fest+"-"+teamId;
+                    if (sf != null)
+                        yield sf.teams[teamId].teamName;
+                    else yield "Unknown" + fest + "-" + teamId;
                 }
             }
         };

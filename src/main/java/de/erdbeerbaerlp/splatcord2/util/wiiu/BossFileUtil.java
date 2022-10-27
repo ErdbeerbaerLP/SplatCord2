@@ -1,45 +1,44 @@
 package de.erdbeerbaerlp.splatcord2.util.wiiu;
 
 import com.arbiter34.byml.BymlFile;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Byml;
 import de.erdbeerbaerlp.splatcord2.util.SSLBypass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.*;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
  * Most code translated from https://github.com/PretendoNetwork/boss-js/tree/master/lib
  */
 public class BossFileUtil {
+
+    private static final int BOSS_MAGIC = ByteBuffer.wrap("boss".getBytes(StandardCharsets.UTF_8)).getInt();
+
+
+    // == Code translated from Pretendo ==
+    private static final int BOSS_CTR_VER = 0x10001;
+    private static final int BOSS_WUP_VER = 0x20001;
+    private static final byte[] BOSS_AES_KEY_HASH = hexStringToBytes("5202ce5099232c3d365e28379790a919");
+    private static final byte[] BOSS_HMAC_KEY_HASH = hexStringToBytes("b4482fef177b0100090ce0dbeb8ce977");
 
     private static byte[] hexStringToBytes(String hexString) {
         int length = hexString.length();
@@ -50,17 +49,6 @@ public class BossFileUtil {
         }
         return output;
     }
-
-
-    // == Code translated from Pretendo ==
-
-    private static final int BOSS_MAGIC = ByteBuffer.wrap("boss".getBytes(StandardCharsets.UTF_8)).getInt();
-    private static final int BOSS_CTR_VER = 0x10001;
-    private static final int BOSS_WUP_VER = 0x20001;
-
-    private static final byte[] BOSS_AES_KEY_HASH = hexStringToBytes("5202ce5099232c3d365e28379790a919");
-    private static final byte[] BOSS_HMAC_KEY_HASH = hexStringToBytes("b4482fef177b0100090ce0dbeb8ce977");
-
 
     private static byte[] md5(byte... input) {
         try {
@@ -127,22 +115,6 @@ public class BossFileUtil {
         return mac.doFinal();
     }
 
-    public static class BossContainer {
-
-        public final int hashType;
-        public final byte[] iv;
-        public final byte[] hmac;
-        public final byte[] content;
-
-        private BossContainer(int hashType, byte[] IV, byte[] hmac, byte[] content) {
-            this.hashType = hashType;
-            iv = IV;
-            this.hmac = hmac;
-            this.content = content;
-        }
-    }
-
-
     public static BossContainer decrypt(Object pathOrBuffer, byte[] aesKey, byte[] hmacKey) throws Exception {
         final byte[] data = getDataFromPathOrBuffer(pathOrBuffer);
 
@@ -195,7 +167,6 @@ public class BossFileUtil {
         }
 
 
-
         final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
         final File boss = new File("./boss.byml");
         try (final FileOutputStream os = new FileOutputStream(boss)) {
@@ -207,6 +178,21 @@ public class BossFileUtil {
         final BymlFile parse = BymlFile.parse(boss.getAbsolutePath());
         return Main.gson.fromJson(parse.toJson(), Byml.class);
 
+    }
+
+    public static class BossContainer {
+
+        public final int hashType;
+        public final byte[] iv;
+        public final byte[] hmac;
+        public final byte[] content;
+
+        private BossContainer(int hashType, byte[] IV, byte[] hmac, byte[] content) {
+            this.hashType = hashType;
+            iv = IV;
+            this.hmac = hmac;
+            this.content = content;
+        }
     }
 
 }

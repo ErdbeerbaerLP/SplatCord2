@@ -9,10 +9,10 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.Random;
 
-public class CodeCommand extends BaseCommand{
+public class CodeCommand extends BaseCommand {
     public CodeCommand(Locale l) {
         super("code", l.botLocale.cmdCodeDesc);
-        addOption(OptionType.BOOLEAN,"hidden",l.botLocale.cmdCodeArgDesc);
+        addOption(OptionType.BOOLEAN, "hidden", l.botLocale.cmdCodeArgDesc);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class CodeCommand extends BaseCommand{
     public void execute(SlashCommandInteractionEvent ev) {
         boolean hide = false;
         final OptionMapping hidden = ev.getOption("hidden");
-        if(hidden != null && hidden.getAsBoolean()) hide = true;
+        if (hidden != null && hidden.getAsBoolean()) hide = true;
 
         final Random r = new Random();
         final int a = r.nextInt(10);
@@ -32,6 +32,6 @@ public class CodeCommand extends BaseCommand{
         final int c = r.nextInt(10);
         final int d = r.nextInt(10);
 
-        ev.deferReply(hide).submit().thenAccept((msg)-> msg.editOriginal(a + "" + b + "" + c + "" + d).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue());
+        ev.deferReply(hide).submit().thenAccept((msg) -> msg.editOriginal(a + "" + b + "" + c + "" + d).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue());
     }
 }

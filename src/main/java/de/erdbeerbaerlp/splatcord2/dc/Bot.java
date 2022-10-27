@@ -4,6 +4,7 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
 import de.erdbeerbaerlp.splatcord2.commands.PrivateCommand;
 import de.erdbeerbaerlp.splatcord2.commands.RotationCommand;
+import de.erdbeerbaerlp.splatcord2.commands.Splatnet3Command;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
@@ -17,7 +18,12 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
@@ -29,6 +35,7 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -78,6 +85,20 @@ public class Bot implements EventListener {
             }
         });
 
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean isAdmin(Member m) {
+        if (m == null) return false;
+        return m.hasPermission(MANAGE_SERVER);
+    }
+
+    private static String getWeaponName(Locale lang, Weapons w) {
+        if (w.weapon == null && w.coop_special_weapon != null) {
+            return lang.coop_special_weapons.get(w.coop_special_weapon.image).name;
+        } else {
+            return lang.weapons.get(w.id).name;
+        }
     }
 
     public void sendMessage(String msg, String channelId) {
@@ -198,7 +219,6 @@ public class Bot implements EventListener {
             }
         } else if (event instanceof final ButtonInteractionEvent ev) {
             final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-
             if (ev.getComponentId().equals("delete")) {
                 if (ev.getMessage().getInteraction().getUser().getIdLong() == ev.getUser().getIdLong())
                     ev.getMessage().delete().queue();
@@ -209,7 +229,6 @@ public class Bot implements EventListener {
                 long time = System.currentTimeMillis() / 1000;
                 time += (TimeUnit.HOURS.toSeconds(2) + 1) * 3;
                 final CompletableFuture<InteractionHook> submit = ev.deferReply(true).submit();
-
                 if (ev.getComponentId().equals("loadmore3")) {
                     for (int i = 0; i < 6; i++) {
                         time += TimeUnit.HOURS.toSeconds(2) + 1;
@@ -230,27 +249,33 @@ public class Bot implements EventListener {
                 submit.thenAccept((m) -> {
                     m.editOriginalEmbeds(b.build()).queue();
                 });
+            } else if(ev.getComponentId().startsWith("snet3next")){
+                int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3next",""));
+
+                Button b = Button.secondary("snet3next"+(targetPage+1), Emoji.fromUnicode("U+25B6"));
+                if(Main.splatNet3.data.gesotown.limitedGears.length < (targetPage+1)*3) b = b.asDisabled();
+
+                ev.editMessageEmbeds(Splatnet3Command.saleEmbeds(lang,targetPage-1))
+                        .setActionRow(
+                                Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
+                                Button.secondary("snet3prev"+(targetPage-1), Emoji.fromUnicode("U+25C0")),
+                                b).queue();
+            }else if(ev.getComponentId().startsWith("snet3prev")){
+                int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3prev",""));
+
+                Button b = Button.secondary("snet3prev"+(targetPage-1), Emoji.fromUnicode("U+25C0"));
+                if(targetPage == 0) b = b.asDisabled();
+                ev.editMessageEmbeds(targetPage == 0?Splatnet3Command.dailyEmbeds(lang):Splatnet3Command.saleEmbeds(lang,targetPage-1))
+                        .setActionRow(
+                                Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
+                                b,
+                                Button.secondary("snet3next"+(targetPage+1), Emoji.fromUnicode("U+25B6"))).queue();
             }
             //Update command permissions on role creation / permission change
         } else if (event instanceof RoleUpdatePermissionsEvent) {
             CommandRegistry.setCommands(((RoleUpdatePermissionsEvent) event).getGuild());
         } else if (event instanceof RoleCreateEvent)
             CommandRegistry.setCommands(((RoleCreateEvent) event).getGuild());
-    }
-
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isAdmin(Member m) {
-        if (m == null) return false;
-        return m.hasPermission(MANAGE_SERVER);
-    }
-
-    private static String getWeaponName(Locale lang, Weapons w) {
-        if (w.weapon == null && w.coop_special_weapon != null) {
-            return lang.coop_special_weapons.get(w.coop_special_weapon.image).name;
-        } else {
-            return lang.weapons.get(w.id).name;
-        }
     }
 
     public Map.Entry<Long, Long> sendS2SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
@@ -300,8 +325,8 @@ public class Bot implements EventListener {
 
 
     private class StatusUpdater extends Thread {
-        int presence = 0;
         final Random r = new Random();
+        int presence = 0;
 
         @Override
         public void run() {

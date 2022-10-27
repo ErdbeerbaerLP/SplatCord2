@@ -1,6 +1,6 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-public class Japanese  extends EnglishBase{
+public class Japanese extends EnglishBase {
     {
         languageSetMessage = "Your server's language is now set to japanese\nFor now, only game data will be translated";
     }
@@ -27,6 +27,7 @@ public class Japanese  extends EnglishBase{
             default -> super.getS1MapName(mapid);
         };
     }
+
     public String getS3SRTitle(int title) {
         return switch (title) {
             case 0 -> "Apprentice";
@@ -43,8 +44,6 @@ public class Japanese  extends EnglishBase{
 
 
     public String getSplatfestTeam(int id) {
-        return switch (id) {
-            default -> super.getSplatfestTeam(id);
-        };
+        return super.getSplatfestTeam(id);
     }
 }

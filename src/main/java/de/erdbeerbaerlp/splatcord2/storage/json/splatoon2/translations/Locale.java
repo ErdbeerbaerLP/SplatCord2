@@ -57,7 +57,7 @@ public class Locale {
                 for (Map.Entry<String, JsonElement> s2 : g.getAsJsonObject().entrySet()) {
                     try {
                         final int i = Integer.parseInt(s2.getKey());
-                        allGears.put(s+"/"+i, s2.getValue().getAsJsonObject().get("name").getAsString());
+                        allGears.put(s + "/" + i, s2.getValue().getAsJsonObject().get("name").getAsString());
                     } catch (NumberFormatException er) {
                         er.printStackTrace();
                     }

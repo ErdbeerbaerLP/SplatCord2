@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -147,7 +147,7 @@ public class MessageUtil {
     public static MessageCreateData getMapMessage(final Long serverid, final Rotation r) {
         final Locale lang = Main.translations.get(iface.getServerLang(serverid));
         final EmbedBuilder b = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 2)");
-        addS2Embed(lang,r,b);
+        addS2Embed(lang, r, b);
         return new MessageCreateBuilder().setEmbeds(b.build()).build();
     }
 
@@ -160,47 +160,48 @@ public class MessageUtil {
 
     public static void addS2Embed(final Locale lang, final Rotation r, final EmbedBuilder b) {
         b.addField(Emote.REGULAR +
-                        lang.game_modes.get("regular").name,
-                lang.stages.get(r.getRegular().stage_a.id).getName() +
-                        ", " + lang.stages.get(r.getRegular().stage_b.id).getName()
-                , false)
+                                lang.game_modes.get("regular").name,
+                        lang.stages.get(r.getRegular().stage_a.id).getName() +
+                                ", " + lang.stages.get(r.getRegular().stage_b.id).getName()
+                        , false)
                 .addField(Emote.RANKED +
-                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS2(lang,r.getRanked().rule.key) + ")",
+                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS2(lang, r.getRanked().rule.key) + ")",
                         lang.stages.get(r.getRanked().stage_a.id).getName() +
                                 ", " + lang.stages.get(r.getRanked().stage_b.id).getName()
                         , false)
                 .addField(Emote.LEAGUE +
-                                lang.game_modes.get("league").name + " (" + GameModeUtil.translateS2(lang,r.getLeague().rule.key) + ")",
+                                lang.game_modes.get("league").name + " (" + GameModeUtil.translateS2(lang, r.getLeague().rule.key) + ")",
                         lang.stages.get(r.getLeague().stage_a.id).getName() +
                                 ", " + lang.stages.get(r.getLeague().stage_b.id).getName()
                         , false);
     }
+
     public static void addS3Embed(Locale lang, final S3Rotation r, EmbedBuilder b) {
-        if(r.getFest().festMatchSetting != null){
+        if (r.getFest().festMatchSetting != null) {
             b.addField(Emote.SPLATFEST +
-                                    lang.game_modes.get("regular").name,
-                            (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[0].id).name +
-                                    ", " + (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[1].id)).name)
-                            , true);
-            if(r.getSplatfest() != null && r.getSplatfest().getMidtermTime()<= System.currentTimeMillis()/1000 && r.getSplatfest().tricolorStage != null){
-                b.addField(Emote.SPLATFEST+lang.botLocale.tricolorBattle, lang.s3locales.stages.get( r.getSplatfest().tricolorStage.id).name, true);
+                            lang.game_modes.get("regular").name,
+                    (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[0].id).name +
+                            ", " + (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[1].id)).name)
+                    , true);
+            if (r.getSplatfest() != null && r.getSplatfest().getMidtermTime() <= System.currentTimeMillis() / 1000 && r.getSplatfest().tricolorStage != null) {
+                b.addField(Emote.SPLATFEST + lang.botLocale.tricolorBattle, lang.s3locales.stages.get(r.getSplatfest().tricolorStage.id).name, true);
             }
-        }else
+        } else
             b.addField(Emote.REGULAR +
-                                lang.game_modes.get("regular").name,
-                        (lang.s3locales.stages.get(r.getRegular().regularMatchSetting.vsStages[0].id).name +
-                                ", " + lang.s3locales.stages.get(r.getRegular().regularMatchSetting.vsStages[1].id).name)
-                        , true)
-                .addField(Emote.RANKED +
-                                lang.botLocale.anarchyBattleSeries + " [" + GameModeUtil.translateS3(lang,r.getBankara().bankaraMatchSettings[0].vsRule.id) + "]",
-                        lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[0].vsStages[0].id).name +
-                                ", " + lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[0].vsStages[1].id).name
-                        , true)
-                .addField(Emote.RANKED +
-                                lang.botLocale.anarchyBattleOpen + " [" + GameModeUtil.translateS3(lang,r.getBankara().bankaraMatchSettings[1].vsRule.id) + "]",
-                lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[0].id).name +
-                                ", " + lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[1].id).name
-                        , true);
+                                    lang.game_modes.get("regular").name,
+                            (lang.s3locales.stages.get(r.getRegular().regularMatchSetting.vsStages[0].id).name +
+                                    ", " + lang.s3locales.stages.get(r.getRegular().regularMatchSetting.vsStages[1].id).name)
+                            , true)
+                    .addField(Emote.RANKED +
+                                    lang.botLocale.anarchyBattleSeries + " [" + GameModeUtil.translateS3(lang, r.getBankara().bankaraMatchSettings[0].vsRule.id) + "]",
+                            lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[0].vsStages[0].id).name +
+                                    ", " + lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[0].vsStages[1].id).name
+                            , true)
+                    .addField(Emote.RANKED +
+                                    lang.botLocale.anarchyBattleOpen + " [" + GameModeUtil.translateS3(lang, r.getBankara().bankaraMatchSettings[1].vsRule.id) + "]",
+                            lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[0].id).name +
+                                    ", " + lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[1].id).name
+                            , true);
 
     }
 
@@ -213,13 +214,13 @@ public class MessageUtil {
                                 ", " + lang.botLocale.getS1MapName(currentRotation.RegularStages[1].MapID.value)
                         , true)
                 .addField(Emote.RANKED +
-                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang,currentRotation.GachiRule.value) + ")",
+                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang, currentRotation.GachiRule.value) + ")",
                         lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
                                 ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
                         , true).build()).build();
     }
 
-    public static int convertIdToVsStageId(String id){
+    public static int convertIdToVsStageId(String id) {
         return Integer.parseInt(new String(Base64.getDecoder().decode(id), StandardCharsets.UTF_8).split("-")[1]);
     }
 
@@ -254,28 +255,26 @@ public class MessageUtil {
     public static MessageEmbed generateSplatfestEmbed(FestRecord fest, boolean command, Locale l) {
         final EmbedBuilder b = new EmbedBuilder();
         final int splatfestID = fest.getSplatfestID();
-            if(fest.getEndTime() < System.currentTimeMillis()/1000){
-                b.setTitle(l.botLocale.splatfestEmbedTitle);
-                b.setFooter(l.botLocale.footer_ended);
-                b.setTimestamp(Instant.ofEpochSecond(fest.getEndTime()));
-            }
-            else if(fest.getStartTime() >= System.currentTimeMillis()/1000){
-                b.setTitle(l.botLocale.runningSplatfestTitle);
-                b.setFooter(l.botLocale.footer_ends);
-                b.setTimestamp(Instant.ofEpochSecond(fest.getEndTime()));
-            }
-            else if(fest.getStartTime() < System.currentTimeMillis()/1000){
-                b.setTitle(l.botLocale.newSplatfestTitle);
-                b.setFooter(l.botLocale.footer_starts);
-                b.setTimestamp(Instant.ofEpochSecond(fest.getStartTime()));
-            }
-        if(command) b.setTitle(l.botLocale.splatfestEmbedTitle);
+        if (fest.getEndTime() < System.currentTimeMillis() / 1000) {
+            b.setTitle(l.botLocale.splatfestEmbedTitle);
+            b.setFooter(l.botLocale.footer_ended);
+            b.setTimestamp(Instant.ofEpochSecond(fest.getEndTime()));
+        } else if (fest.getStartTime() >= System.currentTimeMillis() / 1000) {
+            b.setTitle(l.botLocale.runningSplatfestTitle);
+            b.setFooter(l.botLocale.footer_ends);
+            b.setTimestamp(Instant.ofEpochSecond(fest.getEndTime()));
+        } else if (fest.getStartTime() < System.currentTimeMillis() / 1000) {
+            b.setTitle(l.botLocale.newSplatfestTitle);
+            b.setFooter(l.botLocale.footer_starts);
+            b.setTimestamp(Instant.ofEpochSecond(fest.getStartTime()));
+        }
+        if (command) b.setTitle(l.botLocale.splatfestEmbedTitle);
         b.setImage(fest.image.url);
         b.setDescription(l.botLocale.getSplatfestTitle(splatfestID));
-        b.addField(l.botLocale.splatfestTeams, l.botLocale.getSplatfestTeam(1+ 3* splatfestID)+", "+l.botLocale.getSplatfestTeam(2+ 3* splatfestID)+", "+l.botLocale.getSplatfestTeam(3+ 3* splatfestID),false);
-        if(fest.getWinningTeam() != null){
+        b.addField(l.botLocale.splatfestTeams, l.botLocale.getSplatfestTeam(1 + 3 * splatfestID) + ", " + l.botLocale.getSplatfestTeam(2 + 3 * splatfestID) + ", " + l.botLocale.getSplatfestTeam(3 + 3 * splatfestID), false);
+        if (fest.getWinningTeam() != null) {
             b.setColor(fest.getWinningTeam().color.toColor());
-            b.addField(l.botLocale.splatfestTeamWinner,fest.getWinningTeam().teamName, false);
+            b.addField(l.botLocale.splatfestTeamWinner, fest.getWinningTeam().teamName, false);
         }
 
         return b.build();

@@ -9,9 +9,7 @@ public class RotationTimingUtil {
     public static final long rotationIncrement = TimeUnit.HOURS.toMillis(4);
 
 
-
-
-    public static int getRotationForInstant(Instant instant){
+    public static int getRotationForInstant(Instant instant) {
         final long mil = instant.toEpochMilli() - getBaseTimestamp();
         return getRotationForLong(mil);
     }
@@ -21,21 +19,21 @@ public class RotationTimingUtil {
     }
 
 
-    public static long getNextRotationStart(long input){
-        long s = TimeUnit.MILLISECONDS.toHours(input)- TimeUnit.MILLISECONDS.toHours(getBaseTimestamp());
+    public static long getNextRotationStart(long input) {
+        long s = TimeUnit.MILLISECONDS.toHours(input) - TimeUnit.MILLISECONDS.toHours(getBaseTimestamp());
         final long l = TimeUnit.HOURS.toMillis((long) (s - (s % 4d)));
-        return getBaseTimestamp()+l+rotationIncrement;
+        return getBaseTimestamp() + l + rotationIncrement;
     }
 
-    public static int getOffsetRotationForInstant(Instant instant, int offset){
-        return getRotationForLong((instant.toEpochMilli()+(offset*rotationIncrement)) - getBaseTimestamp());
+    public static int getOffsetRotationForInstant(Instant instant, int offset) {
+        return getRotationForLong((instant.toEpochMilli() + (offset * rotationIncrement)) - getBaseTimestamp());
     }
 
-    private static int getRotationForLong(long l){
+    private static int getRotationForLong(long l) {
         final int length = 179;
         long offset = l / rotationIncrement;
         while (offset >= length) {
-            offset-=length;
+            offset -= length;
         }
         return (int) (offset);
     }

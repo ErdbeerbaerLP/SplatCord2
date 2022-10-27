@@ -35,9 +35,9 @@ public class SplatfestCommand extends BaseCommand {
         final OptionMapping sfOption = ev.getOption("splatfest");
         final int festID = sfOption.getAsInt();
         final FestRecord fest = ScheduleUtil.getSplatfestByID(festID);
-        if(fest == null) return;
-        submit.thenAccept((s)->{
-            s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbed(fest,true, lang)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+        if (fest == null) return;
+        submit.thenAccept((s) -> {
+            s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbed(fest, true, lang)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
         });
     }
 

@@ -75,11 +75,10 @@ public class ViewProfileCommand extends BaseCommand {
                             b.setTitle(m.getEffectiveName() + "'s Splatoon 2 Profile");
                         b.addField(lang.botLocale.cmdProfileLevel, profile.splat2Profile.getLevel(), true);
                         b.addField(lang.botLocale.cmdProfileSRTitle, getSRTitle(profile.splat2Profile.srTitle, lang), true);
-                        StringBuilder mains = new StringBuilder();
-                        mains.append("- "+(profile.splat2Profile.mainWeapon1>0?lang.weapons.get(profile.splat2Profile.mainWeapon1).name:lang.botLocale.unset));
-                        mains.append("\n");
-                        mains.append("- "+(profile.splat2Profile.mainWeapon2>0?lang.weapons.get(profile.splat2Profile.mainWeapon2).name:lang.botLocale.unset));
-                        b.addField(lang.botLocale.cmdProfileMainWeapon, mains.toString(), true);
+                        String mains = "- " + (profile.splat2Profile.mainWeapon1 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon1).name : lang.botLocale.unset) +
+                                "\n" +
+                                "- " + (profile.splat2Profile.mainWeapon2 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon2).name : lang.botLocale.unset);
+                        b.addField(lang.botLocale.cmdProfileMainWeapon, mains, true);
                         b.addBlankField(false);
                         b.addField(lang.rules.get("rainmaker").name, profile.splat2Profile.rainmaker.toString(), true);
                         b.addField(lang.rules.get("splat_zones").name, profile.splat2Profile.splatzones.toString(), true);
@@ -101,8 +100,8 @@ public class ViewProfileCommand extends BaseCommand {
                         else
                             b.setTitle(m.getEffectiveName() + "'s Splatoon 3 Profile");
                         b.addField(lang.botLocale.cmdProfileLevel, profile.splat3Profile.getLevel(), true);
-                        b.addField(lang.botLocale.cmdProfileCatalogLevel, profile.splat3Profile.catalogLevel+"", true);
-                        b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel+"", true);
+                        b.addField(lang.botLocale.cmdProfileCatalogLevel, profile.splat3Profile.catalogLevel + "", true);
+                        b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel + "", true);
                         b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
                         b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
                         b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.getSplatfestTeam(profile.splat3Profile.splatfestTeam), true);

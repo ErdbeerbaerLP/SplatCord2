@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseInterface implements AutoCloseable {
-    private Connection conn;
     public final StatusThread status;
+    private Connection conn;
 
     public DatabaseInterface() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -81,20 +81,20 @@ public class DatabaseInterface implements AutoCloseable {
                 profile.wiiu_pnid = res.getString(2);
                 profile.switch_fc = res.getLong(3);
                 String splat1str = res.getString(4);
-                if(splat1str == null) splat1str = "{}";
+                if (splat1str == null) splat1str = "{}";
                 String splat2str = res.getString(5);
-                if(splat2str == null) splat2str = "{}";
+                if (splat2str == null) splat2str = "{}";
                 String splat3str = res.getString(6);
-                if(splat3str == null) splat3str = "{}";
+                if (splat3str == null) splat3str = "{}";
                 profile.splat1Profile = Splat1Profile.fromJson(new JsonStreamParser(splat1str).next().getAsJsonObject());
                 profile.splat2Profile = Splat2Profile.fromJson(new JsonStreamParser(splat2str).next().getAsJsonObject());
                 profile.splat3Profile = Splat3Profile.fromJson(new JsonStreamParser(splat3str).next().getAsJsonObject());
                 String order2String = res.getString(7);
-                if(order2String == null) order2String = "[]";
+                if (order2String == null) order2String = "[]";
                 final Order[] ordr2 = Main.gson.fromJson(order2String, Order[].class);
                 profile.s2orders = new ArrayList<>(List.of(ordr2));
                 String order3String = res.getString(8);
-                if(order3String == null) order3String = "[]";
+                if (order3String == null) order3String = "[]";
                 final Order[] ordr3 = Main.gson.fromJson(order3String, Order[].class);
                 profile.s3orders = new ArrayList<>(List.of(ordr3));
                 profile.pbID = res.getLong(9);
@@ -106,107 +106,76 @@ public class DatabaseInterface implements AutoCloseable {
     }
 
     public void updateSplatProfile(SplatProfile profile) {
-        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`, `snet2orders`, `snet3orders`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '"+profile.splat3Profile.toJson().toString() +"','"+ Main.gson.toJson(profile.s2orders.toArray())+"','"+ Main.gson.toJson(profile.s3orders.toArray())+"',"+profile.pbID+")");
+        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`, `snet2orders`, `snet3orders`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '" + profile.splat3Profile.toJson().toString() + "','" + Main.gson.toJson(profile.s2orders.toArray()) + "','" + Main.gson.toJson(profile.s3orders.toArray()) + "'," + profile.pbID + ")");
     }
-    public long getUserRoom(long user){
-        try (final ResultSet res = query("SELECT `pb-id` FROM users WHERE id = " + user)){
+
+    public long getUserRoom(long user) {
+        try (final ResultSet res = query("SELECT `pb-id` FROM users WHERE id = " + user)) {
             while (res != null && res.next()) {
                 if (res.wasNull())
                     return 0;
                 return res.getLong(1);
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             return 0;
         }
         return 0;
     }
-    public long getOwnedRoom(long owner){
-        try (final ResultSet res = query("SELECT `roomid` FROM privaterooms WHERE roomowner = " + owner)){
+
+    public long getOwnedRoom(long owner) {
+        try (final ResultSet res = query("SELECT `roomid` FROM privaterooms WHERE roomowner = " + owner)) {
             while (res != null && res.next()) {
                 if (res.wasNull())
                     return 0;
                 return res.getLong(1);
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             return 0;
         }
         return 0;
     }
-    public boolean createNewPBRoom(long room, short gameVersion, long roomOwner){
-        if(getOwnedRoom(room) == -1 ) return false;
-        runUpdate("INSERT INTO privaterooms (`roomid`, `gamever`, `roomowner`) VALUES ("+room+", "+gameVersion+", "+roomOwner+ ")");
-        runUpdate("INSERT INTO users (`id`,`pb-id`) VALUES (" + roomOwner + ", "+ room+ ") ON DUPLICATE KEY UPDATE `pb-id` =VALUES(`pb-id`)");
+
+    public boolean createNewPBRoom(long room, short gameVersion, long roomOwner) {
+        if (getOwnedRoom(room) == -1) return false;
+        runUpdate("INSERT INTO privaterooms (`roomid`, `gamever`, `roomowner`) VALUES (" + room + ", " + gameVersion + ", " + roomOwner + ")");
+        runUpdate("INSERT INTO users (`id`,`pb-id`) VALUES (" + roomOwner + ", " + room + ") ON DUPLICATE KEY UPDATE `pb-id` =VALUES(`pb-id`)");
         return true;
     }
 
-    public boolean deleteRoom(long room){
-        runUpdate("DELETE FROM privaterooms WHERE `roomid` = "+room);
-        runUpdate("UPDATE users SET `pb-id` = replace(`pb-id`,"+ room+",0) WHERE `pb-id` = "+room);
+    public boolean deleteRoom(long room) {
+        runUpdate("DELETE FROM privaterooms WHERE `roomid` = " + room);
+        runUpdate("UPDATE users SET `pb-id` = replace(`pb-id`," + room + ",0) WHERE `pb-id` = " + room);
         return true;
     }
-    public void setPlayerRoom(long room, long user){
-        runUpdate("INSERT INTO users (`id`,`pb-id`) VALUES (" + user + ", "+ room+ ") ON DUPLICATE KEY UPDATE `pb-id` =VALUES(`pb-id`)");
+
+    public void setPlayerRoom(long room, long user) {
+        runUpdate("INSERT INTO users (`id`,`pb-id`) VALUES (" + user + ", " + room + ") ON DUPLICATE KEY UPDATE `pb-id` =VALUES(`pb-id`)");
     }
 
     public boolean roomExists(long room) {
-        try (final ResultSet res = query("SELECT `roomid` FROM privaterooms WHERE roomid = " + room)){
+        try (final ResultSet res = query("SELECT `roomid` FROM privaterooms WHERE roomid = " + room)) {
             while (res != null && res.next()) {
-                if (res.wasNull())
-                    return false;
-                return true;
+                return !res.wasNull();
             }
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             return false;
         }
         return false;
     }
 
-    public ArrayList<Long> getPlayersInRoom(long room){
+    public ArrayList<Long> getPlayersInRoom(long room) {
         final ArrayList<Long> out = new ArrayList<>();
-        try (final ResultSet res = query("SELECT `id` FROM users WHERE `pb-id` = " + room)){
+        try (final ResultSet res = query("SELECT `id` FROM users WHERE `pb-id` = " + room)) {
             while (res != null && res.next()) {
                 if (!res.wasNull())
                     out.add(res.getLong(1));
             }
-        }catch (SQLException ignored){
+        } catch (SQLException ignored) {
         }
         return out;
-    }
-
-
-    public class StatusThread extends Thread {
-
-        private boolean alive = true;
-
-        public boolean isDBAlive() {
-            return alive;
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                alive = DatabaseInterface.this.isConnected();
-                if (!alive) try {
-                    System.err.println("Attempting Database reconnect...");
-                    DatabaseInterface.this.connect();
-                } catch (SQLException e) {
-                    System.err.println("Failed to reconnect to database: " + e.getMessage());
-                    try {
-                        TimeUnit.SECONDS.sleep(15);
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-                try {
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-        }
     }
 
     private boolean isConnected() {
@@ -235,6 +204,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return BotLanguage.ENGLISH;
     }
+
     public boolean getDeleteMessage(final long serverID) {
         try (final ResultSet res = query("SELECT deleteMessage FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -256,6 +226,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return 0;
     }
+
     public long getS1StageChannel(final long serverID) {
         try (final ResultSet res = query("SELECT s1mapchannel FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -266,6 +237,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return 0;
     }
+
     public long getSalmonChannel(final long serverID) {
         try (final ResultSet res = query("SELECT salchannel FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -287,15 +259,19 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return 0;
     }
+
     public void setDeleteMessage(long serverID, boolean deleteMessage) {
-        runUpdate("UPDATE servers SET deleteMessage = " + (deleteMessage ? 1:0) + " WHERE serverid = " + serverID);
+        runUpdate("UPDATE servers SET deleteMessage = " + (deleteMessage ? 1 : 0) + " WHERE serverid = " + serverID);
     }
+
     public void setS2StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
+
     public void setS3StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s3mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
+
     public void setS1StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s1mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
@@ -314,6 +290,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return mapChannels;
     }
+
     public HashMap<Long, Long> getAllS3MapChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,s3mapchannel FROM servers")) {
@@ -328,6 +305,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return mapChannels;
     }
+
     public HashMap<Long, Long> getAllS1MapChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,s1mapchannel FROM servers")) {
@@ -342,7 +320,8 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return mapChannels;
     }
-public HashMap<Long, Order[]> getAllS2Orders() {
+
+    public HashMap<Long, Order[]> getAllS2Orders() {
         final HashMap<Long, Order[]> ret = new HashMap<>();
         try (final ResultSet res = query("SELECT id,snet2orders FROM users")) {
             while (res != null && res.next()) {
@@ -350,10 +329,10 @@ public HashMap<Long, Order[]> getAllS2Orders() {
                 if (!res.wasNull()) {
                     final ArrayList<Order> orders = new ArrayList<>();
                     String orderString = res.getString(2);
-                    if(orderString == null) orderString = "[]";
+                    if (orderString == null) orderString = "[]";
                     final JsonArray jsonElements = Main.gson.fromJson(orderString, JsonArray.class);
-                    for(JsonElement i : jsonElements){
-                        orders.add(Main.gson.fromJson(i,Order.class));
+                    for (JsonElement i : jsonElements) {
+                        orders.add(Main.gson.fromJson(i, Order.class));
                     }
                     ret.put(userid, orders.toArray(new Order[0]));
                 }
@@ -363,6 +342,7 @@ public HashMap<Long, Order[]> getAllS2Orders() {
         }
         return ret;
     }
+
     public HashMap<Long, Order[]> getAllS3Orders() {
         final HashMap<Long, Order[]> ret = new HashMap<>();
         try (final ResultSet res = query("SELECT id,snet3orders FROM users")) {
@@ -371,10 +351,10 @@ public HashMap<Long, Order[]> getAllS2Orders() {
                 if (!res.wasNull()) {
                     final ArrayList<Order> orders = new ArrayList<>();
                     String orderString = res.getString(2);
-                    if(orderString == null) orderString = "[]";
+                    if (orderString == null) orderString = "[]";
                     final JsonArray jsonElements = Main.gson.fromJson(orderString, JsonArray.class);
-                    for(JsonElement i : jsonElements){
-                        orders.add(Main.gson.fromJson(i,Order.class));
+                    for (JsonElement i : jsonElements) {
+                        orders.add(Main.gson.fromJson(i, Order.class));
                     }
                     ret.put(userid, orders.toArray(new Order[0]));
                 }
@@ -392,6 +372,7 @@ public HashMap<Long, Order[]> getAllS2Orders() {
     public void setSalmonMessage(long serverID, Long messageID) {
         runUpdate("UPDATE servers SET lastSalmon = " + messageID + " WHERE serverid = " + serverID);
     }
+
     public void setS3SalmonChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s3salmonchannel = " + channelID + " WHERE serverid = " + serverID);
     }
@@ -399,12 +380,15 @@ public HashMap<Long, Order[]> getAllS2Orders() {
     public void setS3SalmonMessage(long serverID, Long messageID) {
         runUpdate("UPDATE servers SET s3lastSalmon = " + messageID + " WHERE serverid = " + serverID);
     }
+
     public void setLastS3RotationMessage(long serverID, long msgID) {
         runUpdate("UPDATE servers SET lastStage3 = " + msgID + " WHERE serverid = " + serverID);
     }
+
     public void setLastS2RotationMessage(long serverID, long msgID) {
         runUpdate("UPDATE servers SET lastStage2 = " + msgID + " WHERE serverid = " + serverID);
     }
+
     public void setLastS1RotationMessage(long serverID, long msgID) {
         runUpdate("UPDATE servers SET lastStage1 = " + msgID + " WHERE serverid = " + serverID);
     }
@@ -438,6 +422,7 @@ public HashMap<Long, Order[]> getAllS2Orders() {
         }
         return salmonMessages;
     }
+
     public HashMap<Long, Long> getAllS3SalmonChannels() {
         final HashMap<Long, Long> salmoChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,s3salmonchannel FROM servers")) {
@@ -467,6 +452,7 @@ public HashMap<Long, Order[]> getAllS2Orders() {
         }
         return salmonMessages;
     }
+
     public long getLastS2RotationMessage(long serverID) {
         try (final ResultSet res = query("SELECT lastStage2 FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -477,6 +463,7 @@ public HashMap<Long, Order[]> getAllS2Orders() {
         }
         return 0;
     }
+
     public long getLastS3RotationMessage(long serverID) {
         try (final ResultSet res = query("SELECT lastStage3 FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -509,6 +496,7 @@ public HashMap<Long, Order[]> getAllS2Orders() {
         }
         return 0;
     }
+
     public long getLastS3SalmonMessage(long serverID) {
         try (final ResultSet res = query("SELECT s3lastSalmon FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -554,9 +542,40 @@ public HashMap<Long, Order[]> getAllS2Orders() {
         }
     }
 
-
     @Override
     public void close() throws Exception {
         conn.close();
+    }
+
+    public class StatusThread extends Thread {
+
+        private boolean alive = true;
+
+        public boolean isDBAlive() {
+            return alive;
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                alive = DatabaseInterface.this.isConnected();
+                if (!alive) try {
+                    System.err.println("Attempting Database reconnect...");
+                    DatabaseInterface.this.connect();
+                } catch (SQLException e) {
+                    System.err.println("Failed to reconnect to database: " + e.getMessage());
+                    try {
+                        TimeUnit.SECONDS.sleep(15);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
     }
 }

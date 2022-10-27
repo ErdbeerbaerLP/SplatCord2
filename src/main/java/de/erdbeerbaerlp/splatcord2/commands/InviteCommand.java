@@ -3,7 +3,7 @@ package de.erdbeerbaerlp.splatcord2.commands;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class InviteCommand extends BaseCommand{
+public class InviteCommand extends BaseCommand {
     public InviteCommand(Locale l) {
         super("invite", l.botLocale.cmdInviteDesc);
     }

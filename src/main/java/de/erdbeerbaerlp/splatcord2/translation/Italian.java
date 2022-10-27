@@ -19,7 +19,7 @@ public class Italian extends EnglishBase {
         primarySkill = "Abilità:";
         skillSlots = "Slot abilità:";
         price = "Prezzo:";
-        splatNetShop  = "Calama-zone";
+        splatNetShop = "Calama-zone";
         splatnetCooldown = "Il comando Calama-zone è correntemente in cooldown. Per favore, riprova tra qualche minuto.";
         cmdSettingsLang = "Cambia la lingua del bot per questo server";
         cmdInviteDesc = "Invia l'invito per questo bot";
@@ -68,7 +68,7 @@ public class Italian extends EnglishBase {
         salmonRunTitleApprentice = "Tirocinante";
         salmonRunTitlePartTimer = "Apprendista";
         salmonRunTitleGoGetter = "Arrivista";
-        salmonRunTitleOverachiever = "Impiegato del mese"; 
+        salmonRunTitleOverachiever = "Impiegato del mese";
         salmonRunTitleProfreshional = "Professionista";
         cmdProfileRank = "Classifica";
         cmdProfileLevel = "Livello";
@@ -85,7 +85,7 @@ public class Italian extends EnglishBase {
 
 
     @Override
-    public String getS1MapName(int mapid){
+    public String getS1MapName(int mapid) {
         return switch (mapid) {
             case 0 -> "Periferia urbana";
             case 1 -> "Magazzino";

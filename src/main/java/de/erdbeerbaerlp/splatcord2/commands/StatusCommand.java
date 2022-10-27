@@ -38,12 +38,12 @@ public class StatusCommand extends BaseCommand {
             Duration duration = Duration.between(Main.startTime, Instant.now());
             String stats =
                     lang.botLocale.cmdStatusStatsServers + Main.bot.jda.getGuilds().size() + "\n" +
-                            lang.botLocale.cmdStatusStatsUptime + duration.toDaysPart()+"d "+duration.toHoursPart()+"H "+duration.toMinutesPart()+"M";
+                            lang.botLocale.cmdStatusStatsUptime + duration.toDaysPart() + "d " + duration.toHoursPart() + "H " + duration.toMinutesPart() + "M";
 
 
             b.addField(lang.botLocale.cmdStatusStats, stats, false);
             final boolean beta = Config.instance().discord.betaServers.contains(ev.getGuild().getId());
-            if(beta) b.addField("Beta server?", beta+"", false);
+            if (beta) b.addField("Beta server?", beta + "", false);
         }
         ev.replyEmbeds(b.build()).queue();
     }

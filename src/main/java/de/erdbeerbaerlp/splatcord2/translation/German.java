@@ -161,6 +161,7 @@ public class German extends EnglishBase {
         cmdPrivateRemoveDesc = "Entfernt einen Spieler vom Privatraum";
         cmdPrivateAdded = "Spieler zum Privatraum hinzugefügt";
         cmdPrivateRemove = "Spieler vom Privatraum entfernt";
+        cmdSplatnet3theDailyDrop = "Heutige Auswahl";
     }
 
 

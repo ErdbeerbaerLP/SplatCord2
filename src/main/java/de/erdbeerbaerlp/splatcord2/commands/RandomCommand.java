@@ -4,6 +4,7 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.GameRule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.TranslationNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -20,7 +21,9 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomCommand extends BaseCommand {
+    final String[] weapons = Main.weaponData.keySet().toArray(new String[0]);
     public ArrayList<String> lastRandomWeapons = new ArrayList<>();
+    public ArrayList<String> lastRandomWeapons3 = new ArrayList<>();
 
     public RandomCommand(Locale l) {
         super("random", l.botLocale.cmdRandomDesc);
@@ -36,14 +39,15 @@ public class RandomCommand extends BaseCommand {
         team.addOption(OptionType.BOOLEAN, "weapons", l.botLocale.cmdRandomTeamWeapons);
         final SubcommandData mode = new SubcommandData("mode", l.botLocale.cmdRandomMode);
         OptionData splVersions = new OptionData(OptionType.INTEGER, "version", l.botLocale.cmdRandomModeVersion);
-        splVersions.addChoice("Splatoon 1", 1);
         splVersions.addChoice("Splatoon 2", 2);
-        //splVersions.addChoice("Splatoon 3", 3);
+        splVersions.addChoice("Splatoon 3", 3);
+        weapon.addOptions(splVersions);
+        splVersions.addChoice("Splatoon 1", 1);
         mode.addOptions(splVersions);
-        addSubcommands(weapon,number, stage, team, mode);
+        addSubcommands(weapon, number, stage, team, mode);
     }
 
-    static <T>void shuffleArray(T[] ar) {
+    static <T> void shuffleArray(T[] ar) {
         final Random rnd = new Random();
         for (int i = ar.length - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
@@ -63,8 +67,10 @@ public class RandomCommand extends BaseCommand {
         lastRandomWeapons.add(wpnID);
         if (lastRandomWeapons.size() > 8) lastRandomWeapons.remove(0);
     }
-
-    final String[] weapons = Main.weaponData.keySet().toArray(new String[0]);
+    private void addWeapon3(String wpnID) {
+        lastRandomWeapons3.add(wpnID);
+        if (lastRandomWeapons3.size() > 8) lastRandomWeapons3.remove(0);
+    }
 
     private String getRandomWeaponID(Locale lang) {
         final Random r = new Random();
@@ -76,6 +82,19 @@ public class RandomCommand extends BaseCommand {
             if (lastRandomWeapons.contains(wpnid))
                 continue;
             addWeapon(wpnid);
+            return wpnid;
+        } while (true);
+    }
+    private String getRandomWeaponID3(Locale lang) {
+        final Random r = new Random();
+        do {
+            final int weapon = r.nextInt(lang.s3locales.weapons.keySet().size()-1);
+            final String wpnid = lang.s3locales.weapons.keySet().toArray(new String[0])[weapon];
+            if (!lang.s3locales.weapons.containsKey(wpnid))
+                continue;
+            if (lastRandomWeapons3.contains(wpnid))
+                continue;
+            addWeapon3(wpnid);
             return wpnid;
         } while (true);
     }
@@ -96,21 +115,43 @@ public class RandomCommand extends BaseCommand {
             amount = Math.min(Integer.parseInt(amountOption.getAsString()), 10);
         } catch (NumberFormatException ignored) {
         }
+        int splVer = 3;
+        final OptionMapping versionOption = ev.getOption("version");
+        if (versionOption != null) try {
+            splVer = Integer.parseInt(versionOption.getAsString());
+        } catch (NumberFormatException ignored) {
+        }
         switch (subcmd) {
             case "weapon":
+
                 final MessageCreateBuilder mb = new MessageCreateBuilder();
-                final ArrayList<MessageEmbed> embeds = new ArrayList<>();
-                for (int i = 0; i < amount; ++i) {
-                    final String wpnid = getRandomWeaponID(lang);
-                    final de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon wpn = Main.weaponData.get(wpnid);
-                    embeds.add(new EmbedBuilder()
-                            .setTitle(lang.weapons.get(Integer.parseInt(wpnid)).name)
-                            .setThumbnail("https://splatoon2.ink/assets/splatnet" + wpn.image)
-                            .addField(lang.botLocale.weaponSub, lang.weapon_subs.get(wpn.sub.id).name, true)
-                            .addField(lang.botLocale.weaponSpecial, lang.weapon_specials.get(wpn.special.id).name, true)
-                            .build());
+                switch (splVer) {
+                    case 2:
+                        final ArrayList<MessageEmbed> embeds = new ArrayList<>();
+                        for (int i = 0; i < amount; ++i) {
+                            final String wpnid = getRandomWeaponID(lang);
+                            final de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon wpn = Main.weaponData.get(wpnid);
+                            embeds.add(new EmbedBuilder()
+                                    .setTitle(lang.weapons.get(Integer.parseInt(wpnid)).name)
+                                    .setThumbnail("https://splatoon2.ink/assets/splatnet" + wpn.image)
+                                    .addField(lang.botLocale.weaponSub, lang.weapon_subs.get(wpn.sub.id).name, true)
+                                    .addField(lang.botLocale.weaponSpecial, lang.weapon_specials.get(wpn.special.id).name, true)
+                                    .build());
+
+                        }
+                        mb.setEmbeds(embeds);
+                        break;
+                    case 3:
+                        final StringBuilder b = new StringBuilder();
+                        for (int i = 0; i < amount; ++i) {
+                            final String wpnid = getRandomWeaponID3(lang);
+                            final TranslationNode wpn = lang.s3locales.weapons.get(wpnid);
+                            b.append(wpn.name).append("\n");
+                        }
+                        mb.setContent(b.toString());
+                        break;
                 }
-                mb.setEmbeds(embeds);
+
                 ev.reply(mb.build()).queue();
                 break;
             case "number":
@@ -207,12 +248,6 @@ public class RandomCommand extends BaseCommand {
                 break;
             case "mode":
                 final StringBuilder modeString = new StringBuilder();
-                int splVer = 2;
-                final OptionMapping versionOption = ev.getOption("version");
-                if (versionOption != null) try {
-                    splVer = Integer.parseInt(versionOption.getAsString());
-                } catch (NumberFormatException ignored) {
-                }
 
                 switch (splVer) {
                     case 1:
@@ -224,6 +259,9 @@ public class RandomCommand extends BaseCommand {
                         break;
                     case 2:
                         modeString.append(lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
+                        break;
+                    case 3:
+                        modeString.append(lang.s3locales.rules.values().toArray(new TranslationNode[0])[new Random().nextInt(lang.rules.size())].name);
                         break;
                     default:
                         break;

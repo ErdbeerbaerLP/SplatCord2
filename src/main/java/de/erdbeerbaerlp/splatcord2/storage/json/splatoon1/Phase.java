@@ -3,6 +3,18 @@ package de.erdbeerbaerlp.splatcord2.storage.json.splatoon1;
 import java.util.Arrays;
 
 public class Phase {
+    public GachiRule GachiRule = new GachiRule();
+    public Stage[] GachiStages = new Stage[0];
+    public Stage[] RegularStages = new Stage[0];
+
+    @Override
+    public String toString() {
+        return "Phase{" +
+                "GachiStages=" + Arrays.toString(GachiStages) +
+                ", RegularStages=" + Arrays.toString(RegularStages) +
+                '}';
+    }
+
     public static class GachiRule {
         public String value = "cUnk";
 
@@ -14,16 +26,6 @@ public class Phase {
         }
     }
 
-    @Override
-    public String toString() {
-        return "Phase{" +
-                "GachiStages=" + Arrays.toString(GachiStages) +
-                ", RegularStages=" + Arrays.toString(RegularStages) +
-                '}';
-    }
-    public GachiRule GachiRule = new GachiRule();
-    public Stage[] GachiStages = new Stage[0];
-    public Stage[] RegularStages = new Stage[0];
     public static class Stage {
         public MapID MapID = new MapID();
 

@@ -29,12 +29,12 @@ public class ImageUtil {
             final Graphics g = combined.getGraphics();
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
             g.drawImage(map, 0, 0, null);
-            g.setColor(new Color(0f,0f,0f,0.75f));
-            g.fillRoundRect(-20,h-wpnsize,wpnsize*4+20,wpnsize+20, 20,20);
-            g.drawImage(wpn1, 0, h-wpnsize,wpnsize,wpnsize, null);
-            g.drawImage(wpn2, wpnsize, h-wpnsize,wpnsize,wpnsize, null);
-            g.drawImage(wpn3, wpnsize*2, h-wpnsize, wpnsize,wpnsize,null);
-            g.drawImage(wpn4, wpnsize*3, h-wpnsize, wpnsize,wpnsize,null);
+            g.setColor(new Color(0f, 0f, 0f, 0.75f));
+            g.fillRoundRect(-20, h - wpnsize, wpnsize * 4 + 20, wpnsize + 20, 20, 20);
+            g.drawImage(wpn1, 0, h - wpnsize, wpnsize, wpnsize, null);
+            g.drawImage(wpn2, wpnsize, h - wpnsize, wpnsize, wpnsize, null);
+            g.drawImage(wpn3, wpnsize * 2, h - wpnsize, wpnsize, wpnsize, null);
+            g.drawImage(wpn4, wpnsize * 3, h - wpnsize, wpnsize, wpnsize, null);
             g.dispose();
             ImageIO.write(combined, "png", baos);
             return baos.toByteArray();

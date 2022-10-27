@@ -7,12 +7,13 @@ public class CoopSetting {
     public CoopStage coopStage;
 
 
-    public static class CoopWeapon{
+    public static class CoopWeapon {
         public String name;
         public String __splatoon3ink_id;
         public Image image;
     }
-    public static class CoopStage{
+
+    public static class CoopStage {
         public int coopStageId;
         public Image thumbnailImage;
         public Image image;

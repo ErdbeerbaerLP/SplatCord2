@@ -3,9 +3,6 @@ package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2;
 import com.google.gson.JsonObject;
 
 public class Splat2Profile {
-    int level = 1;
-    int stars = 0;
-    String name;
     public Rank rainmaker = new Rank("c-");
     public Rank splatzones = new Rank("c-");
     public Rank towercontrol = new Rank("c-");
@@ -13,32 +10,69 @@ public class Splat2Profile {
     public int srTitle = 0;
     public int mainWeapon1 = -1;
     public int mainWeapon2 = -1;
+    int level = 1;
+    int stars = 0;
+    String name;
+
+    public static Splat2Profile fromJson(JsonObject obj) {
+        final Splat2Profile profile = new Splat2Profile();
+        if (obj.get("level") != null) profile.level = obj.get("level").getAsInt();
+        if (obj.get("srtitle") != null) profile.srTitle = obj.get("srtitle").getAsInt();
+        if (obj.get("rainmaker") != null) profile.rainmaker = new Rank(obj.get("rainmaker").getAsString());
+        if (obj.get("splatzones") != null) profile.splatzones = new Rank(obj.get("splatzones").getAsString());
+        if (obj.get("towercontrol") != null) profile.towercontrol = new Rank(obj.get("towercontrol").getAsString());
+        if (obj.get("clamblitz") != null) profile.clamblitz = new Rank(obj.get("clamblitz").getAsString());
+        if (obj.get("stars") != null) profile.stars = obj.get("stars").getAsInt();
+        if (obj.get("name") != null && !obj.get("name").isJsonNull()) profile.name = obj.get("name").getAsString();
+        if (obj.get("main1") != null) profile.mainWeapon1 = obj.get("main1").getAsInt();
+        if (obj.get("main2") != null) profile.mainWeapon2 = obj.get("main2").getAsInt();
+        return profile;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (name.length() <= 10)
+            this.name = name;
+    }
+
+    public String getLevel() {
+        if (stars > 0)
+            return level + "☆" + stars;
+        else return level + "";
+    }
+
+    public void setLevel(int level) {
+        stars = 0;
+        this.level = level;
+        while (this.level >= 100) {
+            stars++;
+            this.level -= 100;
+            if (this.level == 0) this.level = 1;
+        }
+    }
+
+    public JsonObject toJson() {
+        final JsonObject json = new JsonObject();
+        json.addProperty("level", level);
+        json.addProperty("srtitle", srTitle);
+        json.addProperty("stars", stars);
+        json.addProperty("name", name);
+        json.addProperty("rainmaker", rainmaker.toString().replace("(", "").replace(")", ""));
+        json.addProperty("splatzones", splatzones.toString().replace("(", "").replace(")", ""));
+        json.addProperty("towercontrol", towercontrol.toString().replace("(", "").replace(")", ""));
+        json.addProperty("clamblitz", clamblitz.toString().replace("(", "").replace(")", ""));
+        json.addProperty("main1", mainWeapon1);
+        json.addProperty("main2", mainWeapon2);
+        return json;
+    }
 
     public static class Rank {
-        public enum RankEnum {
-            Cminus("c-"),
-            Cplus("c+"),
-            C("c"),
-            Bminus("b-"),
-            Bplus("b+"),
-            B("b"),
-            Aminus("a-"),
-            Aplus("a+"),
-            A("a"),
-            Splus("s+"),
-            S("s"),
-            X("x");
-            String identifier;
-
-            RankEnum(String s) {
-                this.identifier = s;
-            }
-        }
-
         private final RankEnum rank;
         private int power = -1;
         private int splusnum = 0;
-
         public Rank(String s) throws IllegalArgumentException {
             s = s.toLowerCase();
             RankEnum rank = null;
@@ -75,61 +109,26 @@ public class Splat2Profile {
             }
             return s;
         }
-    }
 
-    public void setLevel(int level) {
-        stars = 0;
-        this.level = level;
-        while (this.level >= 100) {
-            stars++;
-            this.level -= 100;
-            if (this.level == 0) this.level = 1;
+        public enum RankEnum {
+            Cminus("c-"),
+            Cplus("c+"),
+            C("c"),
+            Bminus("b-"),
+            Bplus("b+"),
+            B("b"),
+            Aminus("a-"),
+            Aplus("a+"),
+            A("a"),
+            Splus("s+"),
+            S("s"),
+            X("x");
+            String identifier;
+
+            RankEnum(String s) {
+                this.identifier = s;
+            }
         }
-    }
-
-    public void setName(String name) {
-        if (name.length() <= 10)
-            this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getLevel() {
-        if (stars > 0)
-            return level + "☆" + stars;
-        else return level + "";
-    }
-
-    public JsonObject toJson() {
-        final JsonObject json = new JsonObject();
-        json.addProperty("level", level);
-        json.addProperty("srtitle", srTitle);
-        json.addProperty("stars", stars);
-        json.addProperty("name", name);
-        json.addProperty("rainmaker", rainmaker.toString().replace("(", "").replace(")", ""));
-        json.addProperty("splatzones", splatzones.toString().replace("(", "").replace(")", ""));
-        json.addProperty("towercontrol", towercontrol.toString().replace("(", "").replace(")", ""));
-        json.addProperty("clamblitz", clamblitz.toString().replace("(", "").replace(")", ""));
-        json.addProperty("main1", mainWeapon1);
-        json.addProperty("main2", mainWeapon2);
-        return json;
-    }
-
-    public static Splat2Profile fromJson(JsonObject obj) {
-        final Splat2Profile profile = new Splat2Profile();
-        if (obj.get("level") != null) profile.level = obj.get("level").getAsInt();
-        if (obj.get("srtitle") != null) profile.srTitle = obj.get("srtitle").getAsInt();
-        if (obj.get("rainmaker") != null) profile.rainmaker = new Rank(obj.get("rainmaker").getAsString());
-        if (obj.get("splatzones") != null) profile.splatzones = new Rank(obj.get("splatzones").getAsString());
-        if (obj.get("towercontrol") != null) profile.towercontrol = new Rank(obj.get("towercontrol").getAsString());
-        if (obj.get("clamblitz") != null) profile.clamblitz = new Rank(obj.get("clamblitz").getAsString());
-        if (obj.get("stars") != null) profile.stars = obj.get("stars").getAsInt();
-        if (obj.get("name") != null && !obj.get("name").isJsonNull()) profile.name = obj.get("name").getAsString();
-        if (obj.get("main1") != null) profile.mainWeapon1 = obj.get("main1").getAsInt();
-        if (obj.get("main2") != null) profile.mainWeapon2 = obj.get("main2").getAsInt();
-        return profile;
     }
 
 }

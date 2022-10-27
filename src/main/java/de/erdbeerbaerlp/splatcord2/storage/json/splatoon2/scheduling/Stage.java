@@ -1,9 +1,9 @@
 package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling;
 
 public class Stage {
-    String name;
     public String image;
     public int id;
+    String name;
 
     @Override
     public String toString() {

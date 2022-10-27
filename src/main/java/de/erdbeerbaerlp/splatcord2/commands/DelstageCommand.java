@@ -11,9 +11,9 @@ public class DelstageCommand extends BaseCommand {
         super("delstage", l.botLocale.cmdDelstageDesc);
         final SubcommandData splat1 = new SubcommandData("splatoon1", l.botLocale.cmdSetstageDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetstageDesc);
-        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetstageDescTemporary);
+        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetstageDescTemporary);
 
-        addSubcommands(splat2,splat1,splat3);
+        addSubcommands(splat2, splat1, splat3);
     }
 
     @Override

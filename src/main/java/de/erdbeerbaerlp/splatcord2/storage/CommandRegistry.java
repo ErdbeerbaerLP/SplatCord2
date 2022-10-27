@@ -49,8 +49,8 @@ public class CommandRegistry {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(g.getIdLong()));
         final ArrayList<BaseCommand> commands = new ArrayList<>();
         for (Class<? extends BaseCommand> clazz : baseCommandClasses) {
-            if(clazz == SplatfestCommand.class){
-                if(!Config.instance().discord.betaServers.contains(g.getId())) continue;
+            if (clazz == SplatfestCommand.class) {
+                if (!Config.instance().discord.betaServers.contains(g.getId())) continue;
             }
             try {
                 BaseCommand cmd = clazz.getConstructor(Locale.class).newInstance(lang);
@@ -59,7 +59,8 @@ public class CommandRegistry {
                     baseCommands.add(cmd);
                 }
                 commands.add(cmd);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
@@ -70,7 +71,7 @@ public class CommandRegistry {
             });
         }).whenComplete((v, error) -> {
             if (error != null) {
-                System.out.println(g.getName() +" -> "+error.getMessage());
+                System.out.println(g.getName() + " -> " + error.getMessage());
             }
         });
     }

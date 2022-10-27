@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class BaseCommand extends CommandDataImpl {
+    private final Pattern forbiddenChars = Pattern.compile("['\"\\\\]");
+
     /**
      * Create an command builder.
      *
@@ -27,9 +29,7 @@ public abstract class BaseCommand extends CommandDataImpl {
 
     public abstract void execute(SlashCommandInteractionEvent ev);
 
-    private final Pattern forbiddenChars = Pattern.compile("['\"\\\\]");
-
-    public boolean hasForbiddenChars(String s){
+    public boolean hasForbiddenChars(String s) {
         Matcher matcher = forbiddenChars.matcher(s);
         return matcher.find();
     }

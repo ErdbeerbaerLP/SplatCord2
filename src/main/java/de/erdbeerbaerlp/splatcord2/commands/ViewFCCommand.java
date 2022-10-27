@@ -24,7 +24,7 @@ public class ViewFCCommand extends BaseCommand {
         wiiupnid.addOptions(user);
         wiiunnid.addOptions(user);
 
-        addSubcommands(sw,wiiunnid,wiiupnid);
+        addSubcommands(sw, wiiunnid, wiiupnid);
     }
 
     @Override
@@ -44,21 +44,21 @@ public class ViewFCCommand extends BaseCommand {
                 case "switch":
                     if (profile.switch_fc != -1) {
                         ev.reply("Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
-                    }else{
+                    } else {
                         ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
                 case "wiiu":
                     if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isEmpty()) {
                         ev.reply("NNID: " + profile.wiiu_nnid).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
-                    }else{
+                    } else {
                         ev.reply(lang.botLocale.cmdProfileMissingNNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
                 case "wiiu-pretendo":
                     if (profile.wiiu_pnid != null && !profile.wiiu_pnid.isEmpty()) {
-                        ev.reply("PNID: "+profile.wiiu_pnid).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
-                    }else{
+                        ev.reply("PNID: " + profile.wiiu_pnid).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                    } else {
                         ev.reply(lang.botLocale.cmdProfileMissingPNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;

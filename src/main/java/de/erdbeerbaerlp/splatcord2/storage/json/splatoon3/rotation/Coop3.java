@@ -12,15 +12,16 @@ public class Coop3 {
     public byte[] outImage = new byte[0];
 
 
-    public void genImage(){
+    public void genImage() {
         outImage = ImageUtil.generateSRImage(this);
     }
 
-    public long getStartTime(){
-        return Instant.parse(startTime).toEpochMilli()/1000;
+    public long getStartTime() {
+        return Instant.parse(startTime).toEpochMilli() / 1000;
     }
-    public long getEndTime(){
 
-        return Instant.parse(endTime).toEpochMilli()/1000;
+    public long getEndTime() {
+
+        return Instant.parse(endTime).toEpochMilli() / 1000;
     }
 }

@@ -8,7 +8,7 @@ public class LimitedGear {
     public String price;
     public Gear3 gear;
 
-    public long getEndTime(){
-        return Instant.parse(saleEndTime).toEpochMilli()/1000;
+    public long getEndTime() {
+        return Instant.parse(saleEndTime).toEpochMilli() / 1000;
     }
 }

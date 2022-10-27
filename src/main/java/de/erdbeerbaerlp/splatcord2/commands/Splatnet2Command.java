@@ -28,8 +28,12 @@ public class Splatnet2Command extends BaseCommand {
         final OptionData d = new OptionData(OptionType.STRING, "gear", l.botLocale.cmdSplatnetDesc, true);
         d.setAutoComplete(true);
         order.addOptions(d);
-        this.addSubcommands(list,order);
+        this.addSubcommands(list, order);
 
+    }
+
+    public static String repeat(int count, String with) {
+        return new String(new char[count]).replace("\0", with);
     }
 
     @Override
@@ -43,7 +47,7 @@ public class Splatnet2Command extends BaseCommand {
         final CompletableFuture<InteractionHook> submit = ev.deferReply().submit();
         final String subcmd = ev.getSubcommandName();
         if (subcmd == null) return;
-        switch(subcmd){
+        switch (subcmd) {
             case "list":
                 final ArrayList<MessageEmbed> embeds = new ArrayList<>();
                 for (Merchandise m : Main.splatNet2.merchandises) {
@@ -51,7 +55,7 @@ public class Splatnet2Command extends BaseCommand {
                             .setTimestamp(Instant.ofEpochSecond(m.end_time))
                             .setFooter(lang.botLocale.footer_ends)
                             .setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image)
-                            .setAuthor(lang.allGears.get(m.gear.kind+"/"+m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
+                            .setAuthor(lang.allGears.get(m.gear.kind + "/" + m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image)
                             .addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true)
                             .addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
                     embeds.add(b.build());
@@ -62,22 +66,18 @@ public class Splatnet2Command extends BaseCommand {
                 final OptionMapping gearOpt = ev.getOption("gear");
                 final String asString = gearOpt.getAsString();
                 final SplatProfile profile = Main.getUserProfile(ev.getUser().getIdLong());
-                for(Order o : profile.s2orders){
-                    if(o.gear.equals(asString)){
+                for (Order o : profile.s2orders) {
+                    if (o.gear.equals(asString)) {
                         submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent("Already Ordered").build()).queue());
                         return;
                     }
                 }
-                profile.s2orders.add(new Order(ev.getChannel().getId(),asString));
+                profile.s2orders.add(new Order(ev.getChannel().getId(), asString));
                 Main.iface.updateSplatProfile(profile);
-                submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%",lang.allGears.get(asString))).build()).queue());
+                submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", lang.allGears.get(asString))).build()).queue());
                 break;
         }
 
-    }
-
-    public static String repeat(int count, String with) {
-        return new String(new char[count]).replace("\0", with);
     }
 
 

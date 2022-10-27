@@ -4,7 +4,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.CurrentSplatfest;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Schedule3;
 
-public class S3Rotation{
+public class S3Rotation {
     private final Schedule3 regular;
     private final Schedule3 bankara;
     private final Schedule3 xBattle;
@@ -37,6 +37,7 @@ public class S3Rotation{
     public Schedule3 getxBattle() {
         return xBattle;
     }
+
     public Schedule3 getFest() {
         return fest;
     }

@@ -8,7 +8,7 @@ import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
@@ -19,9 +19,9 @@ public class SetstageCommand extends BaseCommand {
         super("setstage", l.botLocale.cmdSetstageDesc);
         final SubcommandData splat1 = new SubcommandData("splatoon1", l.botLocale.cmdSetstageDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetstageDesc);
-        final SubcommandData splat3 = new SubcommandData("splatoon3",l.botLocale.cmdSetstageDesc);
+        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetstageDesc);
 
-        addSubcommands(splat2, splat1,splat3);
+        addSubcommands(splat2, splat1, splat3);
     }
 
     @Override

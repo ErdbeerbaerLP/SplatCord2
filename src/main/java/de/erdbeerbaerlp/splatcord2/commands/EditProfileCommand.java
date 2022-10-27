@@ -30,7 +30,6 @@ public class EditProfileCommand extends BaseCommand {
         final OptionData splatname = new OptionData(OptionType.STRING, "name", l.botLocale.cmdProfileNameDesc, false);
 
 
-
         //Splatoon 1 and 3 only
         final OptionData rank = new OptionData(OptionType.STRING, "rank", l.botLocale.cmdProfileRankDesc, false);
 
@@ -70,16 +69,25 @@ public class EditProfileCommand extends BaseCommand {
 
         final OptionData splatfestTeam = new OptionData(OptionType.INTEGER, "splatfest-team", l.botLocale.cmdProfileSplatfest, false);
         splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(0), 0);
-        int splatfestOffset = 3* ScheduleUtil.getSplatfestData().US.data.festRecords.nodes.length;
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(1+ splatfestOffset), 1+ splatfestOffset);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(2+ splatfestOffset), 2+ splatfestOffset);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3+ splatfestOffset), 3+ splatfestOffset);
+        int splatfestOffset = 3 * ScheduleUtil.getSplatfestData().US.data.festRecords.nodes.length;
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(1 + splatfestOffset), 1 + splatfestOffset);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(2 + splatfestOffset), 2 + splatfestOffset);
+        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3 + splatfestOffset), 3 + splatfestOffset);
 
         splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
-        splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1,mainWeapon2);
-        splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam, tableturfLevel,catalogLevel);
+        splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1, mainWeapon2);
+        splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam, tableturfLevel, catalogLevel);
 
         addSubcommands(splat2, splat1, splat3);
+    }
+
+    static String formatToFC(long input) {
+        String plain = input + "";
+        return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0, 4), plain.substring(4, 8), plain.substring(8, 12));
+    }
+
+    static long formatFromFC(String input) {
+        return Long.parseLong(input.replaceAll("[^\\d.]", ""));
     }
 
     @Override
@@ -317,14 +325,5 @@ public class EditProfileCommand extends BaseCommand {
 
         }
         return srTitle;
-    }
-
-    static String formatToFC(long input) {
-        String plain = input + "";
-        return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0, 4), plain.substring(4, 8), plain.substring(8, 12));
-    }
-
-    static long formatFromFC(String input) {
-        return Long.parseLong(input.replaceAll("[^\\d.]", ""));
     }
 }

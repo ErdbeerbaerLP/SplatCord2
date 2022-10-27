@@ -10,12 +10,13 @@ public class Schedule3 {
     public MatchSetting festMatchSetting;
     public MatchSetting[] bankaraMatchSettings;
 
-    public long getStartTime(){
-        return Instant.parse(startTime).toEpochMilli()/1000;
+    public long getStartTime() {
+        return Instant.parse(startTime).toEpochMilli() / 1000;
     }
-    public long getEndTime(){
 
-        return Instant.parse(endTime).toEpochMilli()/1000;
+    public long getEndTime() {
+
+        return Instant.parse(endTime).toEpochMilli() / 1000;
     }
 
     @Override

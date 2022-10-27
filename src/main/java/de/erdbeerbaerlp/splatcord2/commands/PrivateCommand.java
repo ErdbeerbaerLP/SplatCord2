@@ -38,15 +38,15 @@ public class PrivateCommand extends BaseCommand {
         final SubcommandData create = new SubcommandData("create", l.botLocale.cmdPrivateCreateDesc);
         final SubcommandData delete = new SubcommandData("delete", l.botLocale.cmdPrivateDeleteDesc);
         final SubcommandData generate = new SubcommandData("generate", l.botLocale.cmdPrivateGenerateDesc);
-        addSubcommands(join, leave, add,remove, create, delete, generate);
+        addSubcommands(join, leave, add, remove, create, delete, generate);
     }
 
     public static void generatePrivate(GenericInteractionCreateEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         InteractionHook cmdmsg = null;
-        if(ev instanceof SlashCommandInteractionEvent e) {
+        if (ev instanceof SlashCommandInteractionEvent e) {
             cmdmsg = e.deferReply().complete();
-        }else if(ev instanceof ButtonInteractionEvent e){
+        } else if (ev instanceof ButtonInteractionEvent e) {
             cmdmsg = e.deferEdit().complete();
         }
         ArrayList<Long> playersInRoom = Main.iface.getPlayersInRoom(Main.iface.getUserRoom(ev.getUser().getIdLong()));
@@ -82,10 +82,11 @@ public class PrivateCommand extends BaseCommand {
             spectator.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
             curPlayer++;
         }
-        b.setTitle(lang.botLocale.cmdRandomPrivateMode + ": "+lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
+        b.setTitle(lang.botLocale.cmdRandomPrivateMode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
         b.addField(lang.botLocale.cmdRandomPrivateAlpha, alpha.toString(), true);
         b.addField(lang.botLocale.cmdRandomPrivateBravo, bravo.toString(), true);
-        if(!spectator.toString().isEmpty())b.addField(lang.botLocale.cmdRandomPrivateSpec, spectator.toString(), true);
+        if (!spectator.toString().isEmpty())
+            b.addField(lang.botLocale.cmdRandomPrivateSpec, spectator.toString(), true);
         cmdmsg.editOriginalEmbeds(b.build()).setActionRow(Button.primary("regenprivate", lang.botLocale.regenerateButton), Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).submit();
     }
 
@@ -145,7 +146,7 @@ public class PrivateCommand extends BaseCommand {
                 case "delete":
                     long ownedRoom = Main.iface.getOwnedRoom(ev.getUser().getIdLong());
                     if (ownedRoom != 0) {
-                        ev.reply(Main.iface.deleteRoom(ownedRoom)?lang.botLocale.cmdPrivateDeleted:lang.botLocale.cmdPrivateError + "").setEphemeral(true).queue();
+                        ev.reply(Main.iface.deleteRoom(ownedRoom) ? lang.botLocale.cmdPrivateDeleted : lang.botLocale.cmdPrivateError + "").setEphemeral(true).queue();
                     } else {
                         ev.reply(lang.botLocale.cmdPrivateNotOwning).setEphemeral(true).queue();
                     }
