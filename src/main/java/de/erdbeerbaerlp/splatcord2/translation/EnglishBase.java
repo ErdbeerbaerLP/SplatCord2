@@ -228,10 +228,10 @@ public class EnglishBase {
             case 1 -> "Rock";
             case 2 -> "Paper";
             case 3 -> "Scissors";
-            */
+
             case 4 -> "Gear";
             case 5 -> "Grub";
-            case 6 -> "Fun";
+            case 6 -> "Fun";*/
             default -> {
                 if (id < 6)
                     yield "Unset";
@@ -242,10 +242,10 @@ public class EnglishBase {
                         tmpId -= 3;
                         fest++;
                     }
-                    int teamId = id % 3;
+                    int teamId = id % 3;/*
                     if (teamId == 1) teamId = 0;
                     if (teamId == 2) teamId = 1;
-                    if (teamId == 0) teamId = 2;
+                    if (teamId == 0) teamId = 2;*/
                     final FestRecord sf = ScheduleUtil.getSplatfestByID(fest);
                     if (sf != null)
                         yield sf.teams[teamId].teamName;
