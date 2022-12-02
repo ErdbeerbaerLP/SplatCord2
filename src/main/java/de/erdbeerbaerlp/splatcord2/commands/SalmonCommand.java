@@ -20,8 +20,8 @@ public class SalmonCommand extends BaseCommand {
 
         super("salmon", l.botLocale.cmdSalmonDesc);
 
-        final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetsalmonDesc);
-        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetsalmonDesc);
+        final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSalmonDesc);
+        final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSalmonDesc);
         addSubcommands(splat2, splat3);
     }
 
