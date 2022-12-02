@@ -201,6 +201,11 @@ public class MessageUtil {
                                     lang.botLocale.anarchyBattleOpen + " [" + GameModeUtil.translateS3(lang, r.getBankara().bankaraMatchSettings[1].vsRule.id) + "]",
                             lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[0].id).name +
                                     ", " + lang.s3locales.stages.get(r.getBankara().bankaraMatchSettings[1].vsStages[1].id).name
+                            , true)
+                    .addField(Emote.X_BATTLE +
+                                    lang.botLocale.xBattle + " [" + GameModeUtil.translateS3(lang, r.getxBattle().xMatchSetting.vsRule.id) + "]",
+                            lang.s3locales.stages.get(r.getxBattle().xMatchSetting.vsStages[0].id).name +
+                                    ", " + lang.s3locales.stages.get(r.getxBattle().xMatchSetting.vsStages[1].id).name
                             , true);
 
     }

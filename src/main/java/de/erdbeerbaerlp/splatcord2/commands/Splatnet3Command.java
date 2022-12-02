@@ -31,7 +31,7 @@ public class Splatnet3Command extends BaseCommand {
         final OptionData d = new OptionData(OptionType.STRING, "gear", l.botLocale.cmdSplatnetDesc, true);
         d.setAutoComplete(true);
         order.addOptions(d);
-        this.addSubcommands(list, order);
+        this.addSubcommands(list/*, order*/);
 
     }
 

@@ -4,14 +4,18 @@ import com.google.gson.JsonParseException;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.SplatNet;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.SplatNet3;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.BossFileUtil;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class DataUpdateThread extends Thread {
@@ -50,6 +54,19 @@ public class DataUpdateThread extends Thread {
                     conn3.setRequestProperty("User-Agent", Main.USER_AGENT);
                     conn3.connect();
                     Main.splatNet3 = Main.gson.fromJson(new InputStreamReader(conn3.getInputStream()), SplatNet3.class);
+                    System.out.println("Refreshing S3 translations...");
+                    Main.translations.forEach((l,locale)->{
+                        try {
+                            final URL lng3 = new URL("https://splatoon3.ink/data/locale/" + l.s3Key + ".json");
+                            final HttpsURLConnection s3Conn = (HttpsURLConnection) lng3.openConnection();
+                            s3Conn.setRequestProperty("User-Agent", Main.USER_AGENT);
+                            s3Conn.connect();
+                            String o3 = new Scanner(s3Conn.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
+                            locale.s3locales = Main.gson.fromJson(new StringReader(o3), S3Locale.class);
+                        }catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

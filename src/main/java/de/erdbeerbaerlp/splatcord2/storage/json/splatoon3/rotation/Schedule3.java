@@ -7,6 +7,7 @@ public class Schedule3 {
     public String startTime;
     public String endTime;
     public MatchSetting regularMatchSetting;
+    public MatchSetting xMatchSetting;
     public MatchSetting festMatchSetting;
     public MatchSetting[] bankaraMatchSettings;
 
@@ -17,16 +18,5 @@ public class Schedule3 {
     public long getEndTime() {
 
         return Instant.parse(endTime).toEpochMilli() / 1000;
-    }
-
-    @Override
-    public String toString() {
-        return "Schedule3{" +
-                "startTime='" + startTime + '\'' +
-                ", endTime='" + endTime + '\'' +
-                ", regularMatchSetting=" + regularMatchSetting +
-                ", festMatchSetting=" + festMatchSetting +
-                ", bankaraMatchSettings=" + Arrays.toString(bankaraMatchSettings) +
-                '}';
     }
 }
