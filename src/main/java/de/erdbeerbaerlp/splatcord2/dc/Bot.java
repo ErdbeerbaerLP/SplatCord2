@@ -288,11 +288,11 @@ public class Bot implements EventListener {
                                         getWeaponName(lang, Main.coop_schedules.details[0].weapons[2]) + ", " +
                                         getWeaponName(lang, Main.coop_schedules.details[0].weapons[3])
                                 , true)
-                        .setImage("https://splatoon2.ink/assets/splatnet/" + Main.coop_schedules.details[0].stage.image)
+                        .setImage("attachment://current.png")
                         .setFooter(lang.botLocale.footer_ends)
                         .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[0].end_time))
                         .build()
-                ).build(),
+                ).addFiles(FileUpload.fromData(Main.coop_schedules.details[0].outImage, "current.png")).build(),
                 channel);
         if (submitMsg != null)
             return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());

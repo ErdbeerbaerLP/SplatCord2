@@ -13,7 +13,7 @@ public class Coop3 {
 
 
     public void genImage() {
-        outImage = ImageUtil.generateSRImage(this);
+        outImage = ImageUtil.generateSR3Image(this);
     }
 
     public long getStartTime() {

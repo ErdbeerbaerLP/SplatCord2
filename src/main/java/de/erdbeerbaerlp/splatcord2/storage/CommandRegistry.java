@@ -53,8 +53,8 @@ public class CommandRegistry {
                 if (!Config.instance().discord.betaServers.contains(g.getId())) continue;
             }
             try {
-                BaseCommand cmd = clazz.getConstructor(Locale.class).newInstance(lang);
-                BaseCommand cmdByName = getCommandByName(cmd.getName());
+                final BaseCommand cmd = clazz.getConstructor(Locale.class).newInstance(lang);
+                final BaseCommand cmdByName = getCommandByName(cmd.getName());
                 if (cmdByName == null) {
                     baseCommands.add(cmd);
                 }

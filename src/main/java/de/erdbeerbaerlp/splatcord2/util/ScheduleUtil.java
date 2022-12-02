@@ -5,6 +5,7 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Detail;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
@@ -145,6 +146,11 @@ public class ScheduleUtil {
         deConn2.connect();
         schedules = Main.gson.fromJson(new InputStreamReader(deConn.getInputStream()), Schedules.class);
         Main.coop_schedules = Main.gson.fromJson(new InputStreamReader(deConn2.getInputStream()), CoOpSchedules.class);
+
+        System.out.println("Generating sr images...");
+        for (Detail node : Main.coop_schedules.details) {
+            node.genImage();
+        }
 
 
     }

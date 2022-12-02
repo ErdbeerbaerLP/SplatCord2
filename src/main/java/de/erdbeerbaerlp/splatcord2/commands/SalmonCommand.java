@@ -53,7 +53,7 @@ public class SalmonCommand extends BaseCommand {
                                             getWeaponName(lang, Main.coop_schedules.details[0].weapons[2]) + ", " +
                                             getWeaponName(lang, Main.coop_schedules.details[0].weapons[3])
                                     , true)
-                            .setImage("https://splatoon2.ink/assets/splatnet/" + Main.coop_schedules.details[0].stage.image)
+                            .setImage("attachment://current.png")
                             .setFooter(lang.botLocale.footer_ends)
                             .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[0].end_time))
                             .build(), new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 2)")
@@ -64,10 +64,10 @@ public class SalmonCommand extends BaseCommand {
                                             getWeaponName(lang, Main.coop_schedules.details[1].weapons[2]) + ", " +
                                             getWeaponName(lang, Main.coop_schedules.details[1].weapons[3])
                                     , true)
-                            .setImage("https://splatoon2.ink/assets/splatnet/" + Main.coop_schedules.details[1].stage.image)
+                            .setImage("attachment://next.png")
                             .setFooter(lang.botLocale.footer_starts)
                             .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[1].start_time))
-                            .build()).queue();
+                            .build()).addFiles(FileUpload.fromData(Main.coop_schedules.details[0].outImage, "current.png"), FileUpload.fromData(Main.coop_schedules.details[1].outImage, "next.png")).queue();
                     break;
                 case "splatoon3":
                     final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
