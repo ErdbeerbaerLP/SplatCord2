@@ -52,7 +52,6 @@ public class Locale {
             final JsonElement g = gear.get(s);
             try {
                 final int i = Integer.parseInt(s);
-                //allGears.put(i+"", g.getAsJsonObject().get("name").getAsString());
             } catch (NumberFormatException e) {
                 for (Map.Entry<String, JsonElement> s2 : g.getAsJsonObject().entrySet()) {
                     try {

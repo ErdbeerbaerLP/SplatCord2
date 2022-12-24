@@ -13,8 +13,6 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -27,10 +25,10 @@ public class Splatnet3Command extends BaseCommand {
     public Splatnet3Command(Locale l) {
         super("splatnet3", l.botLocale.cmdSplatnetDesc);
         final SubcommandData list = new SubcommandData("list", l.botLocale.cmdSplatnetDesc);
-        final SubcommandData order = new SubcommandData("order", l.botLocale.cmdSplatnetDesc);
+        /*final SubcommandData order = new SubcommandData("order", l.botLocale.cmdSplatnetDesc);
         final OptionData d = new OptionData(OptionType.STRING, "gear", l.botLocale.cmdSplatnetDesc, true);
         d.setAutoComplete(true);
-        order.addOptions(d);
+        order.addOptions(d);*/
         this.addSubcommands(list/*, order*/);
 
     }

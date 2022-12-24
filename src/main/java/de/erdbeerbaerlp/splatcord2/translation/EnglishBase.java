@@ -104,7 +104,7 @@ public class EnglishBase {
     public String cmdProfileMissingFC = "%s did not configure an Switch Friend Code yet.";
     public String cmdProfileFCSet = "Set Friend Code to ";
     public String cmdSettingsDesc = "Edit server settings (ex. language)";
-    public String cmdSettingsDelMsg = "Delete old rotation messages?";
+    public String cmdSettingsDelMsg = "How should messages be updated?";
     public String cmdSettingsDelEnable = "Old rotation messages will now be deleted when sending new ones";
     public String cmdSettingsDelDisable = "Old rotation messages will be kept when sending new ones";
     public String cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified";

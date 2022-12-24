@@ -1,7 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.util;
 
-import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Detail;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
 
@@ -48,11 +46,32 @@ public class ImageUtil {
     }
     public static byte[] generateSR2Image(Detail rotation) {
         try {
-            final URL mapurl = new URL("https://splatoon2.ink/assets/splatnet/"+rotation.stage.image);
-            final URL wpn1url = new URL("https://splatoon2.ink/assets/splatnet/"+rotation.weapons[0].weapon.image);
-            final URL wpn2url = new URL("https://splatoon2.ink/assets/splatnet/"+rotation.weapons[1].weapon.image);
-            final URL wpn3url = new URL("https://splatoon2.ink/assets/splatnet/"+rotation.weapons[2].weapon.image);
-            final URL wpn4url = new URL("https://splatoon2.ink/assets/splatnet/"+rotation.weapons[3].weapon.image);
+            final URL mapurl = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.stage.image);
+            if (rotation.weapons[0] == null) return new byte[0];
+            URL wpn1url = null;
+            URL wpn2url = null;
+            URL wpn3url = null;
+            URL wpn4url = null;
+            if (rotation.weapons[0].id == -1) {
+                wpn1url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[0].coop_special_weapon.image);
+            } else {
+                wpn1url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[0].weapon.image);
+            }
+            if (rotation.weapons[1].id == -1) {
+                wpn2url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[1].coop_special_weapon.image);
+            } else {
+                wpn2url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[1].weapon.image);
+            }
+            if (rotation.weapons[2].id == -1) {
+                wpn3url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[2].coop_special_weapon.image);
+            } else {
+                wpn3url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[2].weapon.image);
+            }
+            if (rotation.weapons[3].id == -1) {
+                wpn4url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[3].coop_special_weapon.image);
+            } else {
+                wpn4url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[3].weapon.image);
+            }
             final BufferedImage map = ImageIO.read(mapurl);
             final BufferedImage wpn1 = ImageIO.read(wpn1url);
             final BufferedImage wpn2 = ImageIO.read(wpn2url);

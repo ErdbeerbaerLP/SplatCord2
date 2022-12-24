@@ -80,6 +80,12 @@ public class ScheduleUtil {
                 break;
             }
         }
+        for (Coop3 s : schedules3.data.coopGroupingSchedule.bigRunSchedules.nodes) {
+            if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
+                coop = s;
+                break;
+            }
+        }
         for (Schedule3 s : schedules3.data.festSchedules.nodes) {
             if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
                 fest = s;
@@ -165,6 +171,9 @@ public class ScheduleUtil {
 
         System.out.println("Generating sr images...");
         for (Coop3 node : schedules3.data.coopGroupingSchedule.regularSchedules.nodes) {
+            node.genImage();
+        }
+        for (Coop3 node : schedules3.data.coopGroupingSchedule.bigRunSchedules.nodes) {
             node.genImage();
         }
 

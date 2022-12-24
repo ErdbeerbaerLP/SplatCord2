@@ -78,6 +78,7 @@ public class SplatnetOrderThread extends Thread {
                             for (Order o : orders) {
                                 if ((g.gear.__splatoon3ink_id).equals(o.gear)) {
                                     final TextChannel channel = bot.jda.getTextChannelById(o.channel);
+                                    if(channel == null) continue;
                                     final Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
                                     final MessageCreateBuilder b = new MessageCreateBuilder();
                                     b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%", user.getAsMention()));
