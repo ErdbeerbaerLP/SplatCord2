@@ -26,30 +26,30 @@ public class DelstageCommand extends BaseCommand {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
-                case "splatoon1":
+                case "splatoon1" -> {
                     if (!Bot.isAdmin(ev.getMember())) {
                         ev.reply(lang.botLocale.noAdminPerms).queue();
                         return;
                     }
                     Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), null);
                     ev.reply(lang.botLocale.deleteSuccessful).queue();
-                    break;
-                case "splatoon2":
+                }
+                case "splatoon2" -> {
                     if (!Bot.isAdmin(ev.getMember())) {
                         ev.reply(lang.botLocale.noAdminPerms).queue();
                         return;
                     }
                     Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), null);
                     ev.reply(lang.botLocale.deleteSuccessful).queue();
-                    break;
-                case "splatoon3":
+                }
+                case "splatoon3" -> {
                     if (!Bot.isAdmin(ev.getMember())) {
                         ev.reply(lang.botLocale.noAdminPerms).queue();
                         return;
                     }
                     Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), null);
                     ev.reply(lang.botLocale.deleteSuccessful).queue();
-                    break;
+                }
             }
     }
 }

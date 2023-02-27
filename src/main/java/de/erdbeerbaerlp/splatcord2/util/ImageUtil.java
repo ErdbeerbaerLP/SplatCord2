@@ -52,22 +52,22 @@ public class ImageUtil {
             URL wpn2url = null;
             URL wpn3url = null;
             URL wpn4url = null;
-            if (rotation.weapons[0].id == -1) {
+            if (rotation.weapons[0].id <= -1) {
                 wpn1url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[0].coop_special_weapon.image);
             } else {
                 wpn1url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[0].weapon.image);
             }
-            if (rotation.weapons[1].id == -1) {
+            if (rotation.weapons[1].id <= -1) {
                 wpn2url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[1].coop_special_weapon.image);
             } else {
                 wpn2url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[1].weapon.image);
             }
-            if (rotation.weapons[2].id == -1) {
+            if (rotation.weapons[2].id <= -1) {
                 wpn3url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[2].coop_special_weapon.image);
             } else {
                 wpn3url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[2].weapon.image);
             }
-            if (rotation.weapons[3].id == -1) {
+            if (rotation.weapons[3].id <= -1) {
                 wpn4url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[3].coop_special_weapon.image);
             } else {
                 wpn4url = new URL("https://splatoon2.ink/assets/splatnet/" + rotation.weapons[3].weapon.image);

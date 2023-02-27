@@ -48,7 +48,7 @@ public class Splatnet2Command extends BaseCommand {
         final String subcmd = ev.getSubcommandName();
         if (subcmd == null) return;
         switch (subcmd) {
-            case "list":
+            case "list" -> {
                 final ArrayList<MessageEmbed> embeds = new ArrayList<>();
                 for (Merchandise m : Main.splatNet2.merchandises) {
                     final EmbedBuilder b = new EmbedBuilder()
@@ -61,8 +61,8 @@ public class Splatnet2Command extends BaseCommand {
                     embeds.add(b.build());
                 }
                 submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.splatNetShop).setEmbeds(embeds).build()).queue());
-                break;
-            case "order":
+            }
+            case "order" -> {
                 final OptionMapping gearOpt = ev.getOption("gear");
                 final String asString = gearOpt.getAsString();
                 final SplatProfile profile = Main.getUserProfile(ev.getUser().getIdLong());
@@ -75,7 +75,7 @@ public class Splatnet2Command extends BaseCommand {
                 profile.s2orders.add(new Order(ev.getChannel().getId(), asString));
                 Main.iface.updateSplatProfile(profile);
                 submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", lang.allGears.get(asString))).build()).queue());
-                break;
+            }
         }
 
     }

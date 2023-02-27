@@ -23,6 +23,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
@@ -55,6 +56,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static de.erdbeerbaerlp.splatcord2.Main.bot;
 import static net.dv8tion.jda.api.Permission.MANAGE_SERVER;
 
 public class Bot implements EventListener {
@@ -107,21 +109,21 @@ public class Bot implements EventListener {
 
     public CompletableFuture<Message> sendMessage(MessageCreateData msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return null;
-        final TextChannel channel = jda.getTextChannelById(channelId);
+        final StandardGuildMessageChannel channel = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
         return null;
     }
 
     private CompletableFuture<Message> submitMessage(MessageCreateData msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return null;
-        final TextChannel channel = jda.getTextChannelById(channelId);
+        final StandardGuildMessageChannel channel = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
         return null;
     }
 
     public void sendMessage(MessageCreateData msg, String channelId) {
         if (msg == null || channelId == null) return;
-        final TextChannel channel = jda.getTextChannelById(channelId);
+        final StandardGuildMessageChannel channel = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channelId);
         if (channel != null) channel.sendMessage(msg).queue();
     }
 
@@ -131,7 +133,7 @@ public class Bot implements EventListener {
         if (event instanceof final CommandAutoCompleteInteractionEvent ev) {
             final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
             switch (CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName()) {
-                case "splatnet2":
+                case "splatnet2" -> {
                     final ArrayList<Command.Choice> choices = new ArrayList<>();
                     int count = 0;
                     for (String key : lang.allGears.keySet()) {
@@ -143,8 +145,8 @@ public class Bot implements EventListener {
                         }
                     }
                     ev.replyChoices(choices).queue();
-                    break;
-                case "splatnet3":
+                }
+                case "splatnet3" -> {
                     final ArrayList<Command.Choice> choices3 = new ArrayList<>();
                     int count3 = 0;
                     for (String key : lang.s3locales.gear.keySet()) {
@@ -156,8 +158,8 @@ public class Bot implements EventListener {
                         }
                     }
                     ev.replyChoices(choices3).queue();
-                    break;
-                case "editprofile":
+                }
+                case "editprofile" -> {
                     switch (ev.getFocusedOption().getName()) {
                         case "main1":
                         case "main2":
@@ -174,8 +176,8 @@ public class Bot implements EventListener {
                             ev.replyChoices(weapons).queue();
                             break;
                     }
-                    break;
-                case "splatfest":
+                }
+                case "splatfest" -> {
                     final ArrayList<Command.Choice> splatfests = new ArrayList<>();
                     int countsplatfest = 0;
                     for (FestRecord f : ScheduleUtil.getSplatfestData().US.data.festRecords.nodes) {
@@ -187,7 +189,7 @@ public class Bot implements EventListener {
                         }
                     }
                     ev.replyChoices(splatfests).queue();
-                    break;
+                }
             }
         } else if (event instanceof final GuildJoinEvent ev) {
             Main.iface.addServer(ev.getGuild().getIdLong());

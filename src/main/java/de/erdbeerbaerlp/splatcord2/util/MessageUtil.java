@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -29,7 +29,7 @@ import static de.erdbeerbaerlp.splatcord2.Main.iface;
 
 public class MessageUtil {
     public static void sendSalmonFeed(Long serverid, Long channel) {
-        final TextChannel ch = bot.jda.getTextChannelById(channel);
+        final StandardGuildMessageChannel ch = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
             iface.setSalmonChannel(serverid, null);
@@ -48,19 +48,19 @@ public class MessageUtil {
                     }
                 });
             }
-            Map.Entry<Long, Long> msg = bot.sendS2SalmonMessage(serverid, channel);
+            final Map.Entry<Long, Long> msg = bot.sendS2SalmonMessage(serverid, channel);
             if (msg != null)
                 iface.setSalmonMessage(msg.getKey(), msg.getValue());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         } catch (InsufficientPermissionException e) {
-            Guild guildById = bot.jda.getGuildById(serverid);
+            final Guild guildById = bot.jda.getGuildById(serverid);
             System.err.println("Failed to send salmon to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
 
     public static void sendS3SalmonFeed(Long serverid, Long channel) {
-        final TextChannel ch = bot.jda.getTextChannelById(channel);
+        final StandardGuildMessageChannel ch = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
             iface.setSalmonChannel(serverid, null);
@@ -79,19 +79,19 @@ public class MessageUtil {
                     }
                 });
             }
-            Map.Entry<Long, Long> msg = bot.sendS3SalmonMessage(serverid, channel);
+            final Map.Entry<Long, Long> msg = bot.sendS3SalmonMessage(serverid, channel);
             if (msg != null)
                 iface.setS3SalmonMessage(msg.getKey(), msg.getValue());
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         } catch (InsufficientPermissionException e) {
-            Guild guildById = bot.jda.getGuildById(serverid);
+            final Guild guildById = bot.jda.getGuildById(serverid);
             System.err.println("Failed to send salmon to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
 
     public static void sendS2RotationFeed(long serverid, long channel, Rotation currentRotation) {
-        final TextChannel ch = bot.jda.getTextChannelById(channel);
+        final StandardGuildMessageChannel ch = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
             iface.setS2StageChannel(serverid, null);
@@ -113,13 +113,13 @@ public class MessageUtil {
             if (msg != null) msg.thenAccept((a) -> iface.setLastS2RotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
-            Guild guildById = bot.jda.getGuildById(serverid);
+            final Guild guildById = bot.jda.getGuildById(serverid);
             System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
 
     public static void sendS3RotationFeed(long serverid, long channel, S3Rotation currentRotation) {
-        final TextChannel ch = bot.jda.getTextChannelById(channel);
+        final StandardGuildMessageChannel ch = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
             iface.setS3StageChannel(serverid, null);
@@ -139,7 +139,7 @@ public class MessageUtil {
             if (msg != null) msg.thenAccept((a) -> iface.setLastS3RotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
-            Guild guildById = bot.jda.getGuildById(serverid);
+            final Guild guildById = bot.jda.getGuildById(serverid);
             System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
@@ -230,7 +230,7 @@ public class MessageUtil {
     }
 
     public static void sendS1RotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {
-        final TextChannel ch = bot.jda.getTextChannelById(channel);
+        final StandardGuildMessageChannel ch = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
             iface.setS1StageChannel(serverid, null);
@@ -252,7 +252,7 @@ public class MessageUtil {
             if (msg != null) msg.thenAccept((a) -> iface.setLastS1RotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
-            Guild guildById = bot.jda.getGuildById(serverid);
+            final Guild guildById = bot.jda.getGuildById(serverid);
             System.err.println("Failed to send s1 rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }

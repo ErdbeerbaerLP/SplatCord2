@@ -8,7 +8,7 @@ import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
@@ -33,31 +33,31 @@ public class SetstageCommand extends BaseCommand {
     public void execute(SlashCommandInteractionEvent ev) {
         final Guild guild = ev.getGuild();
         final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
-        final MessageChannel channel = ev.getChannel();
+        final MessageChannelUnion channel = ev.getChannel();
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
-                case "splatoon1":
+                case "splatoon1" -> {
                     if (checkPerms(ev, guild, lang, channel)) return;
                     Main.iface.setS1StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsg).queue();
                     MessageUtil.sendS1RotationFeed(guild.getIdLong(), channel.getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
-                    break;
-                case "splatoon2":
+                }
+                case "splatoon2" -> {
                     if (checkPerms(ev, guild, lang, channel)) return;
                     Main.iface.setS2StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsg).queue();
                     MessageUtil.sendS2RotationFeed(guild.getIdLong(), channel.getIdLong(), ScheduleUtil.getCurrentRotation());
-                    break;
-                case "splatoon3":
+                }
+                case "splatoon3" -> {
                     if (checkPerms(ev, guild, lang, channel)) return;
                     Main.iface.setS3StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsg).queue();
                     MessageUtil.sendS3RotationFeed(guild.getIdLong(), channel.getIdLong(), ScheduleUtil.getCurrentS3Rotation());
-                    break;
+                }
             }
     }
 
-    private boolean checkPerms(SlashCommandInteractionEvent ev, Guild guild, Locale lang, MessageChannel channel) {
+    private boolean checkPerms(SlashCommandInteractionEvent ev, Guild guild, Locale lang, MessageChannelUnion channel) {
         if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
             final Locale finalLang = lang;
             ev.getUser().openPrivateChannel().queue((c) -> {

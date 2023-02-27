@@ -27,22 +27,22 @@ public class DelsalmonCommand extends BaseCommand {
 
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
-                case "splatoon2":
+                case "splatoon2" -> {
                     if (!Bot.isAdmin(ev.getMember())) {
                         ev.reply(lang.botLocale.noAdminPerms).queue();
                         return;
                     }
                     Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), null);
                     ev.reply(lang.botLocale.deleteSuccessful).queue();
-                    break;
-                case "splatoon3":
+                }
+                case "splatoon3" -> {
                     if (!Bot.isAdmin(ev.getMember())) {
                         ev.reply(lang.botLocale.noAdminPerms).queue();
                         return;
                     }
                     Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), null);
                     ev.reply(lang.botLocale.deleteSuccessful).queue();
-                    break;
+                }
             }
 
     }

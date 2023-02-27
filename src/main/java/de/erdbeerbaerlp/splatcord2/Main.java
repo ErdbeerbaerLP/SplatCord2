@@ -58,7 +58,6 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         Config.instance().loadConfig();
-
         try {
             iface = new DatabaseInterface();
         } catch (SQLException e) {
@@ -74,7 +73,7 @@ public class Main {
         try {
             s1rotations = BossFileUtil.getStageByml();
         } catch (Exception e) {
-            System.err.println("Failed loading splatoon 1 rotations!");
+            System.err.println("Failed loading Splatoon 1 rotations!");
             e.printStackTrace();
         }
 
