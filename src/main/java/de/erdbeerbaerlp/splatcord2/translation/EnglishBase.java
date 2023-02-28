@@ -179,6 +179,7 @@ public class EnglishBase {
     public String cmdPrivateAdded = "Player added to your private room";
     public String cmdPrivateRemove = "Player removed from your private room";
     public String cmdSplatnet3theDailyDrop = "The Daily Drop";
+    public String cmdProfileSwitchFCFormatNotValid = "Switch Friend Code format is not valid!";
 
     public String getSplatfestTitle(int id) {
         return ScheduleUtil.getSplatfestByID(id).title;

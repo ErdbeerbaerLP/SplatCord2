@@ -86,9 +86,6 @@ public class EditProfileCommand extends BaseCommand {
         return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0, 4), plain.substring(4, 8), plain.substring(8, 12));
     }
 
-    static long formatFromFC(String input) {
-        return Long.parseLong(input.replaceAll("[^\\d.]", ""));
-    }
 
     @Override
     public boolean requiresManageServer() {
@@ -102,7 +99,7 @@ public class EditProfileCommand extends BaseCommand {
         final SplatProfile profile = Main.getUserProfile(ev.getUser().getIdLong());
         if (subcommandName != null)
             switch (subcommandName) {
-                case "splat1":
+                case "splat1" -> {
                     if (ev.getOptions().isEmpty()) {
                         ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
                     } else {
@@ -156,17 +153,22 @@ public class EditProfileCommand extends BaseCommand {
                         }
                         ev.reply(msg).queue();
                     }
-                    break;
-                case "splat2":
+                }
+                case "splat2" -> {
                     if (ev.getOptions().isEmpty()) {
                         ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
                     } else {
                         String msg = "";
                         OptionMapping switchFCOption = ev.getOption("switch-fc");
                         if (switchFCOption != null) {
-                            long switchFC = formatFromFC(switchFCOption.getAsString());
-                            profile.switch_fc = switchFC;
-                            msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
+                            final String fc = switchFCOption.getAsString().replaceAll("[^\\d.]", "");
+                            if(fc.length() < 12){
+                                msg += lang.botLocale.cmdProfileSwitchFCFormatNotValid + "\n";
+                            }else {
+                                long switchFC = Long.parseLong(fc);
+                                profile.switch_fc = switchFC;
+                                msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
+                            }
                         }
                         if (profile.switch_fc != -1) {
                             if (ev.getOption("level") != null) {
@@ -239,17 +241,22 @@ public class EditProfileCommand extends BaseCommand {
                         }
                         ev.reply(msg).queue();
                     }
-                    break;
-                case "splat3":
+                }
+                case "splat3" -> {
                     if (ev.getOptions().isEmpty()) {
                         ev.reply(lang.botLocale.cmdEditProfileArgMissing).queue();
                     } else {
                         String msg = "";
                         OptionMapping switchFCOption = ev.getOption("switch-fc");
                         if (switchFCOption != null) {
-                            long switchFC = formatFromFC(switchFCOption.getAsString());
-                            profile.switch_fc = switchFC;
-                            msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
+                            final String fc = switchFCOption.getAsString().replaceAll("[^\\d.]", "");
+                            if(fc.length() < 12){
+                                msg += lang.botLocale.cmdProfileSwitchFCFormatNotValid + "\n";
+                            }else {
+                                long switchFC = Long.parseLong(fc);
+                                profile.switch_fc = switchFC;
+                                msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
+                            }
                         }
                         if (profile.switch_fc != -1) {
                             if (ev.getOption("level") != null) {
@@ -297,10 +304,8 @@ public class EditProfileCommand extends BaseCommand {
                         }
                         ev.reply(msg).queue();
                     }
-                    break;
-                default:
-                    ev.reply("Unknown subcommand, report to developer!").queue(); //Should never be shown at all
-                    break;
+                }
+                default -> ev.reply("Unknown subcommand, report to developer!").queue(); //Should never be shown at all
             }
     }
 

@@ -162,6 +162,7 @@ public class German extends EnglishBase {
         cmdPrivateAdded = "Spieler zum Privatraum hinzugefügt";
         cmdPrivateRemove = "Spieler vom Privatraum entfernt";
         cmdSplatnet3theDailyDrop = "Heutige Auswahl";
+        cmdProfileSwitchFCFormatNotValid = "Dein Switch Freundescode ist ungültig!";
     }
 
 
