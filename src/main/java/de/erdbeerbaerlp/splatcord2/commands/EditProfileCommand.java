@@ -162,7 +162,7 @@ public class EditProfileCommand extends BaseCommand {
                         OptionMapping switchFCOption = ev.getOption("switch-fc");
                         if (switchFCOption != null) {
                             final String fc = switchFCOption.getAsString().replaceAll("[^\\d.]", "");
-                            if(fc.length() < 12){
+                            if(fc.length() != 12){
                                 msg += lang.botLocale.cmdProfileSwitchFCFormatNotValid + "\n";
                             }else {
                                 long switchFC = Long.parseLong(fc);
@@ -250,7 +250,7 @@ public class EditProfileCommand extends BaseCommand {
                         OptionMapping switchFCOption = ev.getOption("switch-fc");
                         if (switchFCOption != null) {
                             final String fc = switchFCOption.getAsString().replaceAll("[^\\d.]", "");
-                            if(fc.length() < 12){
+                            if(fc.length() != 12){
                                 msg += lang.botLocale.cmdProfileSwitchFCFormatNotValid + "\n";
                             }else {
                                 long switchFC = Long.parseLong(fc);
