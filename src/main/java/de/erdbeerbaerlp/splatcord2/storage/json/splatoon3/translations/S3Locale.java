@@ -9,4 +9,5 @@ public class S3Locale {
     public HashMap<String, TranslationNode> brands;
     public HashMap<String, TranslationNode> gear;
     public HashMap<String, TranslationNode> powers;
+    public HashMap<String, SplatfestTranslation> festivals;
 }

@@ -6,12 +6,18 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.SplatfestTranslation;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
 
 public class EditProfileCommand extends BaseCommand {
 
@@ -68,11 +74,10 @@ public class EditProfileCommand extends BaseCommand {
         final OptionData tableturfLevel = new OptionData(OptionType.INTEGER, "tableturf-level", l.botLocale.cmdProfileTableturfLevelDesc, false);
 
         final OptionData splatfestTeam = new OptionData(OptionType.INTEGER, "splatfest-team", l.botLocale.cmdProfileSplatfest, false);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(0), 0);
-        int splatfestOffset = 3 * ScheduleUtil.getSplatfestData().US.data.festRecords.nodes.length;
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(1 + splatfestOffset), 1 + splatfestOffset);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(2 + splatfestOffset), 2 + splatfestOffset);
-        splatfestTeam.addChoice(l.botLocale.getSplatfestTeam(3 + splatfestOffset), 3 + splatfestOffset);
+        final FestRecord node = ScheduleUtil.getSplatfestData().US.data.festRecords.nodes[0];
+        splatfestTeam.addChoice(l.s3locales.festivals.get(node.getSplatfestID()).teams[0].teamName, 3L * ScheduleUtil.getSplatfestData().US.data.festRecords.nodes.length+1);
+        splatfestTeam.addChoice(l.s3locales.festivals.get(node.getSplatfestID()).teams[1].teamName, 3L * ScheduleUtil.getSplatfestData().US.data.festRecords.nodes.length+2);
+        splatfestTeam.addChoice(l.s3locales.festivals.get(node.getSplatfestID()).teams[2].teamName, 3L * ScheduleUtil.getSplatfestData().US.data.festRecords.nodes.length+3);
 
         splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
         splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1, mainWeapon2);
@@ -83,6 +88,9 @@ public class EditProfileCommand extends BaseCommand {
 
     static String formatToFC(long input) {
         String plain = input + "";
+        if(plain.length()< 12){
+            plain = String.join("", Collections.nCopies(12-plain.length(), "0")) +plain;
+        }
         return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0, 4), plain.substring(4, 8), plain.substring(8, 12));
     }
 
@@ -295,7 +303,8 @@ public class EditProfileCommand extends BaseCommand {
                             }
                             if (ev.getOption("splatfest-team") != null) {
                                 profile.splat3Profile.splatfestTeam = Integer.parseInt(ev.getOption("splatfest-team").getAsString());
-                                msg += lang.botLocale.cmdProfileSplatfestSet + lang.botLocale.getSplatfestTeam(profile.splat3Profile.splatfestTeam) + "\n";
+                                final Iterator<Map.Entry<String, SplatfestTranslation>> iterator = lang.s3locales.festivals.entrySet().iterator();
+                                msg += lang.botLocale.cmdProfileSplatfestSet + iterator.next().getValue().teams[-lang.s3locales.festivals.entrySet().size()*3+profile.splat3Profile.splatfestTeam-1].teamName + "\n";
                             }
 
                             Main.iface.updateSplatProfile(profile);

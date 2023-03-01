@@ -32,11 +32,13 @@ public class DataUpdateThread extends Thread {
                 }
                 try {
                     ScheduleUtil.updateS3RotationData();
+                    ScheduleUtil.updateSpl3Fests();
                     Main.splatoon3inkStatus = true;
                 } catch (IOException | JsonParseException e) {
                     e.printStackTrace();
                     Main.splatoon3inkStatus = false;
                 }
+
                 try {
                     Main.s1rotations = BossFileUtil.getStageByml();
                 } catch (Exception e) {

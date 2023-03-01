@@ -25,8 +25,8 @@ public class FestRecord {
         return Instant.parse(endTime).toEpochMilli() / 1000;
     }
 
-    public int getSplatfestID() {
-        return Integer.parseInt(new String(Base64.getDecoder().decode(id), StandardCharsets.UTF_8).split("-")[2]);
+    public String getSplatfestID() {
+        return new String(Base64.getDecoder().decode(id), StandardCharsets.UTF_8).split(":")[1];
     }
 
     public SplatfestTeam getWinningTeam() {

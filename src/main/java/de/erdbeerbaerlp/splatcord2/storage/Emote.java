@@ -74,7 +74,9 @@ public enum Emote {
             case "264ff06a6e99b11a":
             case "4b8e1b77f6b1ef60": return ABILITY_LOCKED;
             case "1d202ffb6e81bce5": return ABILITY_RESPAWN_PUNISHER;
-            case "815a9a65c869e5d9": return ABILITY_INK_SAVER_SUB;
+            case "815a9a65c869e5d9":
+            case "8340c4eed8943fc7":
+                return ABILITY_INK_SAVER_SUB;
             case "d419d93c9ca266f2": return ABILITY_INK_RESISTANCE_UP;
             case "0e164aae93afae43": return ABILITY_SPECIAL_SAVER;
             case "28c5ec4430082450": return ABILITY_QUICK_RESPAWN;
@@ -84,6 +86,7 @@ public enum Emote {
             case "8afb83ffeb289865": return ABILITY_HAUNT;
             case "0e2ac5e15d77b2cb": return ABILITY_SUB_POWER_UP;
             case "9d5a18e4c5e5645e": return ABILITY_OPENING_GAMBIT;
+            case "3820d64c12f27290": return ABILITY_OBJECT_SHREDDER;
             default:
                 System.out.println("Missing Ability emote for ID " + id);
                 return ERROR_CONTACT_DEVELOPER; //Fallback

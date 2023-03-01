@@ -23,12 +23,18 @@ public class SettingsCommand extends BaseCommand {
         super("settings", l.botLocale.cmdSettingsDesc);
         final OptionData deleteMsg = new OptionData(OptionType.BOOLEAN, "delete-messages", l.botLocale.cmdSettingsDelMsg, false);
         final OptionData language = new OptionData(OptionType.STRING, "language", l.botLocale.cmdSettingsLang, false);
+        final OptionData splatfestRoles = new OptionData(OptionType.BOOLEAN, "splatfest-roles", l.botLocale.cmdSettingsSplatfestRole, false);
+        final OptionData splatfestRoleIcon = new OptionData(OptionType.BOOLEAN, "splatfest-role-icon", l.botLocale.cmdSettingsSplatfestRoleIcon, false);
+        final OptionData splatfestRole1 = new OptionData(OptionType.ROLE, "splatfest-team1", l.botLocale.cmdSettingsSplatfestTeam, false);
+        final OptionData splatfestRole2 = new OptionData(OptionType.ROLE, "splatfest-team2", l.botLocale.cmdSettingsSplatfestTeam, false);
+        final OptionData splatfestRole3 = new OptionData(OptionType.ROLE, "splatfest-team3", l.botLocale.cmdSettingsSplatfestTeam, false);
         final ArrayList<Command.Choice> languages = new ArrayList<>();
         for (BotLanguage lang : BotLanguage.values()) {
             languages.add(new Command.Choice(lang.getDisplayName(), lang.val));
         }
         language.addChoices(languages);
         addOptions(language, deleteMsg);
+        addOptions(splatfestRoles, splatfestRoleIcon, splatfestRole1, splatfestRole2, splatfestRole3);
     }
 
     @Override

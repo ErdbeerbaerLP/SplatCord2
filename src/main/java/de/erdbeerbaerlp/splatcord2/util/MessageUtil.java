@@ -225,8 +225,13 @@ public class MessageUtil {
                         , true).build()).build();
     }
 
-    public static int convertIdToVsStageId(String id) {
-        return Integer.parseInt(new String(Base64.getDecoder().decode(id), StandardCharsets.UTF_8).split("-")[1]);
+    public static int convertIdToTeamNum(String id) {
+        final String s = new String(Base64.getDecoder().decode(id), StandardCharsets.UTF_8).split(":")[2];
+        return switch (s.toLowerCase()) {
+            case "alpha" -> 0;
+            case "bravo" -> 1;
+            default -> 2;
+        };
     }
 
     public static void sendS1RotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {
@@ -259,7 +264,7 @@ public class MessageUtil {
 
     public static MessageEmbed generateSplatfestEmbed(FestRecord fest, boolean command, Locale l) {
         final EmbedBuilder b = new EmbedBuilder();
-        final int splatfestID = fest.getSplatfestID();
+        final String splatfestID = fest.getSplatfestID();
         if (fest.getEndTime() < System.currentTimeMillis() / 1000) {
             b.setTitle(l.botLocale.splatfestEmbedTitle);
             b.setFooter(l.botLocale.footer_ended);
@@ -275,11 +280,11 @@ public class MessageUtil {
         }
         if (command) b.setTitle(l.botLocale.splatfestEmbedTitle);
         b.setImage(fest.image.url);
-        b.setDescription(l.botLocale.getSplatfestTitle(splatfestID));
-        b.addField(l.botLocale.splatfestTeams, l.botLocale.getSplatfestTeam(1 + 3 * splatfestID) + ", " + l.botLocale.getSplatfestTeam(2 + 3 * splatfestID) + ", " + l.botLocale.getSplatfestTeam(3 + 3 * splatfestID), false);
+        b.setDescription(l.s3locales.festivals.get(splatfestID).title);
+        b.addField(l.botLocale.splatfestTeams, l.s3locales.festivals.get(splatfestID).teams[0].teamName + ", " + l.s3locales.festivals.get(splatfestID).teams[1].teamName + ", " + l.s3locales.festivals.get(splatfestID).teams[2].teamName, false);
         if (fest.getWinningTeam() != null) {
             b.setColor(fest.getWinningTeam().color.toColor());
-            b.addField(l.botLocale.splatfestTeamWinner, fest.getWinningTeam().teamName, false);
+            b.addField(l.botLocale.splatfestTeamWinner, l.s3locales.festivals.get(splatfestID).teams[convertIdToTeamNum(fest.getWinningTeam().id)].teamName, false);
         }
 
         return b.build();

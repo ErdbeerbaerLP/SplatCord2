@@ -41,9 +41,4 @@ public class Japanese extends EnglishBase {
             default -> "Eggsecutive VP";
         };
     }
-
-
-    public String getSplatfestTeam(int id) {
-        return super.getSplatfestTeam(id);
-    }
 }

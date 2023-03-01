@@ -1,8 +1,5 @@
 package de.erdbeerbaerlp.splatcord2.translation;
 
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
-import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
-
 /**
  * Using english as base, extend other localizations from this class
  */
@@ -35,6 +32,9 @@ public class EnglishBase {
     public String splatNetShop = "SplatNet Gear Shop";
     public String splatnetCooldown = "The SplatNet command is currently on cooldown. Please try again in a few minutes.";
     public String cmdSettingsLang = "Changes the bot language for this server";
+    public String cmdSettingsSplatfestRole = "Emable/disable the Splatfest role feature";
+    public String cmdSettingsSplatfestRoleIcon = "Emable/disable the Splatfest role icons (only works if you have the Splatfest role enabled)";
+    public String cmdSettingsSplatfestTeam = "Set the role to use for splatfest teams. If unset or deleted, bot will create roles.";
     public String cmdInviteDesc = "Gives you the invite URL for this bot";
     public String cmdSetstageDesc = "Marks this channel as the stage notification channel";
     public String cmdDelstageDesc = "Deletes the set stage notification channel";
@@ -181,10 +181,6 @@ public class EnglishBase {
     public String cmdSplatnet3theDailyDrop = "The Daily Drop";
     public String cmdProfileSwitchFCFormatNotValid = "Switch Friend Code format is not valid!";
 
-    public String getSplatfestTitle(int id) {
-        return ScheduleUtil.getSplatfestByID(id).title;
-    }
-
     public String getS1MapName(int mapid) {
         return switch (mapid) {
             case 0 -> "Urchin Underpass";
@@ -222,37 +218,4 @@ public class EnglishBase {
         };
     }
 
-
-    public String getSplatfestTeam(int id) {
-        return switch (id) {
-            /* Keeping old fests here to return to them later
-            case 1 -> "Rock";
-            case 2 -> "Paper";
-            case 3 -> "Scissors";
-
-            case 4 -> "Gear";
-            case 5 -> "Grub";
-            case 6 -> "Fun";*/
-            default -> {
-                if (id < 6)
-                    yield "Unset";
-                else {
-                    int tmpId = id;
-                    int fest = 0;
-                    while (tmpId > 3) {
-                        tmpId -= 3;
-                        fest++;
-                    }
-                    int teamId = id % 3;/*
-                    if (teamId == 1) teamId = 0;
-                    if (teamId == 2) teamId = 1;
-                    if (teamId == 0) teamId = 2;*/
-                    final FestRecord sf = ScheduleUtil.getSplatfestByID(fest);
-                    if (sf != null)
-                        yield sf.teams[teamId].teamName;
-                    else yield "Unknown" + fest + "-" + teamId;
-                }
-            }
-        };
-    }
 }

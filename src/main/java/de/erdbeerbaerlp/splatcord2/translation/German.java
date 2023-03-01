@@ -166,14 +166,6 @@ public class German extends EnglishBase {
     }
 
 
-    public String getSplatfestTitle(int id) {
-        return switch (id) {
-            case 1 -> "Was muss mit auf eine einsame Insel?";
-            case 2 -> "Welchen Typ hat dein Partner-Pokémon?";
-            default -> super.getSplatfestTitle(id);
-        };
-    }
-
     @Override
     public String getS1MapName(int mapid) {
         switch (mapid) {
@@ -228,20 +220,4 @@ public class German extends EnglishBase {
         };
     }
 
-    public String getSplatfestTeam(int id) {
-        return switch (id) {
-/*
-            case 1 -> "Stein";
-            case 2 -> "Papier";
-            case 3 -> "Schere";
-
-            case 4 -> "Werkzeug";
-            case 5 -> "Futter";
-            case 6 -> "Spaß";*/
-            case 7 -> "Feuer";
-            case 8 -> "Wasser";
-            case 9 -> "Pflanze";
-            default -> super.getSplatfestTeam(id);
-        };
-    }
 }

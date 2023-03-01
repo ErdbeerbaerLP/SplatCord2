@@ -122,7 +122,20 @@ public class Main {
         con3.setRequestProperty("User-Agent", Main.USER_AGENT);
         con3.connect();
         splatNet3 = Main.gson.fromJson(new InputStreamReader(con3.getInputStream()), SplatNet3.class);
-
+        try {
+            ScheduleUtil.updateSpl3Fests();
+            splatoon3inkStatus = true;
+        } catch (IOException | JsonParseException e) {
+            splatoon3inkStatus = false;
+            e.printStackTrace();
+        }
+        try {
+            bot = new Bot();
+        } catch (LoginException e) {
+            System.err.println("Cannot login to discord!");
+            e.printStackTrace();
+        }
+        if (bot == null) return;
 
         try {
             ScheduleUtil.updateS2RotationData();
@@ -138,13 +151,7 @@ public class Main {
             splatoon3inkStatus = false;
             e.printStackTrace();
         }
-        try {
-            bot = new Bot();
-        } catch (LoginException e) {
-            System.err.println("Cannot login to discord!");
-            e.printStackTrace();
-        }
-        if (bot == null) return;
+
         startTime = Instant.now();
 
         final DataUpdateThread dataUpdateThread = new DataUpdateThread();

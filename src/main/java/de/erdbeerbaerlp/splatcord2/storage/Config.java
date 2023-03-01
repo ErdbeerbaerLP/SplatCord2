@@ -63,12 +63,14 @@ public class Config {
         static ArrayList<Status> defaultStatuses = new ArrayList<>();
 
         static {
-            defaultStatuses.add(new Status(Activity.ActivityType.PLAYING, "Spoon 2"));
+            defaultStatuses.add(new Status(Activity.ActivityType.PLAYING, "Spoon 3"));
             defaultStatuses.add(new Status(Activity.ActivityType.STREAMING, "to %servercount% Servers"));
         }
 
         @TomlComment("The discord bot token")
         public String token = "NOT SET";
+        @TomlComment("To prevent uploading hundreds of times, images will be uploaded here and then referenced by url only")
+        public String imageChannelID = "NOT SET";
         @TomlComment({"Bot status messages shown in discord", "", "Type can be PLAYING, WATCHING, STREAMING (requires streamingURL), LISTENING, COMPETING"})
         public ArrayList<Status> botStatus = Discord.defaultStatuses;
         @TomlComment("Server IDs allowed to use in-beta commands and features")

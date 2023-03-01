@@ -39,13 +39,14 @@ public class DatabaseInterface implements AutoCloseable {
                 "`salchannel` bigint null COMMENT 'Channel ID for automatic Salmon Run rotation updates',\n" +
                 "`lastSalmon` bigint null COMMENT 'Message ID of last salmon run update message',\n" +
                 "`lastStage2` bigint null COMMENT 'Message ID of last Splatoon 2 Stage Notification',\n" +
-                "`deleteMessage` tinyint not null default 1  COMMENT 'Whether or not the bot should delete the old schedule message',\n" +
+                "`deleteMessage` tinyint not null default 1 COMMENT 'Whether or not the bot should delete the old schedule message',\n" +
                 "`s1mapchannel` bigint DEFAULT NULL,\n" +
                 "`lastStage1` bigint DEFAULT NULL,\n" +
                 "`s3mapchannel` bigint DEFAULT NULL,\n" +
                 "`lastStage3` bigint DEFAULT NULL,\n" +
                 "`s3salmonchannel` bigint DEFAULT NULL,\n" +
-                "`s3lastSalmon` bigint DEFAULT NULL\n" +
+                "`s3lastSalmon` bigint DEFAULT NULL,\n" +
+                "`festroles` JSON NULL\n" +
                 ");");
         runUpdate("CREATE TABLE IF NOT EXISTS `users` (\n" +
                 "`id` BIGINT NOT NULL COMMENT 'Discord User ID',\n" +

@@ -176,12 +176,6 @@ public class ScheduleUtil {
         for (Coop3 node : schedules3.data.coopGroupingSchedule.bigRunSchedules.nodes) {
             node.genImage();
         }
-
-        final URL sfSched = new URL("https://splatoon3.ink/data/festivals.json");
-        final HttpsURLConnection deConnSF = (HttpsURLConnection) sfSched.openConnection();
-        deConnSF.setRequestProperty("User-Agent", Main.USER_AGENT);
-        deConnSF.connect();
-        sf3 = Main.gson.fromJson(new InputStreamReader(deConnSF.getInputStream()), SplatfestData.class);
         System.out.println("S3 Rotations updated successfully");
     }
 
@@ -189,19 +183,26 @@ public class ScheduleUtil {
     public static SplatfestData getSplatfestData() {
         return sf3;
     }
+    public static void updateSpl3Fests() throws IOException, JsonParseException {
+        final URL sfSched = new URL("https://splatoon3.ink/data/festivals.json");
+        final HttpsURLConnection deConnSF = (HttpsURLConnection) sfSched.openConnection();
+        deConnSF.setRequestProperty("User-Agent", Main.USER_AGENT);
+        deConnSF.connect();
+        sf3 = Main.gson.fromJson(new InputStreamReader(deConnSF.getInputStream()), SplatfestData.class);
+    }
 
-    public static FestRecord getSplatfestByID(int id) {
+    public static FestRecord getSplatfestByID(String id) {
         for (FestRecord f : sf3.US.data.festRecords.nodes) {
-            if (id == f.getSplatfestID()) return f;
+            if (id.equals(f.getSplatfestID())) return f;
         }
         for (FestRecord f : sf3.EU.data.festRecords.nodes) {
-            if (id == f.getSplatfestID()) return f;
+            if (id.equals(f.getSplatfestID())) return f;
         }
         for (FestRecord f : sf3.AP.data.festRecords.nodes) {
-            if (id == f.getSplatfestID()) return f;
+            if (id.equals(f.getSplatfestID())) return f;
         }
         for (FestRecord f : sf3.JP.data.festRecords.nodes) {
-            if (id == f.getSplatfestID()) return f;
+            if (id.equals(f.getSplatfestID())) return f;
         }
         return null;
     }

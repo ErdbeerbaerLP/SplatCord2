@@ -39,7 +39,6 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
-import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
@@ -177,11 +176,11 @@ public class Bot implements EventListener {
                             break;
                     }
                 }
-                case "splatfest" -> {
+                case "splatfest", "splatfestdebug" -> {
                     final ArrayList<Command.Choice> splatfests = new ArrayList<>();
                     int countsplatfest = 0;
                     for (FestRecord f : ScheduleUtil.getSplatfestData().US.data.festRecords.nodes) {
-                        final String title = lang.botLocale.getSplatfestTitle(f.getSplatfestID());
+                        final String title = lang.s3locales.festivals.get(f.getSplatfestID()).title;
                         if (title.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
                             splatfests.add(new Command.Choice(title, f.getSplatfestID()));
                             countsplatfest++;
@@ -290,11 +289,11 @@ public class Bot implements EventListener {
                                         getWeaponName(lang, Main.coop_schedules.details[0].weapons[2]) + ", " +
                                         getWeaponName(lang, Main.coop_schedules.details[0].weapons[3])
                                 , true)
-                        .setImage("attachment://current.png")
+                        .setImage(Main.coop_schedules.details[0].outImageURL)
                         .setFooter(lang.botLocale.footer_ends)
                         .setTimestamp(Instant.ofEpochSecond(Main.coop_schedules.details[0].end_time))
                         .build()
-                ).addFiles(FileUpload.fromData(Main.coop_schedules.details[0].outImage, "current.png")).build(),
+                ).build(),
                 channel);
         if (submitMsg != null)
             return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
@@ -315,11 +314,11 @@ public class Bot implements EventListener {
                                     lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[2].__splatoon3ink_id).name + ", " +
                                     lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[3].__splatoon3ink_id).name
                             , true)
-                    .setImage("attachment://current.png")
+                    .setImage(currentS3Rotation.getCoop().outImageURL)
                     .setFooter(lang.botLocale.footer_ends)
                     .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
                     .build()
-            ).build()).addFiles(FileUpload.fromData(currentS3Rotation.getCoop().outImage, "current.png")).submit();
+            ).build()).submit();
         if (submitMsg != null)
             return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
         else return null;
