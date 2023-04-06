@@ -180,6 +180,9 @@ public class EnglishBase {
     public String cmdPrivateRemove = "Player removed from your private room";
     public String cmdSplatnet3theDailyDrop = "The Daily Drop";
     public String cmdProfileSwitchFCFormatNotValid = "Switch Friend Code format is not valid!";
+    public String cmdXrankDesc1 = "Show X-Rank Leaderboard of the Tentatek Division (North America, South America, and Europe)";
+    public String cmdXrankDesc2 = "Show X-Rank Leaderboard of the Takoroka Division (Japan, Hong Kong, South Korea, Australia and New Zealand)";
+    public String cmdXrankMode = "Game Mode of the Leaderboard";
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {

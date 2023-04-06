@@ -3,7 +3,6 @@ package de.erdbeerbaerlp.splatcord2.commands;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.SplatfestTranslation;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -13,11 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
 public class ViewProfileCommand extends BaseCommand {
     public ViewProfileCommand(Locale l) {
@@ -110,15 +104,11 @@ public class ViewProfileCommand extends BaseCommand {
                         b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel + "", true);
                         b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
                         b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
-                        final List<Map.Entry<String, SplatfestTranslation>> entryList = new ArrayList<>(lang.s3locales.festivals.entrySet());
-                        final ListIterator<Map.Entry<String, SplatfestTranslation>> iterator = entryList.listIterator(entryList.size());
+                        if(lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam) != null)
+                            b.addField(lang.botLocale.cmdProfileSplatfest, lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam).teamName , true);
+                        else
+                            b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.unset, true);
 
-                        int team = profile.splat3Profile.splatfestTeam;
-                        while (iterator.hasPrevious() && team > 3) {
-                            iterator.previous();
-                            team -= 3;
-                        }
-                        b.addField(lang.botLocale.cmdProfileSplatfest, iterator.next().getValue().teams[team-1].teamName, true);
                         String footer = "Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc);
                         b.setFooter(footer);
 

@@ -11,7 +11,7 @@ public abstract class BaseCommand extends CommandDataImpl {
     private final Pattern forbiddenChars = Pattern.compile("['\"\\\\]");
 
     /**
-     * Create an command builder.
+     * Create a command builder.
      *
      * @param name        The command name, 1-32 lowercase alphanumeric characters
      * @param description The command description, 1-100 characters

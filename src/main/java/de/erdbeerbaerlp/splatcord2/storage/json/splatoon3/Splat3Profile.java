@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 public class Splat3Profile {
     public Rank rank = new Rank("c-");
     public int srTitle = 0;
-    public int splatfestTeam = 0;
+    public String splatfestTeam = null;
     public int catalogLevel = 1;
     public int tableturfLevel = 1;
     int level = 1;
@@ -22,7 +22,11 @@ public class Splat3Profile {
         if (obj.get("stars") != null) profile.stars = obj.get("stars").getAsInt();
         if (obj.get("name") != null && !obj.get("name").isJsonNull()) profile.name = obj.get("name").getAsString();
         if (obj.get("splatfest") != null && !obj.get("splatfest").isJsonNull())
-            profile.splatfestTeam = obj.get("splatfest").getAsInt();
+            profile.splatfestTeam = obj.get("splatfest").getAsString();
+        try {
+            Integer.parseInt(profile.splatfestTeam);
+            profile.splatfestTeam = null;
+        }catch (NumberFormatException ignored){}
         return profile;
     }
 
