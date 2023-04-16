@@ -53,7 +53,7 @@ public class ScheduleUtil {
 
     public static S3Rotation getS3RotationForTimestamp(long timestamp) {
         Schedule3 regular = null, bankara = null, xBattle = null, fest = null;
-        Coop3 coop = null;
+        Coop3 coop = null,eggstraCoop = null;
 
         for (Schedule3 s : schedules3.data.regularSchedules.nodes) {
             if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
@@ -86,6 +86,12 @@ public class ScheduleUtil {
                 break;
             }
         }
+        for (Coop3 s : schedules3.data.coopGroupingSchedule.teamContestSchedules.nodes) {
+            if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
+                eggstraCoop = s;
+                break;
+            }
+        }
         for (Schedule3 s : schedules3.data.festSchedules.nodes) {
             if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
                 fest = s;
@@ -93,7 +99,7 @@ public class ScheduleUtil {
             }
         }
 
-        return new S3Rotation(regular, bankara, xBattle, coop, fest, schedules3.data.currentFest);
+        return new S3Rotation(regular, bankara, xBattle, coop, eggstraCoop,fest, schedules3.data.currentFest);
     }
 
     public static Rotation getCurrentRotation() {
@@ -174,6 +180,9 @@ public class ScheduleUtil {
             node.genImage();
         }
         for (Coop3 node : schedules3.data.coopGroupingSchedule.bigRunSchedules.nodes) {
+            node.genImage();
+        }
+        for (Coop3 node : schedules3.data.coopGroupingSchedule.teamContestSchedules.nodes) {
             node.genImage();
         }
         System.out.println("S3 Rotations updated successfully");

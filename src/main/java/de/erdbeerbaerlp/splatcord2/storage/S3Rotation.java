@@ -10,13 +10,15 @@ public class S3Rotation {
     private final Schedule3 xBattle;
     private final Schedule3 fest;
     private final Coop3 coop;
+    private final Coop3 eggstraCoop;
     private final CurrentSplatfest splatfest;
 
-    public S3Rotation(Schedule3 regular, Schedule3 bankara, Schedule3 xBattle, Coop3 coop, Schedule3 fest, CurrentSplatfest splatfest) {
+    public S3Rotation(Schedule3 regular, Schedule3 bankara, Schedule3 xBattle, Coop3 coop, Coop3 eggstraCoop, Schedule3 fest, CurrentSplatfest splatfest) {
 
         this.regular = regular;
         this.bankara = bankara;
         this.xBattle = xBattle;
+        this.eggstraCoop = eggstraCoop;
         this.fest = fest;
         this.coop = coop;
         this.splatfest = splatfest;
@@ -44,6 +46,10 @@ public class S3Rotation {
 
     public Coop3 getCoop() {
         return coop;
+    }
+
+    public Coop3 getEggstraCoop() {
+        return eggstraCoop;
     }
 
     @Override

@@ -163,6 +163,7 @@ public class German extends EnglishBase {
         cmdPrivateRemove = "Spieler vom Privatraum entfernt";
         cmdSplatnet3theDailyDrop = "Heutige Auswahl";
         cmdProfileSwitchFCFormatNotValid = "Dein Switch Freundescode ist ungültig!";
+        eggstraTitle = "Team-Wettkampf";
     }
 
 

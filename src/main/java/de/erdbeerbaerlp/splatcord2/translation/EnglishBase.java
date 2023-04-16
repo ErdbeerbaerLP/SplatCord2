@@ -183,6 +183,7 @@ public class EnglishBase {
     public String cmdXrankDesc1 = "Show X-Rank Leaderboard of the Tentatek Division (North America, South America, and Europe)";
     public String cmdXrankDesc2 = "Show X-Rank Leaderboard of the Takoroka Division (Japan, Hong Kong, South Korea, Australia and New Zealand)";
     public String cmdXrankMode = "Game Mode of the Leaderboard";
+    public String eggstraTitle = "Eggstra Work";
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {

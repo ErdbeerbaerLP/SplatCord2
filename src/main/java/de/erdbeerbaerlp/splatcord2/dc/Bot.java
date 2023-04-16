@@ -21,6 +21,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
@@ -305,8 +306,9 @@ public class Bot implements EventListener {
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
         final TextChannel ch = jda.getTextChannelById(channel);
         CompletableFuture<Message> submitMsg = null;
-        if (ch != null)
-            submitMsg = ch.sendMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
+        if (ch != null) {
+            final ArrayList<MessageEmbed> embeds = new ArrayList<>();
+            embeds.add(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
                     .addField(lang.botLocale.salmonStage, lang.s3locales.stages.get(currentS3Rotation.getCoop().setting.coopStage.id).name, true)
                     .addField(lang.botLocale.weapons,
                             lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[0].__splatoon3ink_id).name + ", " +
@@ -317,8 +319,22 @@ public class Bot implements EventListener {
                     .setImage(currentS3Rotation.getCoop().outImageURL)
                     .setFooter(lang.botLocale.footer_ends)
                     .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
-                    .build()
-            ).build()).submit();
+                    .build());
+            if(currentS3Rotation.getEggstraCoop() != null)
+                embeds.add(new EmbedBuilder().setTitle(lang.botLocale.eggstraTitle + " (Splatoon 3)")
+                        .addField(lang.botLocale.salmonStage, lang.s3locales.stages.get(currentS3Rotation.getEggstraCoop().setting.coopStage.id).name, true)
+                        .addField(lang.botLocale.weapons,
+                                lang.s3locales.weapons.get(currentS3Rotation.getEggstraCoop().setting.weapons[0].__splatoon3ink_id).name + ", " +
+                                        lang.s3locales.weapons.get(currentS3Rotation.getEggstraCoop().setting.weapons[1].__splatoon3ink_id).name + ", " +
+                                        lang.s3locales.weapons.get(currentS3Rotation.getEggstraCoop().setting.weapons[2].__splatoon3ink_id).name + ", " +
+                                        lang.s3locales.weapons.get(currentS3Rotation.getEggstraCoop().setting.weapons[3].__splatoon3ink_id).name
+                                , true)
+                        .setImage(currentS3Rotation.getEggstraCoop().outImageURL)
+                        .setFooter(lang.botLocale.footer_ends)
+                        .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getEggstraCoop().getEndTime()))
+                        .build());
+            submitMsg = ch.sendMessage(new MessageCreateBuilder().setEmbeds(embeds).build()).submit();
+        }
         if (submitMsg != null)
             return new AbstractMap.SimpleEntry<>(serverid, submitMsg.get().getIdLong());
         else return null;
