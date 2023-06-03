@@ -13,4 +13,12 @@ public class EventTimePeriod {
 
         return Instant.parse(endTime).toEpochMilli() / 1000;
     }
+
+    @Override
+    public String toString() {
+        return "EventTimePeriod{" +
+                "startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                '}';
+    }
 }

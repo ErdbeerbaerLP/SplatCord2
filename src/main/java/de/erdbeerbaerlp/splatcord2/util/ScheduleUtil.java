@@ -134,10 +134,11 @@ public class ScheduleUtil {
     public static EventSchedule getNextS3Event() {
         long time = System.currentTimeMillis() / 1000;
         boolean next = false;
-        for (EventSchedule s : schedules3.data.eventSchedules.nodes) {
-            if (s.timePeriods[0].getStartTime() <= time && s.timePeriods[s.timePeriods.length - 1].getEndTime() > time) {
+        System.out.println("Before for");
+        for (final EventSchedule s : schedules3.data.eventSchedules.nodes) {
+            System.out.println(s.toString());
+            if (s.timePeriods[0].getStartTime() > time && s.timePeriods[s.timePeriods.length - 1].getEndTime() > time) {
                 next = true;
-                continue;
             }
             if (next)
                 return s;
