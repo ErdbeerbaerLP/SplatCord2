@@ -65,7 +65,7 @@ public class RotationThread extends Thread {
                     Config.instance().doNotEdit.lastS3RotationTimestamp = currentS3Rotation.getRegular().getStartTime();
                     Config.instance().saveConfig();
                 }
-                if (iface.status.isDBAlive() && currentS3Rotation.getEvent().timePeriods[0].getStartTime() != Config.instance().doNotEdit.lastS3EventTimestamp) {
+                if (iface.status.isDBAlive() && currentS3Rotation.getEvent() != null && currentS3Rotation.getEvent().timePeriods[0].getStartTime() != Config.instance().doNotEdit.lastS3EventTimestamp) {
                     iface.getAllS3EventChannels().forEach((serverid, channel) -> {
                         try {
                             MessageUtil.sendS3EventRotationFeed(serverid, channel, currentS3Rotation);
