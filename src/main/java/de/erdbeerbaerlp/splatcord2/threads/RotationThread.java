@@ -29,8 +29,7 @@ public class RotationThread extends Thread {
                     iface.getAllS1MapChannels().forEach((serverid, channel) -> {
                         try {
                             MessageUtil.sendS1RotationFeed(serverid, channel, currentS1Rotation);
-                        } catch (
-                                Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                        } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                             e.printStackTrace();
                         }
                     });
@@ -47,8 +46,7 @@ public class RotationThread extends Thread {
                     iface.getAllS2MapChannels().forEach((serverid, channel) -> {
                         try {
                             MessageUtil.sendS2RotationFeed(serverid, channel, currentRotation);
-                        } catch (
-                                Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                        } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                             e.printStackTrace();
                         }
                     });
@@ -60,12 +58,22 @@ public class RotationThread extends Thread {
                     iface.getAllS3MapChannels().forEach((serverid, channel) -> {
                         try {
                             MessageUtil.sendS3RotationFeed(serverid, channel, currentS3Rotation);
-                        } catch (
-                                Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                        } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                             e.printStackTrace();
                         }
                     });
                     Config.instance().doNotEdit.lastS3RotationTimestamp = currentS3Rotation.getRegular().getStartTime();
+                    Config.instance().saveConfig();
+                }
+                if (iface.status.isDBAlive() && currentS3Rotation.getEvent().timePeriods[0].getStartTime() != Config.instance().doNotEdit.lastS3EventTimestamp) {
+                    iface.getAllS3EventChannels().forEach((serverid, channel) -> {
+                        try {
+                            MessageUtil.sendS3EventRotationFeed(serverid, channel, currentS3Rotation);
+                        } catch (Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                            e.printStackTrace();
+                        }
+                    });
+                    Config.instance().doNotEdit.lastS3EventTimestamp = currentS3Rotation.getEvent().timePeriods[0].getStartTime();
                     Config.instance().saveConfig();
                 }
 

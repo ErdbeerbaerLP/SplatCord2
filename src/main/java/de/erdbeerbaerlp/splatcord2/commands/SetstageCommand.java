@@ -8,7 +8,7 @@ import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
@@ -33,7 +33,7 @@ public class SetstageCommand extends BaseCommand {
     public void execute(SlashCommandInteractionEvent ev) {
         final Guild guild = ev.getGuild();
         final Locale lang = Main.translations.get(Main.iface.getServerLang(guild.getIdLong()));
-        final MessageChannelUnion channel = ev.getChannel();
+        final GuildMessageChannel channel = (GuildMessageChannel) ev.getChannel();
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
                 case "splatoon1" -> {
@@ -57,8 +57,8 @@ public class SetstageCommand extends BaseCommand {
             }
     }
 
-    private boolean checkPerms(SlashCommandInteractionEvent ev, Guild guild, Locale lang, MessageChannelUnion channel) {
-        if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(guild.getGuildChannelById(channel.getIdLong()), Permission.MESSAGE_SEND)) {
+    private boolean checkPerms(SlashCommandInteractionEvent ev, Guild guild, Locale lang, GuildMessageChannel channel) {
+        if (!guild.getMember(ev.getJDA().getSelfUser()).hasPermission(channel, Permission.MESSAGE_SEND)) {
             final Locale finalLang = lang;
             ev.getUser().openPrivateChannel().queue((c) -> {
                 c.sendMessage(finalLang.botLocale.noWritePerms).queue();

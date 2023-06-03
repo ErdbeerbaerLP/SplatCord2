@@ -1,10 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.dc;
 
 import de.erdbeerbaerlp.splatcord2.Main;
-import de.erdbeerbaerlp.splatcord2.commands.BaseCommand;
-import de.erdbeerbaerlp.splatcord2.commands.PrivateCommand;
-import de.erdbeerbaerlp.splatcord2.commands.RotationCommand;
-import de.erdbeerbaerlp.splatcord2.commands.Splatnet3Command;
+import de.erdbeerbaerlp.splatcord2.commands.*;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
@@ -13,24 +10,20 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
+import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.ChannelType;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
+import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
+import net.dv8tion.jda.api.*;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.guild.*;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -109,21 +102,21 @@ public class Bot implements EventListener {
 
     public CompletableFuture<Message> sendMessage(MessageCreateData msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return null;
-        final StandardGuildMessageChannel channel = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channelId);
+        final GuildMessageChannel channel = (GuildMessageChannel) bot.jda.getGuildChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
         return null;
     }
 
     private CompletableFuture<Message> submitMessage(MessageCreateData msg, Long channelId) throws InsufficientPermissionException {
         if (msg == null || channelId == null) return null;
-        final StandardGuildMessageChannel channel = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channelId);
+        final GuildMessageChannel channel = (GuildMessageChannel) bot.jda.getGuildChannelById(channelId);
         if (channel != null) return channel.sendMessage(msg).submit();
         return null;
     }
 
     public void sendMessage(MessageCreateData msg, String channelId) {
         if (msg == null || channelId == null) return;
-        final StandardGuildMessageChannel channel = (StandardGuildMessageChannel) bot.jda.getGuildChannelById(channelId);
+        final GuildMessageChannel channel = (GuildMessageChannel) bot.jda.getGuildChannelById(channelId);
         if (channel != null) channel.sendMessage(msg).queue();
     }
 
@@ -191,6 +184,62 @@ public class Bot implements EventListener {
                     ev.replyChoices(splatfests).queue();
                 }
             }
+        } else if (event instanceof EntitySelectInteractionEvent ev) {
+            switch (ev.getComponentId()){
+                case "s1channel"->{
+                    Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s2channel"->{
+                    Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    MessageUtil.sendS2RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentRotation());
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s3channel"->{
+                    Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    MessageUtil.sendS3RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s2salmon"->{
+                    Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    MessageUtil.sendSalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s3salmon"->{
+                    Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    MessageUtil.sendS3SalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    ev.getInteraction().deferEdit().queue();
+
+                }
+                case "s3event"->{
+                    if (checkPerms(ev)) return;
+                    Main.iface.setS3EventChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    MessageUtil.sendS3EventRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
+                    ev.getInteraction().deferEdit().queue();
+                }
+                default ->
+                        ev.reply("Selected " + ev.getValues().get(0).getAsMention()).setEphemeral(true).queue();
+            }
+        } else if (event instanceof StringSelectInteractionEvent ev) {
+            switch (ev.getComponentId()) {
+                case "language" -> {
+                    System.out.println(ev.getInteraction().getValues().get(0)+" language");
+                    Main.iface.setServerLang(ev.getGuild().getIdLong(),BotLanguage.fromInt(Integer.parseInt(ev.getInteraction().getValues().get(0))));
+                    ev.getInteraction().editMessage(SettingsCommand.getMenu("generic", Main.iface.getServerLang(ev.getGuild().getIdLong()))).queue();
+                    CommandRegistry.setCommands(ev.getGuild());
+                    return;
+                }
+                case "msgdelete"->{
+                    final boolean deleteMsgs = ev.getValues().get(0).equals("yes");
+                    Main.iface.setDeleteMessage(ev.getGuild().getIdLong(), deleteMsgs);
+                    ev.getInteraction().deferEdit().queue();
+                }
+            }
+            if (ev.getComponentId().equals("settingSel")) {
+                ev.getInteraction().deferEdit().submit().thenAccept((a) -> a.editOriginal((SettingsCommand.getMenu(ev.getInteraction().getValues().get(0), Main.iface.getServerLang(ev.getGuild().getIdLong())))).queue());
+            } else
+                ev.reply("Selected " + ev.getValues().get(0)).setEphemeral(true).queue();
         } else if (event instanceof final GuildJoinEvent ev) {
             Main.iface.addServer(ev.getGuild().getIdLong());
             CommandRegistry.setCommands(ev.getGuild());
@@ -203,7 +252,6 @@ public class Bot implements EventListener {
         else if (event instanceof UnavailableGuildLeaveEvent)
             Main.iface.delServer(((UnavailableGuildLeaveEvent) event).getGuildIdLong());
         else if (event instanceof SlashCommandInteractionEvent ev) {
-            if (ev.getChannelType() != ChannelType.TEXT) return;
             final Command cmd = CommandRegistry.registeredCommands.get(ev.getCommandIdLong());
             if (cmd != null) {
                 if (!Main.iface.status.isDBAlive() && !(cmd.getName().equals("status") || cmd.getName().equals("support"))) {
@@ -221,12 +269,40 @@ public class Bot implements EventListener {
             }
         } else if (event instanceof final ButtonInteractionEvent ev) {
             final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-            if (ev.getComponentId().equals("delete")) {
-                if (ev.getMessage().getInteraction().getUser().getIdLong() == ev.getUser().getIdLong())
-                    ev.getMessage().delete().queue();
-            } else if (ev.getComponentId().equals("regenprivate")) {
-                PrivateCommand.generatePrivate(ev);
-            } else if (ev.getComponentId().startsWith("loadmore")) {
+            switch (ev.getComponentId()) {
+                case "s1clear" -> {
+                    Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), null);
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s2clear" -> {
+                    Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), null);
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s3clear" -> {
+                    Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), null);
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s2clears" -> {
+                    Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), null);
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s3clears" -> {
+                    Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), null);
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "s3cleare" -> {
+                    Main.iface.setS3EventChannel(ev.getGuild().getIdLong(), null);
+                    ev.getInteraction().deferEdit().queue();
+                }
+                case "delete" -> {
+                    if (ev.getMessage().getInteraction().getUser().getIdLong() == ev.getUser().getIdLong())
+                        ev.getMessage().delete().queue();
+                }
+                case "regenprivate" -> {
+                    PrivateCommand.generatePrivate(ev);
+                }
+            }
+            if (ev.getComponentId().startsWith("loadmore")) {
                 final EmbedBuilder b = new EmbedBuilder();
                 long time = System.currentTimeMillis() / 1000;
                 time += (TimeUnit.HOURS.toSeconds(2) + 1) * 3;
@@ -251,37 +327,45 @@ public class Bot implements EventListener {
                 submit.thenAccept((m) -> {
                     m.editOriginalEmbeds(b.build()).queue();
                 });
-            } else if(ev.getComponentId().startsWith("snet3next")){
-                int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3next",""));
+            } else if (ev.getComponentId().startsWith("snet3next")) {
+                int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3next", ""));
 
-                Button b = Button.secondary("snet3next"+(targetPage+1), Emoji.fromUnicode("U+25B6"));
-                if(Main.splatNet3.data.gesotown.limitedGears.length < (targetPage+1)*3) b = b.asDisabled();
+                Button b = Button.secondary("snet3next" + (targetPage + 1), Emoji.fromUnicode("U+25B6"));
+                if (Main.splatNet3.data.gesotown.limitedGears.length < (targetPage + 1) * 3) b = b.asDisabled();
 
-                ev.editMessageEmbeds(Splatnet3Command.saleEmbeds(lang,targetPage-1))
+                ev.editMessageEmbeds(Splatnet3Command.saleEmbeds(lang, targetPage - 1))
                         .setActionRow(
                                 Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
-                                Button.secondary("snet3prev"+(targetPage-1), Emoji.fromUnicode("U+25C0")),
+                                Button.secondary("snet3prev" + (targetPage - 1), Emoji.fromUnicode("U+25C0")),
                                 b).queue();
-            }else if(ev.getComponentId().startsWith("snet3prev")){
-                int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3prev",""));
+            } else if (ev.getComponentId().startsWith("snet3prev")) {
+                int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3prev", ""));
 
-                Button b = Button.secondary("snet3prev"+(targetPage-1), Emoji.fromUnicode("U+25C0"));
-                if(targetPage == 0) b = b.asDisabled();
-                ev.editMessageEmbeds(targetPage == 0?Splatnet3Command.dailyEmbeds(lang):Splatnet3Command.saleEmbeds(lang,targetPage-1))
+                Button b = Button.secondary("snet3prev" + (targetPage - 1), Emoji.fromUnicode("U+25C0"));
+                if (targetPage == 0) b = b.asDisabled();
+                ev.editMessageEmbeds(targetPage == 0 ? Splatnet3Command.dailyEmbeds(lang) : Splatnet3Command.saleEmbeds(lang, targetPage - 1))
                         .setActionRow(
                                 Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
                                 b,
-                                Button.secondary("snet3next"+(targetPage+1), Emoji.fromUnicode("U+25B6"))).queue();
+                                Button.secondary("snet3next" + (targetPage + 1), Emoji.fromUnicode("U+25B6"))).queue();
             }
-            //Update command permissions on role creation / permission change
         } else if (event instanceof RoleUpdatePermissionsEvent) {
+            //Update command permissions on role creation / permission change
             CommandRegistry.setCommands(((RoleUpdatePermissionsEvent) event).getGuild());
         } else if (event instanceof RoleCreateEvent)
             CommandRegistry.setCommands(((RoleCreateEvent) event).getGuild());
     }
 
+    private boolean checkPerms(final EntitySelectInteractionEvent ev) {
+        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        if (!ev.getGuild().getMember(ev.getJDA().getSelfUser()).hasPermission(ev.getGuild().getChannelById(GuildMessageChannel.class,ev.getValues().get(0).getIdLong()), Permission.MESSAGE_SEND)) {
+            ev.reply(lang.botLocale.noWritePerms).queue();
+            return true;
+        }
+        return false;
+    }
     public Map.Entry<Long, Long> sendS2SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
-        Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
+        final Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
         final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 2)")
                         .addField(lang.botLocale.salmonStage, lang.coop_stages.get(Main.coop_schedules.details[0].stage.image).getName(), true)
                         .addField(lang.botLocale.weapons,
@@ -304,7 +388,7 @@ public class Bot implements EventListener {
     public Map.Entry<Long, Long> sendS3SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        final TextChannel ch = jda.getTextChannelById(channel);
+        final GuildMessageChannel ch = jda.getChannelById(GuildMessageChannel.class,channel);
         CompletableFuture<Message> submitMsg = null;
         if (ch != null) {
             final ArrayList<MessageEmbed> embeds = new ArrayList<>();
@@ -320,7 +404,7 @@ public class Bot implements EventListener {
                     .setFooter(lang.botLocale.footer_ends)
                     .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
                     .build());
-            if(currentS3Rotation.getEggstraCoop() != null)
+            if (currentS3Rotation.getEggstraCoop() != null)
                 embeds.add(new EmbedBuilder().setTitle(lang.botLocale.eggstraTitle + " (Splatoon 3)")
                         .addField(lang.botLocale.salmonStage, lang.s3locales.stages.get(currentS3Rotation.getEggstraCoop().setting.coopStage.id).name, true)
                         .addField(lang.botLocale.weapons,

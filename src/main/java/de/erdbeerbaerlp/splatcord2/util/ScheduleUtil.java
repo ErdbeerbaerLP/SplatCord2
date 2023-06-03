@@ -8,9 +8,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSch
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Detail;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedules;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Schedule3;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Schedules3;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.SplatfestData;
 
@@ -53,7 +51,8 @@ public class ScheduleUtil {
 
     public static S3Rotation getS3RotationForTimestamp(long timestamp) {
         Schedule3 regular = null, bankara = null, xBattle = null, fest = null;
-        Coop3 coop = null,eggstraCoop = null;
+        Coop3 coop = null, eggstraCoop = null;
+        EventSchedule event = null;
 
         for (Schedule3 s : schedules3.data.regularSchedules.nodes) {
             if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
@@ -98,8 +97,16 @@ public class ScheduleUtil {
                 break;
             }
         }
+        for (EventSchedule s : schedules3.data.eventSchedules.nodes) {
+            final EventTimePeriod[] timePeriods = s.timePeriods;
+            if (timePeriods != null)
+                if (timePeriods[0].getStartTime() <= timestamp && timePeriods[timePeriods.length - 1].getEndTime() > timestamp) {
+                    event = s;
+                    break;
+                }
+        }
 
-        return new S3Rotation(regular, bankara, xBattle, coop, eggstraCoop,fest, schedules3.data.currentFest);
+        return new S3Rotation(regular, bankara, xBattle, coop, eggstraCoop, fest, schedules3.data.currentFest, event);
     }
 
     public static Rotation getCurrentRotation() {
@@ -115,6 +122,20 @@ public class ScheduleUtil {
         boolean next = false;
         for (Coop3 s : schedules3.data.coopGroupingSchedule.regularSchedules.nodes) {
             if (s.getStartTime() <= time && s.getEndTime() > time) {
+                next = true;
+                continue;
+            }
+            if (next)
+                return s;
+        }
+        return null;
+    }
+
+    public static EventSchedule getNextS3Event() {
+        long time = System.currentTimeMillis() / 1000;
+        boolean next = false;
+        for (EventSchedule s : schedules3.data.eventSchedules.nodes) {
+            if (s.timePeriods[0].getStartTime() <= time && s.timePeriods[s.timePeriods.length - 1].getEndTime() > time) {
                 next = true;
                 continue;
             }
@@ -192,6 +213,7 @@ public class ScheduleUtil {
     public static SplatfestData getSplatfestData() {
         return sf3;
     }
+
     public static void updateSpl3Fests() throws IOException, JsonParseException {
         final URL sfSched = new URL("https://splatoon3.ink/data/festivals.json");
         final HttpsURLConnection deConnSF = (HttpsURLConnection) sfSched.openConnection();

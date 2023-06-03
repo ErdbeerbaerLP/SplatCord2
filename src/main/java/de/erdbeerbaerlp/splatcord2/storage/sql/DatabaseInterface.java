@@ -46,6 +46,8 @@ public class DatabaseInterface implements AutoCloseable {
                 "`lastStage3` bigint DEFAULT NULL,\n" +
                 "`s3salmonchannel` bigint DEFAULT NULL,\n" +
                 "`s3lastSalmon` bigint DEFAULT NULL,\n" +
+                "`s3lastEvent` bigint DEFAULT NULL,\n" +
+                "`s3eventChannel` bigint DEFAULT NULL,\n" +
                 "`festroles` JSON NULL\n" +
                 ");");
         runUpdate("CREATE TABLE IF NOT EXISTS `users` (\n" +
@@ -272,6 +274,9 @@ public class DatabaseInterface implements AutoCloseable {
     public void setS3StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s3mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
+   public void setS3EventChannel(long serverID, Long channelID) {
+        runUpdate("UPDATE servers SET s3eventChannel = " + channelID + " WHERE serverid = " + serverID);
+    }
 
     public void setS1StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s1mapchannel = " + channelID + " WHERE serverid = " + serverID);
@@ -295,6 +300,20 @@ public class DatabaseInterface implements AutoCloseable {
     public HashMap<Long, Long> getAllS3MapChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,s3mapchannel FROM servers")) {
+            while (res != null && res.next()) {
+                final long serverid = res.getLong(1);
+                final long channelid = res.getLong(2);
+                if (!res.wasNull())
+                    mapChannels.put(serverid, channelid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapChannels;
+    }
+    public HashMap<Long, Long> getAllS3EventChannels() {
+        final HashMap<Long, Long> mapChannels = new HashMap<>();
+        try (final ResultSet res = query("SELECT serverid,s3eventChannel FROM servers")) {
             while (res != null && res.next()) {
                 final long serverid = res.getLong(1);
                 final long channelid = res.getLong(2);
@@ -500,6 +519,17 @@ public class DatabaseInterface implements AutoCloseable {
 
     public long getLastS3SalmonMessage(long serverID) {
         try (final ResultSet res = query("SELECT s3lastSalmon FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public long getLastS3EventMessage(long serverID) {
+        try (final ResultSet res = query("SELECT s3lastEvent FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
             }

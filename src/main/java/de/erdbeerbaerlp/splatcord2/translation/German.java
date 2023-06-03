@@ -11,8 +11,6 @@ public class German extends EnglishBase {
         footer_closed = "Geschlossen";
         unknownCommand = "Unbekannter Befehl";
         noAdminPerms = "Du benötigst Administrative Berechtigungen (Server verwalten) um diesen Befehl auszuführen!";
-        stageFeedMsg = "Aktuelle Arenen werden nun regelmäßig in diesen Kanal gesendet";
-        salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet";
         languageSetMessage = "Die Sprache dieses Servers ist nun auf Deutsch eingestellt";
         unknownLanguage = "Du hast keine valide Sprache angegeben.";
         deleteSuccessful = "Erfolgreich gelöscht!";
@@ -24,10 +22,10 @@ public class German extends EnglishBase {
         splatnetCooldown = "Der TentaWorld-Befehl ist gerade im Cooldown. Versuche es in ein paar Minuten erneut.";
         cmdSettingsLang = "Ändert die Botsprache für diesen Server";
         cmdInviteDesc = "Sendet den Einladungslink des Bots";
-        cmdSetsalmonDesc = "Markiert einen Kanal für SalmonRun Benachrichtigungen";
-        cmdDelsalmonDesc = "Löscht den gesetzten SalmonRun-Kanal";
-        cmdSetstageDesc = "Markiert einen Kanal für Arena benachrichtigungen";
-        cmdDelstageDesc = "Löscht den gesetzten Arena-Kanal";
+        cmdSetsalmonDesc = "(Veraltet -> /settings) Markiert einen Kanal für SalmonRun Benachrichtigungen";
+        cmdDelsalmonDesc = "(Veraltet -> /settings) Löscht den gesetzten SalmonRun-Kanal";
+        cmdSetstageDesc = "(Veraltet -> /settings) Markiert einen Kanal für Arena benachrichtigungen";
+        cmdDelstageDesc = "(Veraltet -> /settings) Löscht den gesetzten Arena-Kanal";
         cmdCodeDesc = "Generiert einen zufälligen Privatkampf-code";
         cmdCodeArgDesc = "Code vor anderen verstecken? (Standart: wird angezeigt)";
         cmdRotationDesc = "Sendet die aktuell aktiven Arenen und die nächsten Rotationen";
@@ -82,7 +80,7 @@ public class German extends EnglishBase {
         cmdProfileMissingFC = "%s hat noch keinen Switch Freundescode festgelegt.";
         cmdProfileFCSet = "Switch Freundescode gesetzt auf ";
         cmdSettingsDesc = "Bearbeite Servereinstellungen (z.B. Sprache)";
-        cmdSettingsDelMsg = "Alte Rotations-Nachrichten Löschen?";
+        cmdSettingsDelMsg = "Alte Rotations-Nachrichten Löschen? Standard: Ja";
         cmdSettingsDelEnable = "Alte Rotations-Nachrichten werden jetzt aus dem channel gelöscht";
         cmdSettingsDelDisable = "Alte Rotations-Nachrichten werden jetzt im channel belassen";
         cmdSettingsArgMissing = "Nicht genug Parameter angegeben, Einstellungen wurden nicht verändert";
@@ -95,7 +93,7 @@ public class German extends EnglishBase {
         now = "Aktuell";
         cmdRandomMode = "Generiert einen zufälligen Privatkampf-Modus";
         cmdRandomModeVersion = "Ziel Splatoon-Version, Standart: Splatoon 2";
-        cmdRandomPrivateMode = "Modus";
+        mode = "Modus";
         weaponSpecial = "Spezialwaffe";
         weaponSub = "Sekundärwaffe";
         cmdRandomNumMin = "Kleinste zu generierende Zahl (inklusiv). 0 wenn nicht angegeben";
@@ -127,11 +125,6 @@ public class German extends EnglishBase {
         cmdViewFC = "Sendet deinen Freundescode";
         cmdViewNNID = "Sendet deine Nintendo Network ID";
         cmdViewPNID = "Sendet deine Pretendo Network ID";
-
-        stageFeedMsgTemporary = "Aktuelle Arenen werden nun, sobald verfügbar, regelmäßig in diesen Kanal gesendet";
-        salmonFeedMsgTemporary = "Aktuelle Salmon Runs werden nun, sobald verfügbar, in diesen Kanal gesendet";
-        cmdSetstageDescTemporary = "Markiert einen Kanal für Arena benachrichtigungen, sobald sie verfügbar sind";
-        cmdSetsalmonDescTemporary = "Markiert einen Kanal für SalmonRun Benachrichtigungen, sobald sie verfügbar sind";
         noTranslations = "Für Splatoon 3 gibt es momentan noch keine Übersetzungen";
         cmdProfileCatalogLevelDesc = "Dein Katalog-Level";
         cmdProfileTableturfLevelSet = "Revierdecks-Level gesetzt auf ";
@@ -164,6 +157,22 @@ public class German extends EnglishBase {
         cmdSplatnet3theDailyDrop = "Heutige Auswahl";
         cmdProfileSwitchFCFormatNotValid = "Dein Switch Freundescode ist ungültig!";
         eggstraTitle = "Team-Wettkampf";
+        eventTimeTitle = "Zeiträume";
+        cmdSettingsHeader = "Passe deine Servereinstellungen hier an. Beachte, dass die Kanaleinstellungen nicht den aktuellen Kanal anzeigen können";
+        menu = "Menü";
+        cmdSettingsMenuGeneric = "Allgemein";
+        cmdSettingsMenuReset = "Kanäle Zurücksetzen";
+        yes = "Ja";
+        no = "Nein";
+        clearStage = "Lösche %game% Rotations-Kanal";
+        clearSalmon = "Lösche %game% Salmon-Run-Kanal";
+        clearEvent = "Lösche %game% Challenge-Kanal";
+        cmdSettingsMenuHeader = "Wähle Einstellungen";
+        cmdSetLegacy = "Dieser Befehl ist veraltet und wird in einem Zukünftigen Update entfernt. Bitte verwende stattdessen den aktualisierten /settings befehl";
+        stages = "Arenen";
+
+        stageFeedMsg = "Aktuelle Arenen werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
+        salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
     }
 
 

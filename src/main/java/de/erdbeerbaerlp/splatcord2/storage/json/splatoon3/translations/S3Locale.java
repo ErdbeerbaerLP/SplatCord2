@@ -12,6 +12,7 @@ public class S3Locale {
     public HashMap<String, TranslationNode> gear;
     public HashMap<String, TranslationNode> powers;
     public HashMap<String, SplatfestTranslation> festivals;
+    public HashMap<String, EventTranslation> events;
 
     public SplatfestTranslation.SplatfestTeamTranslation getFestTeam(final String base64){
         if(base64 == null) return null;

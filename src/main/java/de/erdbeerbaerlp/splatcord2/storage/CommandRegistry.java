@@ -44,13 +44,14 @@ public class CommandRegistry {
         baseCommandClasses.add(ViewFCCommand.class);
         baseCommandClasses.add(SplatfestCommand.class);
         baseCommandClasses.add(SplatfestDebugCommand.class);
+        baseCommandClasses.add(EventCommand.class);
     }
 
     public static void setCommands(Guild g) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(g.getIdLong()));
         final ArrayList<BaseCommand> commands = new ArrayList<>();
         for (Class<? extends BaseCommand> clazz : baseCommandClasses) {
-            if (clazz == SplatfestCommand.class || clazz == SplatfestDebugCommand.class) {
+            if (clazz == SplatfestDebugCommand.class) {
                 if (!Config.instance().discord.betaServers.contains(g.getId())) continue;
             }
             try {

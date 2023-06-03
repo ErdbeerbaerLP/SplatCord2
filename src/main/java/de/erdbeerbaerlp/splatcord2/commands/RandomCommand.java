@@ -190,7 +190,7 @@ public class RandomCommand extends BaseCommand {
                 }
                 shuffleArray(playerArray);
                 final StringBuilder privateString = new StringBuilder();
-                privateString.append(lang.botLocale.cmdRandomPrivateMode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
+                privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
                 privateString.append(lang.botLocale.cmdRandomPrivateAlpha + ":\n");
                 privateString.append("[" + playerArray[0] + "] ");
                 if (genWeapons)

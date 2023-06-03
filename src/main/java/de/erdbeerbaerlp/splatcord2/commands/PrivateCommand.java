@@ -24,11 +24,9 @@ import java.util.Random;
 public class PrivateCommand extends BaseCommand {
 
     public PrivateCommand(Locale l) {
-        super("private", l.botLocale.cmdPrivateDesc);//
-
+        super("private", l.botLocale.cmdPrivateDesc);
         final SubcommandData join = new SubcommandData("join", l.botLocale.cmdPrivateJoinDesc);
         join.addOption(OptionType.STRING, "id", l.botLocale.cmdPrivateRoomID, true);
-
         final SubcommandData leave = new SubcommandData("leave", l.botLocale.cmdPrivateLeaveDesc);
         final OptionData userOption = new OptionData(OptionType.USER, "user", l.botLocale.targetUser, true);
         final SubcommandData add = new SubcommandData("add", l.botLocale.cmdPrivateAddDesc);
@@ -82,7 +80,7 @@ public class PrivateCommand extends BaseCommand {
             spectator.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
             curPlayer++;
         }
-        b.setTitle(lang.botLocale.cmdRandomPrivateMode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
+        b.setTitle(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
         b.addField(lang.botLocale.cmdRandomPrivateAlpha, alpha.toString(), true);
         b.addField(lang.botLocale.cmdRandomPrivateBravo, bravo.toString(), true);
         if (!spectator.toString().isEmpty())

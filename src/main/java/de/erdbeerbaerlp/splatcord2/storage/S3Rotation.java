@@ -2,6 +2,7 @@ package de.erdbeerbaerlp.splatcord2.storage;
 
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.CurrentSplatfest;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.EventSchedule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Schedule3;
 
 public class S3Rotation {
@@ -12,8 +13,9 @@ public class S3Rotation {
     private final Coop3 coop;
     private final Coop3 eggstraCoop;
     private final CurrentSplatfest splatfest;
+    private final EventSchedule event;
 
-    public S3Rotation(Schedule3 regular, Schedule3 bankara, Schedule3 xBattle, Coop3 coop, Coop3 eggstraCoop, Schedule3 fest, CurrentSplatfest splatfest) {
+    public S3Rotation(Schedule3 regular, Schedule3 bankara, Schedule3 xBattle, Coop3 coop, Coop3 eggstraCoop, Schedule3 fest, CurrentSplatfest splatfest, EventSchedule event) {
 
         this.regular = regular;
         this.bankara = bankara;
@@ -22,6 +24,7 @@ public class S3Rotation {
         this.fest = fest;
         this.coop = coop;
         this.splatfest = splatfest;
+        this.event = event;
     }
 
     public CurrentSplatfest getSplatfest() {
@@ -46,6 +49,10 @@ public class S3Rotation {
 
     public Coop3 getCoop() {
         return coop;
+    }
+
+    public EventSchedule getEvent() {
+        return event;
     }
 
     public Coop3 getEggstraCoop() {

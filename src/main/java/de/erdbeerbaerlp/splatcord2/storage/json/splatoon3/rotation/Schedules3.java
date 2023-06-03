@@ -14,8 +14,8 @@ public class Schedules3 {
         public SchedulesRoot regularSchedules = new SchedulesRoot();
         public SchedulesRoot bankaraSchedules = new SchedulesRoot();
         public SchedulesRoot xSchedules = new SchedulesRoot();
-        public SchedulesRoot leagueSchedules = new SchedulesRoot();
         public SchedulesRoot festSchedules = new SchedulesRoot();
+        public EventSchdulesRoot eventSchedules = new EventSchdulesRoot();
 
         public CoopRoot coopGroupingSchedule = new CoopRoot();
 

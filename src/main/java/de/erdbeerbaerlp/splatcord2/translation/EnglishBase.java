@@ -16,12 +16,6 @@ public class EnglishBase {
     public String salmonRunTitle = "Salmon Run";
     public String unknownCommand = "Unknown command";
     public String noAdminPerms = "You need administrative permissions (manage server) to execute this command!";
-    public String stageFeedMsg = "New stage rotations will now be sent here";
-    public String salmonFeedMsg = "New Salmon Runs will now be sent here";
-    public String stageFeedMsgTemporary = "New stage rotations will now be sent here, as soon as they get implemented!";
-    public String salmonFeedMsgTemporary = "New Salmon Runs will now be sent here, as soon as it gets implemented!";
-    public String cmdSetstageDescTemporary = "Marks this channel for splat 3 rotations as soon as they get available";
-    public String cmdSetsalmonDescTemporary = "Marks this channel for splat 3 salmon runs as soon as they get available";
     public String languageSetMessage = "Your server's language is now set to english";
     public String unknownLanguage = "You did not specify an valid language.";
     public String deleteSuccessful = "Successfully deleted";
@@ -36,10 +30,10 @@ public class EnglishBase {
     public String cmdSettingsSplatfestRoleIcon = "Emable/disable the Splatfest role icons (only works if you have the Splatfest role enabled)";
     public String cmdSettingsSplatfestTeam = "Set the role to use for splatfest teams. If unset or deleted, bot will create roles.";
     public String cmdInviteDesc = "Gives you the invite URL for this bot";
-    public String cmdSetstageDesc = "Marks this channel as the stage notification channel";
-    public String cmdDelstageDesc = "Deletes the set stage notification channel";
-    public String cmdSetsalmonDesc = "Marks this channel as the salmon run notification channel";
-    public String cmdDelsalmonDesc = "Deletes the currently set SalmonRun channel";
+    public String cmdSetstageDesc = "(Legacy -> /settings) Marks this channel as the stage notification channel";
+    public String cmdDelstageDesc = "(Legacy -> /settings) Deletes the set stage notification channel";
+    public String cmdSetsalmonDesc = "(Legacy -> /settings) Marks this channel as the salmon run notification channel";
+    public String cmdDelsalmonDesc = "(Legacy -> /settings) Deletes the currently set SalmonRun channel";
     public String cmdCodeDesc = "Generates an random private battle code";
     public String cmdCodeArgDesc = "Hide code from others? (Default: show)";
     public String cmdRotationDesc = "Sends the currently active stages plus the next two rotations";
@@ -104,7 +98,7 @@ public class EnglishBase {
     public String cmdProfileMissingFC = "%s did not configure an Switch Friend Code yet.";
     public String cmdProfileFCSet = "Set Friend Code to ";
     public String cmdSettingsDesc = "Edit server settings (ex. language)";
-    public String cmdSettingsDelMsg = "How should messages be updated?";
+    public String cmdSettingsDelMsg = "Delete old messages? Default: Yes";
     public String cmdSettingsDelEnable = "Old rotation messages will now be deleted when sending new ones";
     public String cmdSettingsDelDisable = "Old rotation messages will be kept when sending new ones";
     public String cmdSettingsArgMissing = "Not enough arguments supplied, settings have not been modified";
@@ -116,7 +110,7 @@ public class EnglishBase {
     public String now = "Now";
     public String cmdRandomMode = "Generate random private battle mode";
     public String cmdRandomModeVersion = "Target splatoon version, Defaults to Splatoon 2";
-    public String cmdRandomPrivateMode = "Mode";
+    public String mode = "Mode";
     public String weaponSub = "Sub";
     public String weaponSpecial = "Special";
     public String cmdRandomNumMin = "Smallest possible number to be generated (inclusive), defaults to 0";
@@ -184,6 +178,26 @@ public class EnglishBase {
     public String cmdXrankDesc2 = "Show X-Rank Leaderboard of the Takoroka Division (Japan, Hong Kong, South Korea, Australia and New Zealand)";
     public String cmdXrankMode = "Game Mode of the Leaderboard";
     public String eggstraTitle = "Eggstra Work";
+    public String eventTimeTitle = "Time Ranges";
+    public String cmdEventDesc = "Shows the current and next challenges";
+    public String cmdSettingsHeader = "Change your server's settings here. Note that channel selection menus can't show the current selections";
+    public String menu = "Menu";
+    public String cmdSettingsMenuGeneric = "Generic";
+    public String cmdSettingsMenuReset = "Reset Channels";
+    public String no = "No";
+    public String yes = "Yes";
+    public String clearStage = "Clear %game% Stage Channel";
+    public String stage = "%game% Stage Channel";
+    public String salmon = "%game% Salmon-Run Channel";
+    public String event = "%game% Challenge Channel";
+    public String clearSalmon = "Clear %game% Salmon-Run Channel";
+    public String clearEvent = "Clear %game% Challenge Channel";
+    public String cmdSettingsMenuHeader = "Select Setting";
+    public String cmdSetLegacy = "NOTE: This command is deprecated and will be removed in the future. Please resort to the updated /settings command instead";
+
+    public String stageFeedMsg = "New stage rotations will now be sent here\n"+cmdSetLegacy;
+    public String salmonFeedMsg = "New Salmon Runs will now be sent here\n"+cmdSetLegacy;
+    public String stages = "Stages";
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {
