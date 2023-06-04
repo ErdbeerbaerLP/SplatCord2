@@ -145,6 +145,7 @@ public class MessageUtil {
         }
     }
 public static void sendS3EventRotationFeed(long serverid, long channel, S3Rotation currentRotation) {
+        if(currentRotation.getEvent() == null) return;
         final GuildMessageChannel ch = (GuildMessageChannel) bot.jda.getGuildChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
