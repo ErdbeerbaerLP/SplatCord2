@@ -51,7 +51,7 @@ public class Locale {
         for (String s : gear.keySet()) {
             final JsonElement g = gear.get(s);
             try {
-                final int i = Integer.parseInt(s);
+                Integer.parseInt(s);
             } catch (NumberFormatException e) {
                 for (Map.Entry<String, JsonElement> s2 : g.getAsJsonObject().entrySet()) {
                     try {

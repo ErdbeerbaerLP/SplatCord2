@@ -13,6 +13,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSch
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.SplatNet;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.SplatNet3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
@@ -122,6 +123,9 @@ public class Main {
         con3.setRequestProperty("User-Agent", Main.USER_AGENT);
         con3.connect();
         splatNet3 = Main.gson.fromJson(new InputStreamReader(con3.getInputStream()), SplatNet3.class);
+
+        System.out.println("Downloading Loadout.ink (slushiegoose.github.io) data");
+        LInk3.init();
         try {
             ScheduleUtil.updateSpl3Fests();
             splatoon3inkStatus = true;
