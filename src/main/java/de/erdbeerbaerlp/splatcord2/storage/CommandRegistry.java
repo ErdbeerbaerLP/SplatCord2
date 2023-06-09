@@ -45,7 +45,7 @@ public class CommandRegistry {
         baseCommandClasses.add(SplatfestCommand.class);
         baseCommandClasses.add(SplatfestDebugCommand.class);
         baseCommandClasses.add(EventCommand.class);
-        baseCommandClasses.add(TestCommand.class);
+        //baseCommandClasses.add(TestCommand.class);
     }
 
     public static void setCommands(Guild g) {
