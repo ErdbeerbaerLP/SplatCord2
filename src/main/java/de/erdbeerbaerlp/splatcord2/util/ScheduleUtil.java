@@ -99,7 +99,7 @@ public class ScheduleUtil {
         }
         for (EventSchedule s : schedules3.data.eventSchedules.nodes) {
             final EventTimePeriod[] timePeriods = s.timePeriods;
-            if (timePeriods != null)
+            if (timePeriods != null && timePeriods.length > 0)
                 if (timePeriods[0].getStartTime() <= timestamp && timePeriods[timePeriods.length - 1].getEndTime() > timestamp) {
                     event = s;
                     break;

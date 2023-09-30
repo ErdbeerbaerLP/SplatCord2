@@ -170,8 +170,8 @@ public class German extends EnglishBase {
         cmdSettingsMenuHeader = "Wähle Einstellungen";
         cmdSetLegacy = "Dieser Befehl ist veraltet und wird in einem Zukünftigen Update entfernt. Bitte verwende stattdessen den aktualisierten /settings befehl";
         stages = "Arenen";
-
         stageFeedMsg = "Aktuelle Arenen werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
+        salmonPrediction = "Vorhersage: ";
         salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
     }
 

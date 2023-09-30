@@ -35,9 +35,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
 
@@ -157,15 +156,24 @@ public class Main {
         }
 
         startTime = Instant.now();
+        Timer ti = new Timer();
 
-        final DataUpdateThread dataUpdateThread = new DataUpdateThread();
-        dataUpdateThread.start();
+
+        final Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR, c.get(Calendar.HOUR+1));
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 10);
         final RotationThread rotationThread = new RotationThread();
-        rotationThread.start();
         final SalmonrunThread salmonrunThread = new SalmonrunThread();
-        salmonrunThread.start();
+        final DataUpdateThread dataUpdateThread = new DataUpdateThread();
         final SplatnetOrderThread splatnetOrderThread = new SplatnetOrderThread();
-        splatnetOrderThread.start();
+        rotationThread.run();
+        salmonrunThread.run();
+        ti.scheduleAtFixedRate(rotationThread, c.getTime(), TimeUnit.MINUTES.toMillis(60));
+        ti.scheduleAtFixedRate(salmonrunThread, c.getTime(), TimeUnit.MINUTES.toMillis(60));
+        c.set(Calendar.SECOND, 30);
+        ti.scheduleAtFixedRate(dataUpdateThread, c.getTime(), TimeUnit.MINUTES.toMillis(60));
+        ti.scheduleAtFixedRate(splatnetOrderThread, TimeUnit.SECONDS.toMillis(10), TimeUnit.MINUTES.toMillis(5));
     }
 
     public static User getUserById(Long userid) {

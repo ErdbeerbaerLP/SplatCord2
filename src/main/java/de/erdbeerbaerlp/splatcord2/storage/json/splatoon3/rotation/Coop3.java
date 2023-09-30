@@ -11,7 +11,7 @@ import java.time.Instant;
 public class Coop3 {
     public String startTime;
     public String endTime;
-
+    public String __splatoon3ink_king_salmonid_guess;
     public CoopSetting setting;
     private byte[] outImage = new byte[0];
     public String outImageURL;

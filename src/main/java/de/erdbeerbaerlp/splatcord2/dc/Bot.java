@@ -2,10 +2,7 @@ package de.erdbeerbaerlp.splatcord2.dc;
 
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.commands.*;
-import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
-import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
-import de.erdbeerbaerlp.splatcord2.storage.Config;
-import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
+import de.erdbeerbaerlp.splatcord2.storage.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
@@ -14,7 +11,10 @@ import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.*;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.GenericEvent;
@@ -185,52 +185,51 @@ public class Bot implements EventListener {
                 }
             }
         } else if (event instanceof EntitySelectInteractionEvent ev) {
-            switch (ev.getComponentId()){
-                case "s1channel"->{
+            switch (ev.getComponentId()) {
+                case "s1channel" -> {
                     Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
                     ev.getInteraction().deferEdit().queue();
                 }
-                case "s2channel"->{
+                case "s2channel" -> {
                     Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS2RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentRotation());
                     ev.getInteraction().deferEdit().queue();
                 }
-                case "s3channel"->{
+                case "s3channel" -> {
                     Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS3RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
                     ev.getInteraction().deferEdit().queue();
                 }
-                case "s2salmon"->{
+                case "s2salmon" -> {
                     Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendSalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     ev.getInteraction().deferEdit().queue();
                 }
-                case "s3salmon"->{
+                case "s3salmon" -> {
                     Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS3SalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     ev.getInteraction().deferEdit().queue();
 
                 }
-                case "s3event"->{
+                case "s3event" -> {
                     if (checkPerms(ev)) return;
                     Main.iface.setS3EventChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS3EventRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
                     ev.getInteraction().deferEdit().queue();
                 }
-                default ->
-                        ev.reply("Selected " + ev.getValues().get(0).getAsMention()).setEphemeral(true).queue();
+                default -> ev.reply("Selected " + ev.getValues().get(0).getAsMention()).setEphemeral(true).queue();
             }
         } else if (event instanceof StringSelectInteractionEvent ev) {
             switch (ev.getComponentId()) {
                 case "language" -> {
-                    System.out.println(ev.getInteraction().getValues().get(0)+" language");
-                    Main.iface.setServerLang(ev.getGuild().getIdLong(),BotLanguage.fromInt(Integer.parseInt(ev.getInteraction().getValues().get(0))));
+                    System.out.println(ev.getInteraction().getValues().get(0) + " language");
+                    Main.iface.setServerLang(ev.getGuild().getIdLong(), BotLanguage.fromInt(Integer.parseInt(ev.getInteraction().getValues().get(0))));
                     ev.getInteraction().editMessage(SettingsCommand.getMenu("generic", Main.iface.getServerLang(ev.getGuild().getIdLong()))).queue();
                     CommandRegistry.setCommands(ev.getGuild());
                     return;
                 }
-                case "msgdelete"->{
+                case "msgdelete" -> {
                     final boolean deleteMsgs = ev.getValues().get(0).equals("yes");
                     Main.iface.setDeleteMessage(ev.getGuild().getIdLong(), deleteMsgs);
                     ev.getInteraction().deferEdit().queue();
@@ -358,12 +357,13 @@ public class Bot implements EventListener {
 
     private boolean checkPerms(final EntitySelectInteractionEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-        if (!ev.getGuild().getMember(ev.getJDA().getSelfUser()).hasPermission(ev.getGuild().getChannelById(GuildMessageChannel.class,ev.getValues().get(0).getIdLong()), Permission.MESSAGE_SEND)) {
+        if (!ev.getGuild().getMember(ev.getJDA().getSelfUser()).hasPermission(ev.getGuild().getChannelById(GuildMessageChannel.class, ev.getValues().get(0).getIdLong()), Permission.MESSAGE_SEND)) {
             ev.reply(lang.botLocale.noWritePerms).queue();
             return true;
         }
         return false;
     }
+
     public Map.Entry<Long, Long> sendS2SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
         final CompletableFuture<Message> submitMsg = submitMessage(new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 2)")
@@ -388,9 +388,14 @@ public class Bot implements EventListener {
     public Map.Entry<Long, Long> sendS3SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
-        final GuildMessageChannel ch = jda.getChannelById(GuildMessageChannel.class,channel);
+        final GuildMessageChannel ch = jda.getChannelById(GuildMessageChannel.class, channel);
         CompletableFuture<Message> submitMsg = null;
         if (ch != null) {
+            final String prediction = switch (currentS3Rotation.getCoop().__splatoon3ink_king_salmonid_guess) {
+                case "Cohozuna" -> String.valueOf(Emote.COHOZUNA);
+                case "Horrorboros" -> String.valueOf(Emote.HORRORBOROS);
+                default -> String.valueOf(Emote.ERROR_CONTACT_DEVELOPER);
+            };
             final ArrayList<MessageEmbed> embeds = new ArrayList<>();
             embeds.add(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")
                     .addField(lang.botLocale.salmonStage, lang.s3locales.stages.get(currentS3Rotation.getCoop().setting.coopStage.id).name, true)
@@ -401,6 +406,7 @@ public class Bot implements EventListener {
                                     lang.s3locales.weapons.get(currentS3Rotation.getCoop().setting.weapons[3].__splatoon3ink_id).name
                             , true)
                     .setImage(currentS3Rotation.getCoop().outImageURL)
+                    .setDescription(lang.botLocale.salmonPrediction + prediction)
                     .setFooter(lang.botLocale.footer_ends)
                     .setTimestamp(Instant.ofEpochSecond(currentS3Rotation.getCoop().getEndTime()))
                     .build());

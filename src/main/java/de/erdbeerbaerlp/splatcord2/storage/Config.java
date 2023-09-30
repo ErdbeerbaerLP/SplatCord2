@@ -71,7 +71,7 @@ public class Config {
         public String token = "NOT SET";
         @TomlComment("To prevent uploading hundreds of times, images will be uploaded here and then referenced by url only")
         public String imageChannelID = "NOT SET";
-        @TomlComment({"Bot status messages shown in discord", "", "Type can be PLAYING, WATCHING, STREAMING (requires streamingURL), LISTENING, COMPETING"})
+        @TomlComment({"Bot status messages shown in discord", "", "Type can be PLAYING, WATCHING, STREAMING (requires streamingURL), LISTENING, COMPETING, CUSTOM_STATUS"})
         public ArrayList<Status> botStatus = Discord.defaultStatuses;
         @TomlComment("Server IDs allowed to use in-beta commands and features")
         public ArrayList<String> betaServers = new ArrayList<>(Collections.singleton("0"));

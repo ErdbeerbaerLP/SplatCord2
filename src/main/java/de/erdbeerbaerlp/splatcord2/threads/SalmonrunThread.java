@@ -5,16 +5,15 @@ import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 
-import java.util.concurrent.TimeUnit;
+import java.util.TimerTask;
 
 import static de.erdbeerbaerlp.splatcord2.Main.coop_schedules;
 import static de.erdbeerbaerlp.splatcord2.Main.iface;
 
-public class SalmonrunThread extends Thread {
+public class SalmonrunThread extends TimerTask {
     @Override
     public void run() {
         long salmonEndTime = coop_schedules.details[0].end_time;
-        while (true) {
             final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
             try {
                 //Salmon run data
@@ -59,11 +58,5 @@ public class SalmonrunThread extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            try {
-                sleep(TimeUnit.MINUTES.toMillis(1));
-            } catch (InterruptedException e) {
-                return;
-            }
-        }
     }
 }

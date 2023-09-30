@@ -197,6 +197,7 @@ public class EnglishBase {
 
     public String stageFeedMsg = "New stage rotations will now be sent here\n"+cmdSetLegacy;
     public String salmonFeedMsg = "New Salmon Runs will now be sent here\n"+cmdSetLegacy;
+    public String salmonPrediction = "Prediction: ";
     public String stages = "Stages";
 
     public String getS1MapName(int mapid) {
