@@ -134,8 +134,7 @@ public class BossFileUtil {
         }
     }
 
-    public static Byml getStageByml() throws Exception {
-        final String url = "https://npts.app.nintendo.net/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en";
+    public static Byml getStageByml(final String url) throws Exception {
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         f.setNamespaceAware(false);
         f.setValidating(false);
@@ -168,7 +167,7 @@ public class BossFileUtil {
 
 
         final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
-        final File boss = new File("./boss.byml");
+        final File boss = new File("./boss."+url1.getHost()+".byml");
         try (final FileOutputStream os = new FileOutputStream(boss)) {
             os.write(test.content);
         } catch (IOException e) {
@@ -177,6 +176,48 @@ public class BossFileUtil {
 
         final BymlFile parse = BymlFile.parse(boss.getAbsolutePath());
         return Main.gson.fromJson(parse.toJson(), Byml.class);
+
+    }
+    public static Byml getFestByml(final String url) throws Exception {
+        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        f.setNamespaceAware(false);
+        f.setValidating(false);
+        final DocumentBuilder b = f.newDocumentBuilder();
+        final URL url1 = new URL(url);
+        final HttpsURLConnection urlConnection = (HttpsURLConnection) url1.openConnection();
+
+        SSLBypass.allowAllSSL(urlConnection);
+        urlConnection.addRequestProperty("Accept", "application/xml");
+        Document doc = b.parse(urlConnection.getInputStream());
+        doc.getDocumentElement().normalize();
+        final Element files = (Element) doc.getDocumentElement().getElementsByTagName("Files").item(0);
+        final Element file = (Element) files.getElementsByTagName("File").item(0);
+
+        final URL rotationURL = new URL(file.getElementsByTagName("Url").item(0).getTextContent());
+        final HttpsURLConnection conn = (HttpsURLConnection) rotationURL.openConnection();
+        SSLBypass.allowAllSSL(conn);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (InputStream is = conn.getInputStream()) {
+            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+            int n;
+
+            while ((n = is.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
+        } catch (IOException e) {
+            System.err.printf("Failed while reading bytes from %s: %s", rotationURL.toExternalForm(), e.getMessage());
+            e.printStackTrace();
+        }
+
+
+        final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
+        final File boss = new File("./optdat."+url1.getHost()+".byml");
+        try (final FileOutputStream os = new FileOutputStream(boss)) {
+            os.write(test.content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
 
     }
 

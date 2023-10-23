@@ -11,8 +11,7 @@ import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import java.time.Instant;
 import java.util.TimerTask;
 
-import static de.erdbeerbaerlp.splatcord2.Main.iface;
-import static de.erdbeerbaerlp.splatcord2.Main.s1rotations;
+import static de.erdbeerbaerlp.splatcord2.Main.*;
 
 public class RotationThread extends TimerTask {
     @Override
@@ -21,6 +20,7 @@ public class RotationThread extends TimerTask {
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         final int currentS1RotationInt = RotationTimingUtil.getRotationForInstant(Instant.now());
         final Phase currentS1Rotation = s1rotations.root.Phases[currentS1RotationInt];
+        final Phase currentS1PRotation = s1rotationsPretendo.root.Phases[currentS1RotationInt];
 
         try {
             //Splatoon 1 Rotations
@@ -34,6 +34,24 @@ public class RotationThread extends TimerTask {
                     }
                 });
                 Config.instance().doNotEdit.lastS1Rotation = currentS1RotationInt;
+                Config.instance().saveConfig();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            //Splatoon 1 Pretendo Rotations
+            if (iface.status.isDBAlive() && currentS1RotationInt != Config.instance().doNotEdit.lastS1PRotation) {
+                iface.getAllS1PMapChannels().forEach((serverid, channel) -> {
+                    try {
+                        MessageUtil.sendS1PRotationFeed(serverid, channel, currentS1PRotation);
+                    } catch (
+                            Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
+                        e.printStackTrace();
+                    }
+                });
+                Config.instance().doNotEdit.lastS1PRotation = currentS1RotationInt;
                 Config.instance().saveConfig();
             }
 

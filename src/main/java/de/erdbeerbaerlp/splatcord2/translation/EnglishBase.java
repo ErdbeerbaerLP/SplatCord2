@@ -218,7 +218,7 @@ public class EnglishBase {
             case 13 -> "Ancho-V Games";
             case 14 -> "Piranha Pit";
             case 15 -> "Mahi-Mahi Resort";
-            default -> "Unknown Map #" + mapid;
+            default -> "??Map ID #" + mapid;
         };
     }
 

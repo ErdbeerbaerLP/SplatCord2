@@ -42,6 +42,8 @@ public class DatabaseInterface implements AutoCloseable {
                 "`deleteMessage` tinyint not null default 1 COMMENT 'Whether or not the bot should delete the old schedule message',\n" +
                 "`s1mapchannel` bigint DEFAULT NULL,\n" +
                 "`lastStage1` bigint DEFAULT NULL,\n" +
+                "`s1Pmapchannel` bigint DEFAULT NULL,\n" +
+                "`lastStage1P` bigint DEFAULT NULL,\n" +
                 "`s3mapchannel` bigint DEFAULT NULL,\n" +
                 "`lastStage3` bigint DEFAULT NULL,\n" +
                 "`s3salmonchannel` bigint DEFAULT NULL,\n" +
@@ -219,50 +221,6 @@ public class DatabaseInterface implements AutoCloseable {
         return true;
     }
 
-    public long getS2StageChannel(final long serverID) {
-        try (final ResultSet res = query("SELECT mapchannel FROM servers WHERE serverid = " + serverID)) {
-            if (res.next()) {
-                return res.getLong(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public long getS1StageChannel(final long serverID) {
-        try (final ResultSet res = query("SELECT s1mapchannel FROM servers WHERE serverid = " + serverID)) {
-            if (res.next()) {
-                return res.getLong(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public long getSalmonChannel(final long serverID) {
-        try (final ResultSet res = query("SELECT salchannel FROM servers WHERE serverid = " + serverID)) {
-            if (res.next()) {
-                return res.getLong(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    public long getS3SalmonChannel(final long serverID) {
-        try (final ResultSet res = query("SELECT s3rsalchannel FROM servers WHERE serverid = " + serverID)) {
-            if (res.next()) {
-                return res.getLong(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
     public void setDeleteMessage(long serverID, boolean deleteMessage) {
         runUpdate("UPDATE servers SET deleteMessage = " + (deleteMessage ? 1 : 0) + " WHERE serverid = " + serverID);
     }
@@ -274,12 +232,17 @@ public class DatabaseInterface implements AutoCloseable {
     public void setS3StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s3mapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
-   public void setS3EventChannel(long serverID, Long channelID) {
+
+    public void setS3EventChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s3eventChannel = " + channelID + " WHERE serverid = " + serverID);
     }
 
     public void setS1StageChannel(long serverID, Long channelID) {
         runUpdate("UPDATE servers SET s1mapchannel = " + channelID + " WHERE serverid = " + serverID);
+    }
+
+    public void setS1PStageChannel(long serverID, Long channelID) {
+        runUpdate("UPDATE servers SET s1Pmapchannel = " + channelID + " WHERE serverid = " + serverID);
     }
 
     public HashMap<Long, Long> getAllS2MapChannels() {
@@ -311,6 +274,7 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return mapChannels;
     }
+
     public HashMap<Long, Long> getAllS3EventChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,s3eventChannel FROM servers")) {
@@ -329,6 +293,20 @@ public class DatabaseInterface implements AutoCloseable {
     public HashMap<Long, Long> getAllS1MapChannels() {
         final HashMap<Long, Long> mapChannels = new HashMap<>();
         try (final ResultSet res = query("SELECT serverid,s1mapchannel FROM servers")) {
+            while (res != null && res.next()) {
+                final long serverid = res.getLong(1);
+                final long channelid = res.getLong(2);
+                if (!res.wasNull())
+                    mapChannels.put(serverid, channelid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapChannels;
+    }
+    public HashMap<Long, Long> getAllS1PMapChannels() {
+        final HashMap<Long, Long> mapChannels = new HashMap<>();
+        try (final ResultSet res = query("SELECT serverid,s1Pmapchannel FROM servers")) {
             while (res != null && res.next()) {
                 final long serverid = res.getLong(1);
                 final long channelid = res.getLong(2);
@@ -411,6 +389,10 @@ public class DatabaseInterface implements AutoCloseable {
 
     public void setLastS1RotationMessage(long serverID, long msgID) {
         runUpdate("UPDATE servers SET lastStage1 = " + msgID + " WHERE serverid = " + serverID);
+    }
+
+    public void setLastS1PRotationMessage(long serverID, long msgID) {
+        runUpdate("UPDATE servers SET lastStage1P = " + msgID + " WHERE serverid = " + serverID);
     }
 
     public HashMap<Long, Long> getAllSalmonChannels() {
@@ -497,6 +479,17 @@ public class DatabaseInterface implements AutoCloseable {
 
     public long getLastS1RotationMessage(long serverID) {
         try (final ResultSet res = query("SELECT lastStage1 FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getLong(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public long getLastS1PRotationMessage(long serverID) {
+        try (final ResultSet res = query("SELECT lastStage1P FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
                 return res.getLong(1);
             }

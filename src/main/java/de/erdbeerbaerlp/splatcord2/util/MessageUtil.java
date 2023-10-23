@@ -144,8 +144,9 @@ public class MessageUtil {
             System.err.println("Failed to send rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
         }
     }
-public static void sendS3EventRotationFeed(long serverid, long channel, S3Rotation currentRotation) {
-        if(currentRotation.getEvent() == null) return;
+
+    public static void sendS3EventRotationFeed(long serverid, long channel, S3Rotation currentRotation) {
+        if (currentRotation.getEvent() == null) return;
         final GuildMessageChannel ch = (GuildMessageChannel) bot.jda.getGuildChannelById(channel);
         if (ch == null) {
             System.out.println(serverid + " : Channel " + channel + " is null, removing...");
@@ -184,16 +185,17 @@ public static void sendS3EventRotationFeed(long serverid, long channel, S3Rotati
         addS3Embed(lang, r, emb);
         return new MessageCreateBuilder().setEmbeds(emb.build()).build();
     }
+
     public static MessageCreateData getS3EventMessage(final Long serverid, final S3Rotation r) {
         final Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        final EmbedBuilder emb = new EmbedBuilder().setTitle(Emote.EVENT+ lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).name)
-                        .setDescription("**"+lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).desc+"**\n"+lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).regulation.replace("<br />", "\n"))
-                .addField(lang.botLocale.mode, GameModeUtil.translateS3(lang,r.getEvent().leagueMatchSetting.vsRule.id),true )
+        final EmbedBuilder emb = new EmbedBuilder().setTitle(Emote.EVENT + lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).name)
+                .setDescription("**" + lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).desc + "**\n" + lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).regulation.replace("<br />", "\n"))
+                .addField(lang.botLocale.mode, GameModeUtil.translateS3(lang, r.getEvent().leagueMatchSetting.vsRule.id), true)
                 .addField(lang.botLocale.stages, lang.s3locales.stages.get(r.getEvent().leagueMatchSetting.vsStages[0].id).name +
                         ", " + lang.s3locales.stages.get(r.getEvent().leagueMatchSetting.vsStages[1].id).name, true);
         final StringBuilder b = new StringBuilder();
         for (EventTimePeriod tp : r.getEvent().timePeriods) {
-            b.append("<t:"+tp.getStartTime()+":f> (<t:"+tp.getStartTime()+":R>) - <t:"+tp.getEndTime()+":f> (<t:"+tp.getEndTime()+":R>)\n");
+            b.append("<t:" + tp.getStartTime() + ":f> (<t:" + tp.getStartTime() + ":R>) - <t:" + tp.getEndTime() + ":f> (<t:" + tp.getEndTime() + ":R>)\n");
         }
         emb.addField(lang.botLocale.eventTimeTitle, b.toString(), false);
         return new MessageCreateBuilder().setEmbeds(emb.build()).build();
@@ -252,9 +254,23 @@ public static void sendS3EventRotationFeed(long serverid, long channel, S3Rotati
     }
 
 
-    public static MessageCreateData getMapMessage(Long serverid, Phase currentRotation) {
+    public static MessageCreateData getS1Message(Long serverid, Phase currentRotation) {
         final Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 1)")
+        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 1 "+Emote.NINTENDO_NETWORK+")")
+                .addField(Emote.REGULAR +
+                                lang.game_modes.get("regular").name,
+                        lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
+                                ", " + lang.botLocale.getS1MapName(currentRotation.RegularStages[1].MapID.value)
+                        , true)
+                .addField(Emote.RANKED +
+                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang, currentRotation.GachiRule.value) + ")",
+                        lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
+                                ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
+                        , true).build()).build();
+    }
+    public static MessageCreateData getS1PMessage(Long serverid, Phase currentRotation) {
+        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        return new MessageCreateBuilder().setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 1 "+Emote.PRETENDO_NETWORK+")")
                 .addField(Emote.REGULAR +
                                 lang.game_modes.get("regular").name,
                         lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
@@ -293,10 +309,38 @@ public static void sendS3EventRotationFeed(long serverid, long channel, S3Rotati
                 });
             }
             final CompletableFuture<Message> msg = bot.sendMessage(
-                    getMapMessage(
+                    getS1Message(
                             serverid,
                             currentS1Rotation), channel);
             if (msg != null) msg.thenAccept((a) -> iface.setLastS1RotationMessage(serverid, a.getIdLong()));
+
+        } catch (InsufficientPermissionException e) {
+            final Guild guildById = bot.jda.getGuildById(serverid);
+            System.err.println("Failed to send s1 rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
+        }
+    }
+
+    public static void sendS1PRotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {
+        final GuildMessageChannel ch = (GuildMessageChannel) bot.jda.getGuildChannelById(channel);
+        if (ch == null) {
+            System.out.println(serverid + " : Channel " + channel + " is null, removing...");
+            iface.setS1PStageChannel(serverid, null);
+            return;
+        }
+        try {
+            final long lastRotationMessageID = iface.getLastS1PRotationMessage(serverid);
+            final boolean deleteMessage = iface.getDeleteMessage(serverid);
+            if (deleteMessage && lastRotationMessageID != 0) {
+                final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
+                message.submit().thenAccept((msg) -> {
+                    msg.delete().queue();
+                });
+            }
+            final CompletableFuture<Message> msg = bot.sendMessage(
+                    getS1PMessage(
+                            serverid,
+                            currentS1Rotation), channel);
+            if (msg != null) msg.thenAccept((a) -> iface.setLastS1PRotationMessage(serverid, a.getIdLong()));
 
         } catch (InsufficientPermissionException e) {
             final Guild guildById = bot.jda.getGuildById(serverid);

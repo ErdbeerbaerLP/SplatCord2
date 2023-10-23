@@ -18,10 +18,11 @@ public class SetstageCommand extends BaseCommand {
     public SetstageCommand(Locale l) {
         super("setstage", l.botLocale.cmdSetstageDesc);
         final SubcommandData splat1 = new SubcommandData("splatoon1", l.botLocale.cmdSetstageDesc);
+        final SubcommandData splat1p = new SubcommandData("splatoon1pretendo", l.botLocale.cmdSetstageDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSetstageDesc);
         final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSetstageDesc);
 
-        addSubcommands(splat2, splat1, splat3);
+        addSubcommands(splat2, splat1,splat1p, splat3);
     }
 
     @Override
@@ -41,6 +42,12 @@ public class SetstageCommand extends BaseCommand {
                     Main.iface.setS1StageChannel(guild.getIdLong(), channel.getIdLong());
                     ev.reply(lang.botLocale.stageFeedMsg).queue();
                     MessageUtil.sendS1RotationFeed(guild.getIdLong(), channel.getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
+                }
+                case "splatoon1pretendo" -> {
+                    if (checkPerms(ev, guild, lang, channel)) return;
+                    Main.iface.setS1PStageChannel(guild.getIdLong(), channel.getIdLong());
+                    ev.reply(lang.botLocale.stageFeedMsg).queue();
+                    MessageUtil.sendS1PRotationFeed(guild.getIdLong(), channel.getIdLong(), Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
                 }
                 case "splatoon2" -> {
                     if (checkPerms(ev, guild, lang, channel)) return;

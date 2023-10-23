@@ -191,6 +191,11 @@ public class Bot implements EventListener {
                     MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
                     ev.getInteraction().deferEdit().queue();
                 }
+                case "s1channelPretendo" -> {
+                    Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    MessageUtil.sendS1PRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
+                    ev.getInteraction().deferEdit().queue();
+                }
                 case "s2channel" -> {
                     Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS2RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentRotation());

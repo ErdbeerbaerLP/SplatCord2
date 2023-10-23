@@ -51,8 +51,11 @@ public class Main {
     public static SplatNet splatNet2 = null;
     public static SplatNet3 splatNet3 = null;
     public static Byml s1rotations = null;
+    public static Byml s1rotationsPretendo = null;
     public static boolean splatoon2inkStatus = false;
     public static boolean splatoon3inkStatus = false;
+    public static boolean splatoon1Status = false;
+    public static boolean splatoon1PretendoStatus = false;
     public static CoOpSchedules coop_schedules;
     public static Map<String, Weapon> weaponData = new HashMap<>();
 
@@ -71,10 +74,21 @@ public class Main {
         System.out.println("Downloading Splat1 rotation data");
 
         try {
-            s1rotations = BossFileUtil.getStageByml();
+            Main.s1rotations = BossFileUtil.getStageByml("https://npts.app.nintendo.net/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
+            Main.splatoon1Status = true;
         } catch (Exception e) {
-            System.err.println("Failed loading Splatoon 1 rotations!");
+            System.err.println("Failed loading splatoon 1 rotations!");
+            Main.splatoon1Status = false;
             e.printStackTrace();
+        }
+        try {
+            Main.s1rotationsPretendo = BossFileUtil.getStageByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
+            Main.splatoon1PretendoStatus = true;
+            BossFileUtil.getFestByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=EU&l=en");
+        } catch (Exception e) {
+            System.err.println("Failed loading splatoon 1 rotations from pretendo!");
+            e.printStackTrace();
+            Main.splatoon1PretendoStatus = false;
         }
 
 
