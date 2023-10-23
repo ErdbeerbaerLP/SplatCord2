@@ -27,7 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
- * Most code translated from https://github.com/PretendoNetwork/boss-js/tree/master/lib
+ * Most code translated from https://github.com/PretendoNetwork/boss-crypto/tree/fb870d45a680388af4416c499e5ebffeccb8e0c5/lib
  */
 public class BossFileUtil {
 
