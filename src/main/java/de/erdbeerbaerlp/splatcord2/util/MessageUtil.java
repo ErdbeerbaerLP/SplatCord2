@@ -220,11 +220,16 @@ public class MessageUtil {
     }
 
     public static void addS3Embed(Locale lang, final S3Rotation r, EmbedBuilder b) {
-        if (r.getFest().festMatchSetting != null) {
+        if (r.getFest().festMatchSettings != null && r.getFest().festMatchSettings.length > 0) {
             b.addField(Emote.SPLATFEST +
                             lang.game_modes.get("regular").name,
-                    (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[0].id).name +
-                            ", " + (lang.s3locales.stages.get(r.getFest().festMatchSetting.vsStages[1].id)).name)
+                    (lang.s3locales.stages.get(r.getFest().festMatchSettings[0].vsStages[0].id).name +
+                            ", " + (lang.s3locales.stages.get(r.getFest().festMatchSettings[0].vsStages[1].id)).name)
+                    , true);
+            b.addField(Emote.SPLATFEST +
+                            lang.game_modes.get("regular").name +" (Pro)",
+                    (lang.s3locales.stages.get(r.getFest().festMatchSettings[1].vsStages[0].id).name +
+                            ", " + (lang.s3locales.stages.get(r.getFest().festMatchSettings[1].vsStages[1].id)).name)
                     , true);
             if (r.getSplatfest() != null && r.getSplatfest().getMidtermTime() <= System.currentTimeMillis() / 1000 && r.getSplatfest().tricolorStage != null) {
                 b.addField(Emote.SPLATFEST + lang.botLocale.tricolorBattle, lang.s3locales.stages.get(r.getSplatfest().tricolorStage.id).name, true);

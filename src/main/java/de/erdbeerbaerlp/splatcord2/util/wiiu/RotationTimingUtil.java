@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 public class RotationTimingUtil {
     public static final long rotationIncrement = TimeUnit.HOURS.toMillis(4);
 
-
     public static int getRotationForInstant(Instant instant) {
         final long mil = instant.toEpochMilli() - getBaseTimestamp();
         return getRotationForLong(mil);
