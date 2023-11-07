@@ -8,7 +8,7 @@ public enum BotLanguage {
     ITALIAN(2, "it", new Italian(), "it-IT"),
     JAPANESE(3, "ja", new Japanese(), "ja-JP"),
     SPANISH(4,"es", new Spanish(), "es-ES"),
-    JAPANESE_CHATGPT(11, "ja", new JapaneseChatGPT(), "ja-JP"),
+    JAPANESE_CHATGPT(13, "ja", new JapaneseChatGPT(), "ja-JP"),
     ITALIAN_CHATGPT(12, "it", new ItalianChatGPT(), "it-IT");
     public final int val;
     public final String key;
