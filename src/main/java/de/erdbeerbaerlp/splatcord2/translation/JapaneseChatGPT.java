@@ -3,7 +3,7 @@ package de.erdbeerbaerlp.splatcord2.translation;
 public class JapaneseChatGPT extends EnglishBase {
     {
         s1FestStr = "JPja";
-        langName = "Japanese/日本語 (ChatGPT Translated)";
+        langName = "Japanese/日本語 (ChatGPT translated)";
         salmonStage = "アリーナ：";
         weapons = "武器：";
         stagesTitle = "現在のアリーナ";
