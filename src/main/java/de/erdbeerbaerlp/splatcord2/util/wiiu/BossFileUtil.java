@@ -3,7 +3,8 @@ package de.erdbeerbaerlp.splatcord2.util.wiiu;
 import com.arbiter34.byml.BymlFile;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Byml;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.RotationByml;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.SplatfestByml;
 import de.erdbeerbaerlp.splatcord2.util.SSLBypass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -134,7 +135,7 @@ public class BossFileUtil {
         }
     }
 
-    public static Byml getStageByml(final String url) throws Exception {
+    public static RotationByml getStageByml(final String url) throws Exception {
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         f.setNamespaceAware(false);
         f.setValidating(false);
@@ -175,10 +176,10 @@ public class BossFileUtil {
         }
 
         final BymlFile parse = BymlFile.parse(boss.getAbsolutePath());
-        return Main.gson.fromJson(parse.toJson(), Byml.class);
+        return Main.gson.fromJson(parse.toJson(), RotationByml.class);
 
     }
-    public static Byml getFestByml(final String url) throws Exception {
+    public static SplatfestByml getFestByml(final String url) throws Exception {
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         f.setNamespaceAware(false);
         f.setValidating(false);
@@ -193,7 +194,13 @@ public class BossFileUtil {
         final Element files = (Element) doc.getDocumentElement().getElementsByTagName("Files").item(0);
         final Element file = (Element) files.getElementsByTagName("File").item(0);
 
-        final URL rotationURL = new URL(file.getElementsByTagName("Url").item(0).getTextContent());
+        return getFestBymlDirect(file.getElementsByTagName("Url").item(0).getTextContent(), true);
+
+    }
+
+    public static SplatfestByml getFestBymlDirect(String url, boolean decrypt) throws Exception{
+
+        final URL rotationURL = new URL(url);
         final HttpsURLConnection conn = (HttpsURLConnection) rotationURL.openConnection();
         SSLBypass.allowAllSSL(conn);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -208,17 +215,59 @@ public class BossFileUtil {
             System.err.printf("Failed while reading bytes from %s: %s", rotationURL.toExternalForm(), e.getMessage());
             e.printStackTrace();
         }
+        final File boss = new File("./optdat." + rotationURL.getHost() + ".byml");
+        if(decrypt) {
+            final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
+            try (final FileOutputStream os = new FileOutputStream(boss)) {
+                os.write(test.content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            try (final FileOutputStream os = new FileOutputStream(boss)) {
+                os.write(baos.toByteArray());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        final BymlFile parse = BymlFile.parse(boss.getAbsolutePath());
+        return Main.gson.fromJson(parse.toJson(), SplatfestByml.class);
+    }
 
+    public static void getFestBannerBymlDirect(String url, boolean decrypt) throws Exception{
 
-        final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
-        final File boss = new File("./optdat."+url1.getHost()+".byml");
-        try (final FileOutputStream os = new FileOutputStream(boss)) {
-            os.write(test.content);
+        final URL rotationURL = new URL(url);
+        final HttpsURLConnection conn = (HttpsURLConnection) rotationURL.openConnection();
+        SSLBypass.allowAllSSL(conn);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (InputStream is = conn.getInputStream()) {
+            byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+            int n;
+
+            while ((n = is.read(byteChunk)) > 0) {
+                baos.write(byteChunk, 0, n);
+            }
         } catch (IOException e) {
+            System.err.printf("Failed while reading bytes from %s: %s", rotationURL.toExternalForm(), e.getMessage());
             e.printStackTrace();
         }
-        return null;
-
+        final File boss = new File("./banner." + rotationURL.getHost() + ".byml");
+        if(decrypt) {
+            final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
+            try (final FileOutputStream os = new FileOutputStream(boss)) {
+                os.write(test.content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            try (final FileOutputStream os = new FileOutputStream(boss)) {
+                os.write(baos.toByteArray());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        final BymlFile parse = BymlFile.parse(boss.getAbsolutePath());
+        System.out.println(parse.toJson());
     }
 
     public static class BossContainer {

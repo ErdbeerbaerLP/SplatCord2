@@ -40,6 +40,7 @@ public class DatabaseInterface implements AutoCloseable {
                 "`lastSalmon` bigint null COMMENT 'Message ID of last salmon run update message',\n" +
                 "`lastStage2` bigint null COMMENT 'Message ID of last Splatoon 2 Stage Notification',\n" +
                 "`deleteMessage` tinyint not null default 1 COMMENT 'Whether or not the bot should delete the old schedule message',\n" +
+                "`customSplatfests` tinyint not null default 1 COMMENT 'Whether or not custom splatfests should be sent to S1 channel',\n" +
                 "`s1mapchannel` bigint DEFAULT NULL,\n" +
                 "`lastStage1` bigint DEFAULT NULL,\n" +
                 "`s1Pmapchannel` bigint DEFAULT NULL,\n" +
@@ -221,8 +222,22 @@ public class DatabaseInterface implements AutoCloseable {
         return true;
     }
 
+    public boolean getCustomSplatfests(final long serverID) {
+        try (final ResultSet res = query("SELECT customSplatfest FROM servers WHERE serverid = " + serverID)) {
+            if (res.next()) {
+                return res.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
     public void setDeleteMessage(long serverID, boolean deleteMessage) {
         runUpdate("UPDATE servers SET deleteMessage = " + (deleteMessage ? 1 : 0) + " WHERE serverid = " + serverID);
+    }
+    public void setCustomSplatfests(long serverID, boolean enabled) {
+        runUpdate("UPDATE servers SET customSplatfest = " + (enabled ? 1 : 0) + " WHERE serverid = " + serverID);
     }
 
     public void setS2StageChannel(long serverID, Long channelID) {

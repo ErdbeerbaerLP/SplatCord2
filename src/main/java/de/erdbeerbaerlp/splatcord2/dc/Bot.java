@@ -238,6 +238,13 @@ public class Bot implements EventListener {
                     final boolean deleteMsgs = ev.getValues().get(0).equals("yes");
                     Main.iface.setDeleteMessage(ev.getGuild().getIdLong(), deleteMsgs);
                     ev.getInteraction().deferEdit().queue();
+                    return;
+                }
+                case "s1customSplatfest" -> {
+                    final boolean enabled = ev.getValues().get(0).equals("yes");
+                    Main.iface.setCustomSplatfests(ev.getGuild().getIdLong(), enabled);
+                    ev.getInteraction().deferEdit().queue();
+                    return;
                 }
             }
             if (ev.getComponentId().equals("settingSel")) {
@@ -276,6 +283,9 @@ public class Bot implements EventListener {
             switch (ev.getComponentId()) {
                 case "s1clear" -> {
                     Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), null);
+                    ev.getInteraction().deferEdit().queue();
+                }case "s1pclear" -> {
+                    Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), null);
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s2clear" -> {

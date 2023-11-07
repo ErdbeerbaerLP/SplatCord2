@@ -5,6 +5,10 @@ package de.erdbeerbaerlp.splatcord2.translation;
  */
 public class EnglishBase {
 
+    public String s1FestStr = "USen";
+
+    public String langName = "English (Default, by @ErdbeerbaerLP)";
+
     public String salmonStage = "Stages:";
     public String weapons = "Weapons:";
     public String stagesTitle = "Current Stages";
@@ -155,10 +159,10 @@ public class EnglishBase {
     public String xBattle = "X-Battle";
     public String tricolorBattle = "Tricolor Battle";
     public String newSplatfestTitle = "New Splatfest detected!";
-    public String runningSplatfestTitle = "Currently active Splatfest";
+    public String runningSplatfestTitle = "Currently active splatfest";
     public String splatfestEmbedTitle = "Splatfest information";
-    public String splatfestTeams = "Teams:";
-    public String cmdSplatfestDesc = "Shows splatfest data";
+    public String splatfestTeams = "Teams";
+    public String cmdSplatfestDescS3 = "Shows splatfest data";
     public String splatfestTeamWinner = "Winning Team";
     public String regenerateButton = "Regenerate";
     public String cmdRotationLoadAll = "Show more";
@@ -199,6 +203,8 @@ public class EnglishBase {
     public String salmonFeedMsg = "New Salmon Runs will now be sent here\n"+cmdSetLegacy;
     public String salmonPrediction = "Prediction: ";
     public String stages = "Stages";
+    public String splatfestSetting = "Custom Splatfests enabled?";
+
 
     public String getS1MapName(int mapid) {
         return switch (mapid) {

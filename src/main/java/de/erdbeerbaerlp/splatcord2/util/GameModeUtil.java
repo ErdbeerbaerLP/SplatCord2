@@ -45,6 +45,7 @@ public class GameModeUtil {
             case "VnNSdWxlLTM=" -> mode = Emote.RAINMAKER + mode;
             case "VnNSdWxlLTI=" -> mode = Emote.TOWERCONTROL + mode;
             case "VnNSdWxlLTQ=" -> mode = Emote.CLAMBLITZ + mode;
+            case "VnNSdWxlLTA=" -> mode = Emote.REGULAR + mode;
         }
         return mode;
     }

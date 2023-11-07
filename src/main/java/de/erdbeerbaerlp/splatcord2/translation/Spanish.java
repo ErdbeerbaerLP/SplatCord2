@@ -2,6 +2,9 @@ package de.erdbeerbaerlp.splatcord2.translation;
 
 public class Spanish extends EnglishBase {
     {
+        s1FestStr = "EUes";
+        langName = "Spanish/Español (Not 100% translated, by iGared)";
+
         salmonStage = "Escenarios:";
         weapons = "Armas:";
         stagesTitle = "Escenarios actuales";
@@ -154,8 +157,8 @@ public class Spanish extends EnglishBase {
         newSplatfestTitle = "¡Nuevo Splatfest a la vista!";
         runningSplatfestTitle = "Splatfest activo";
         splatfestEmbedTitle = "Información de Splatfest";
-        splatfestTeams = "Equipos:";
-        cmdSplatfestDesc = "Muestra los datos del Splatfest";
+        splatfestTeams = "Equipos";
+        cmdSplatfestDescS3 = "Muestra los datos del Splatfest";
         splatfestTeamWinner = "Equipo ganador";
         regenerateButton = "Regenerar";
         cmdRotationLoadAll = "Ver más";

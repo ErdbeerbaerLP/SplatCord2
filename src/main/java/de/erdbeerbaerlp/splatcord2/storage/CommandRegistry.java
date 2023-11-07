@@ -32,10 +32,6 @@ public class CommandRegistry {
         baseCommandClasses.add(InviteCommand.class);
         baseCommandClasses.add(SupportCommand.class);
         baseCommandClasses.add(SettingsCommand.class);
-        baseCommandClasses.add(SetstageCommand.class);
-        baseCommandClasses.add(DelstageCommand.class);
-        baseCommandClasses.add(SetsalmonCommand.class);
-        baseCommandClasses.add(DelsalmonCommand.class);
         baseCommandClasses.add(CodeCommand.class);
         baseCommandClasses.add(RotationCommand.class);
         baseCommandClasses.add(Splatnet2Command.class);
@@ -43,18 +39,16 @@ public class CommandRegistry {
         baseCommandClasses.add(SalmonCommand.class);
         baseCommandClasses.add(ViewFCCommand.class);
         baseCommandClasses.add(SplatfestCommand.class);
-        baseCommandClasses.add(SplatfestDebugCommand.class);
         baseCommandClasses.add(EventCommand.class);
-        //baseCommandClasses.add(TestCommand.class);
     }
 
     public static void setCommands(Guild g) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(g.getIdLong()));
         final ArrayList<BaseCommand> commands = new ArrayList<>();
         for (Class<? extends BaseCommand> clazz : baseCommandClasses) {
-            if (clazz == SplatfestDebugCommand.class) {
+            /*if (clazz == SplatfestDebugCommand.class) {
                 if (!Config.instance().discord.betaServers.contains(g.getId())) continue;
-            }
+            }*/
             try {
                 final BaseCommand cmd = clazz.getConstructor(Locale.class).newInstance(lang);
                 final BaseCommand cmdByName = getCommandByName(cmd.getName());

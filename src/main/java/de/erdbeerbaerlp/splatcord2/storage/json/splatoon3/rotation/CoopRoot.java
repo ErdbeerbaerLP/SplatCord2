@@ -7,6 +7,5 @@ public class CoopRoot {
 
     public static class CoopRegular {
         public Coop3[] nodes;
-
     }
 }

@@ -20,15 +20,18 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static de.erdbeerbaerlp.splatcord2.Main.iface;
+import static de.erdbeerbaerlp.splatcord2.Main.s1splatfestSplatfestival;
+
 public class RotationCommand extends BaseCommand {
     public RotationCommand(Locale l) {
         super("rotation", l.botLocale.cmdRotationDesc);
-        final SubcommandData splat1 = new SubcommandData("splatoon1", "(Nintendo Network) "+l.botLocale.cmdRotationDesc);
-        final SubcommandData splat1pretendo = new SubcommandData("splatoon1pretendo", "(Pretendo Network) "+l.botLocale.cmdRotationDesc);
+        final SubcommandData splat1 = new SubcommandData("splatoon1", "(Nintendo Network) " + l.botLocale.cmdRotationDesc);
+        final SubcommandData splat1pretendo = new SubcommandData("splatoon1pretendo", "(Pretendo Network) " + l.botLocale.cmdRotationDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdRotationDesc);
         final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdRotationDesc);
 
-        addSubcommands(splat3, splat2, splat1,splat1pretendo);
+        addSubcommands(splat3, splat2, splat1, splat1pretendo);
     }
 
     public static void addS2Rotation(EmbedBuilder future, Rotation currentRotation, Locale lang) {
@@ -100,7 +103,7 @@ public class RotationCommand extends BaseCommand {
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1)]);
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2)]);
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3)]);
-                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 "+Emote.NINTENDO_NETWORK+")");
+                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 " + Emote.NINTENDO_NETWORK + ")");
                     addS1Rotation(future, currentS1Rotation, lang, -1);
                     future.addBlankField(false);
                     long time = Instant.now().toEpochMilli();
@@ -110,6 +113,12 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS1Rotations.size() - 1)
                             future.addBlankField(false);
                     }
+                    if (iface.getCustomSplatfests(ev.getGuild().getIdLong())) {
+                        if (s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) {
+                            ev.replyEmbeds(future.build(), MessageUtil.generateSplatfestEmbedSplatfestival(s1splatfestSplatfestival, false, lang)).queue();
+                            break;
+                        }
+                    }
                     ev.replyEmbeds(future.build()).queue();
                     break;
                 case "splatoon1pretendo":
@@ -118,7 +127,7 @@ public class RotationCommand extends BaseCommand {
                     nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1)]);
                     nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2)]);
                     nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3)]);
-                    final EmbedBuilder futureP = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 "+Emote.PRETENDO_NETWORK+")");
+                    final EmbedBuilder futureP = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 " + Emote.PRETENDO_NETWORK + ")");
                     addS1Rotation(futureP, currentS1RotationP, lang, -1);
                     futureP.addBlankField(false);
                     long timeP = Instant.now().toEpochMilli();

@@ -2,7 +2,7 @@ package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation;
 
 import java.util.Arrays;
 
-public class EventSchdulesRoot {
+public class EventSchedulesRoot {
     public EventSchedule[] nodes;
 
     @Override

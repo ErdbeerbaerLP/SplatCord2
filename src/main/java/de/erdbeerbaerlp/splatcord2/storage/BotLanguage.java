@@ -3,7 +3,13 @@ package de.erdbeerbaerlp.splatcord2.storage;
 import de.erdbeerbaerlp.splatcord2.translation.*;
 
 public enum BotLanguage {
-    ENGLISH(0, "en", new EnglishBase(), "en-US"), GERMAN(1, "de", new German(), "de-DE"), ITALIAN(2, "it", new Italian(), "it-IT"), JAPANESE(3, "ja", new Japanese(), "ja-JP"), SPANISH(4,"es", new Spanish(), "es-ES");
+    ENGLISH(0, "en", new EnglishBase(), "en-US"),
+    GERMAN(1, "de", new German(), "de-DE"),
+    ITALIAN(2, "it", new Italian(), "it-IT"),
+    JAPANESE(3, "ja", new Japanese(), "ja-JP"),
+    SPANISH(4,"es", new Spanish(), "es-ES"),
+    JAPANESE_CHATGPT(11, "ja", new JapaneseChatGPT(), "ja-JP"),
+    ITALIAN_CHATGPT(12, "it", new ItalianChatGPT(), "it-IT");
     public final int val;
     public final String key;
     public final EnglishBase botLocale;
@@ -24,11 +30,6 @@ public enum BotLanguage {
     }
 
     public String getDisplayName() {
-        if (this == ENGLISH || this == GERMAN) {
-            return name().toLowerCase();
-        } else if (this == ITALIAN)
-            return name().toLowerCase() + " (Partially)";
-        else
-            return name().toLowerCase() + " (Just game-data)";
+        return botLocale.langName;
     }
 }

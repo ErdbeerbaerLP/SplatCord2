@@ -2,6 +2,9 @@ package de.erdbeerbaerlp.splatcord2.translation;
 
 public class German extends EnglishBase {
     {
+        s1FestStr = "EUde";
+        langName = "German/Deutsch (100% translated, by @ErdbeerbaerLP";
+
         salmonStage = "Arenen:";
         weapons = "Waffen:";
         stagesTitle = "Aktuelle Arenen";
@@ -139,8 +142,8 @@ public class German extends EnglishBase {
         newSplatfestTitle = "Neues Splatfest erkannt!";
         runningSplatfestTitle = "Aktuell aktives Splatfest";
         splatfestEmbedTitle = "Splatfest informationen";
-        splatfestTeams = "Teams:";
-        cmdSplatfestDesc = "Zeigt Splatfest-Daten an";
+        splatfestTeams = "Teams";
+        cmdSplatfestDescS3 = "Zeigt Splatfest-Daten an";
         splatfestTeamWinner = "Gewinner-Team";
         regenerateButton = "Neu-Generiern";
         cmdRotationLoadAll = "Mehr...";
@@ -173,6 +176,7 @@ public class German extends EnglishBase {
         stageFeedMsg = "Aktuelle Arenen werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
         salmonPrediction = "Vorhersage: ";
         salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
+        splatfestSetting = "Custom Splatfeste aktivieren?";
     }
 
 

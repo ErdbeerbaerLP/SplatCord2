@@ -2,8 +2,8 @@ package de.erdbeerbaerlp.splatcord2.storage.json.splatoon1;
 
 import java.util.Arrays;
 
-public class Byml {
-    public BymlRoot root = new BymlRoot();
+public class RotationByml {
+    public RotationBymlRoot root = new RotationBymlRoot();
 
     @Override
     public String toString() {
@@ -12,7 +12,7 @@ public class Byml {
                 '}';
     }
 
-    public static class BymlRoot {
+    public static class RotationBymlRoot {
         public Phase[] Phases = new Phase[0];
 
         public DateTimeObj DateTime = new DateTimeObj();

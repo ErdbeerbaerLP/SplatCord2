@@ -2,6 +2,10 @@ package de.erdbeerbaerlp.splatcord2.translation;
 
 public class Italian extends EnglishBase {
     {
+
+        s1FestStr = "EUit";
+        langName = "Italian/Italiano (Partially translated, by @pinklimes)";
+
         salmonStage = "Arene:";
         weapons = "Armi:";
         stagesTitle = "Arene correnti";

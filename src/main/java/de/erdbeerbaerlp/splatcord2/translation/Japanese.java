@@ -2,6 +2,9 @@ package de.erdbeerbaerlp.splatcord2.translation;
 
 public class Japanese extends EnglishBase {
     {
+        s1FestStr = "JPja";
+        langName = "Japanese/日本語 (Only game data translated)";
+
         languageSetMessage = "Your server's language is now set to japanese\nFor now, only game data will be translated";
     }
 

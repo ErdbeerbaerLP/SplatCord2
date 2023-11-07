@@ -8,7 +8,8 @@ import de.erdbeerbaerlp.splatcord2.dc.Bot;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Byml;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.RotationByml;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.SplatfestByml;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSchedules;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.SplatNet;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
@@ -50,8 +51,10 @@ public class Main {
     public static Instant startTime = null;
     public static SplatNet splatNet2 = null;
     public static SplatNet3 splatNet3 = null;
-    public static Byml s1rotations = null;
-    public static Byml s1rotationsPretendo = null;
+    public static RotationByml s1rotations = null;
+    public static RotationByml s1rotationsPretendo = null;
+    public static SplatfestByml s1splatfestPretendo = null;
+    public static SplatfestByml s1splatfestSplatfestival = null;
     public static boolean splatoon2inkStatus = false;
     public static boolean splatoon3inkStatus = false;
     public static boolean splatoon1Status = false;
@@ -84,7 +87,8 @@ public class Main {
         try {
             Main.s1rotationsPretendo = BossFileUtil.getStageByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
             Main.splatoon1PretendoStatus = true;
-            BossFileUtil.getFestByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=EU&l=en");
+            Main.s1splatfestPretendo = BossFileUtil.getFestByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=EU&l=en");
+            Main.s1splatfestSplatfestival = BossFileUtil.getFestBymlDirect("https://github.com/Sheldon10095/Splatfestival_StaffFiles/raw/main/FestFiles/00000544",false);
         } catch (Exception e) {
             System.err.println("Failed loading splatoon 1 rotations from pretendo!");
             e.printStackTrace();

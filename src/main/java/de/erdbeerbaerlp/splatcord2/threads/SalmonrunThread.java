@@ -42,7 +42,7 @@ public class SalmonrunThread extends TimerTask {
                     if (salmonEndTime <= (System.currentTimeMillis() / 1000)) {
                         salmonEndTime = -1;
                     }
-                    if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() <= (System.currentTimeMillis() / 1000)) {
+                    if (iface.status.isDBAlive() && currentS3Rotation.getCoop().getStartTime() <= (System.currentTimeMillis() / 1000) || (currentS3Rotation.getEggstraCoop() != null && currentS3Rotation.getEggstraCoop().getStartTime() <= (System.currentTimeMillis() / 1000))) {
                         iface.getAllS3SalmonChannels().forEach((serverid, channel) -> {
                             try {
                                 MessageUtil.sendS3SalmonFeed(serverid, channel);
@@ -50,7 +50,8 @@ public class SalmonrunThread extends TimerTask {
                                 e.printStackTrace();
                             }
                         });
-                        Config.instance().doNotEdit.lastS3SalmonTimestamp = currentS3Rotation.getCoop().getStartTime();
+
+                        Config.instance().doNotEdit.lastS3SalmonTimestamp = currentS3Rotation.getEggstraCoop() != null?currentS3Rotation.getEggstraCoop().getStartTime():currentS3Rotation.getCoop().getStartTime();
                         Config.instance().saveConfig();
                     }
                 }
