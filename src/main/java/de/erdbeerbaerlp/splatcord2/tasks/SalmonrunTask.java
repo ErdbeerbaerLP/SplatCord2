@@ -1,4 +1,4 @@
-package de.erdbeerbaerlp.splatcord2.threads;
+package de.erdbeerbaerlp.splatcord2.tasks;
 
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
@@ -10,7 +10,7 @@ import java.util.TimerTask;
 import static de.erdbeerbaerlp.splatcord2.Main.coop_schedules;
 import static de.erdbeerbaerlp.splatcord2.Main.iface;
 
-public class SalmonrunThread extends TimerTask {
+public class SalmonrunTask extends TimerTask {
     @Override
     public void run() {
         long salmonEndTime = coop_schedules.details[0].end_time;

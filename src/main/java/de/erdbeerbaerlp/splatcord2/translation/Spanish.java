@@ -109,7 +109,7 @@ public class Spanish extends EnglishBase {
         cmdRandomPrivateSpec = "Espectador";
         now = "Ahora";
         cmdRandomMode = "Genera un modo de batalla aleatorio";
-        cmdRandomModeVersion = "Versión de Splatoon objetivo, Por defecto Splatoon 2";
+        cmdRandomModeVersion = "Versión de Splatoon objetivo, Por defecto Splatoon 3";
         mode = "Modo";
         weaponSub = "Sescundaria";
         weaponSpecial = "Especial";

@@ -5,6 +5,7 @@ import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Order;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.LimitedGear;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.Power;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -13,6 +14,8 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
@@ -25,11 +28,11 @@ public class Splatnet3Command extends BaseCommand {
     public Splatnet3Command(Locale l) {
         super("splatnet3", l.botLocale.cmdSplatnetDesc);
         final SubcommandData list = new SubcommandData("list", l.botLocale.cmdSplatnetDesc);
-        /*final SubcommandData order = new SubcommandData("order", l.botLocale.cmdSplatnetDesc);
+        final SubcommandData order = new SubcommandData("order", l.botLocale.cmdSplatnetDesc);
         final OptionData d = new OptionData(OptionType.STRING, "gear", l.botLocale.cmdSplatnetDesc, true);
         d.setAutoComplete(true);
-        order.addOptions(d);*/
-        this.addSubcommands(list/*, order*/);
+        order.addOptions(d);
+        this.addSubcommands(list, order);
 
     }
 
@@ -47,12 +50,12 @@ public class Splatnet3Command extends BaseCommand {
                     .setTimestamp(Instant.ofEpochSecond(g.getEndTime()))
                     .setFooter(lang.botLocale.footer_ends)
                     .setThumbnail(g.gear.image.url)
-                    .setAuthor(lang.s3locales.gear.get(g.gear.__splatoon3ink_id).name + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
+                    .setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-","_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
             final StringBuilder sb = new StringBuilder();
             for (Power p : g.gear.additionalGearPowers) {
-                sb.append(Emote.resolveFromS3Ability(p.__splatoon3ink_id));
+                sb.append(Emote.resolveFromS3Ability(p.name));
             }
-            b.addField(lang.botLocale.skillSlots, Emote.resolveFromS3Ability(g.gear.primaryGearPower.__splatoon3ink_id).toString() + sb, true);
+            b.addField(lang.botLocale.skillSlots, Emote.resolveFromS3Ability(g.gear.primaryGearPower.name).toString() + sb, true);
             b.addField(lang.botLocale.price, Emote.SPLATCASH + g.price, true);
             embeds.add(b.build());
         }
@@ -68,13 +71,13 @@ public class Splatnet3Command extends BaseCommand {
                     .setTimestamp(Instant.ofEpochSecond(g.getEndTime()))
                     .setFooter(lang.botLocale.footer_ends)
                     .setThumbnail(g.gear.image.url)
-                    .setAuthor(lang.s3locales.gear.get(g.gear.__splatoon3ink_id).name + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
+                    .setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-","_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
 
             final StringBuilder sb = new StringBuilder();
             for (Power p : g.gear.additionalGearPowers) {
-                sb.append(Emote.resolveFromS3Ability(p.__splatoon3ink_id));
+                sb.append(Emote.resolveFromS3Ability(p.name));
             }
-            b.addField(lang.botLocale.skillSlots, Emote.resolveFromS3Ability(g.gear.primaryGearPower.__splatoon3ink_id).toString() + sb, true);
+            b.addField(lang.botLocale.skillSlots, Emote.resolveFromS3Ability(g.gear.primaryGearPower.name).toString() + sb, true);
             b.addField(lang.botLocale.price, Emote.SPLATCASH + g.price, true);
             embeds.add(b.build());
         }
@@ -110,21 +113,20 @@ public class Splatnet3Command extends BaseCommand {
             }
             case "order" -> {
                 final OptionMapping gearOpt = ev.getOption("gear");
-                final String asString = gearOpt.getAsString();
+                final String gName = gearOpt.getAsString();
                 final SplatProfile profile = Main.getUserProfile(ev.getUser().getIdLong());
                 for (Order o : profile.s3orders) {
-                    if (o.gear.equals(asString)) {
+                    if (o.gear.equals(gName)) {
                         submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent("Already Ordered").build()).queue());
                         return;
                     }
                 }
-                profile.s3orders.add(new Order(ev.getChannel().getId(), asString));
+                profile.s3orders.add(new Order(ev.getChannel().getId(), gName));
                 Main.iface.updateSplatProfile(profile);
-                submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", lang.s3locales.gear.get(asString).name)).build()).queue());
+                submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", LInk3.getGear(gName).localizedName.get(lang.botLocale.locale.replace("-","_")))).build()).queue());
             }
         }
 
     }
-
 
 }

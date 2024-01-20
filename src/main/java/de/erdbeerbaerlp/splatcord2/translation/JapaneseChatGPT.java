@@ -93,7 +93,7 @@ public class JapaneseChatGPT extends EnglishBase {
         cmdRandomTeamWeapons = "ランダムな武器を生成しますか？（デフォルト：false）";
         now = "現在";
         cmdRandomMode = "ランダムなプライベートマッチモードを生成します";
-        cmdRandomModeVersion = "目標のSplatoonバージョン、デフォルト：Splatoon 2";
+        cmdRandomModeVersion = "目標のSplatoonバージョン、デフォルト：Splatoon 3";
         mode = "モード";
         weaponSpecial = "スペシャルウェポン";
         weaponSub = "サブウェポン";

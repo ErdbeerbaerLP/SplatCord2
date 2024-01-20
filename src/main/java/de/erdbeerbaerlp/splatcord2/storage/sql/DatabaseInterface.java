@@ -142,6 +142,19 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return 0;
     }
+    public short getGameVersionOfRoom(long roomid) {
+        try (final ResultSet res = query("SELECT `gamever` FROM privaterooms WHERE roomid = " + roomid)) {
+            while (res != null && res.next()) {
+                if (res.wasNull())
+                    return 0;
+                return res.getShort(1);
+            }
+
+        } catch (SQLException e) {
+            return 0;
+        }
+        return 0;
+    }
 
     public boolean createNewPBRoom(long room, short gameVersion, long roomOwner) {
         if (getOwnedRoom(room) == -1) return false;

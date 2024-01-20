@@ -4,6 +4,7 @@ package de.erdbeerbaerlp.splatcord2.translation;
  * Using english as base, extend other localizations from this class
  */
 public class EnglishBase {
+    public String locale = "undefined, gets filled in BotLanguage.java";
 
     public String s1FestStr = "USen";
 
@@ -113,7 +114,7 @@ public class EnglishBase {
     public String cmdRandomPrivateSpec = "Spectator";
     public String now = "Now";
     public String cmdRandomMode = "Generate random private battle mode";
-    public String cmdRandomModeVersion = "Target splatoon version, Defaults to Splatoon 2";
+    public String cmdRandomModeVersion = "Target splatoon version, Defaults to Splatoon 3";
     public String mode = "Mode";
     public String weaponSub = "Sub";
     public String weaponSpecial = "Special";

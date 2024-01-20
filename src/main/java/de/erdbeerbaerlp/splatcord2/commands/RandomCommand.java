@@ -4,6 +4,8 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.GameRule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.TranslationNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -17,7 +19,9 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomCommand extends BaseCommand {
@@ -39,9 +43,10 @@ public class RandomCommand extends BaseCommand {
         team.addOption(OptionType.BOOLEAN, "weapons", l.botLocale.cmdRandomTeamWeapons);
         final SubcommandData mode = new SubcommandData("mode", l.botLocale.cmdRandomMode);
         OptionData splVersions = new OptionData(OptionType.INTEGER, "version", l.botLocale.cmdRandomModeVersion);
-        splVersions.addChoice("Splatoon 2", 2);
         splVersions.addChoice("Splatoon 3", 3);
+        splVersions.addChoice("Splatoon 2", 2);
         weapon.addOptions(splVersions);
+        stage.addOptions(splVersions);
         splVersions.addChoice("Splatoon 1", 1);
         mode.addOptions(splVersions);
         addSubcommands(weapon, number, stage, team, mode);
@@ -85,22 +90,27 @@ public class RandomCommand extends BaseCommand {
             return wpnid;
         } while (true);
     }
-    private String getRandomWeaponID3(Locale lang) {
+    private Weapon getRandomWeapon3() {
+        final HashMap<String, Weapon> allWeapons = LInk3.getAllWeapons();
+        final Set<String> ids = allWeapons.keySet();
         final Random r = new Random();
         do {
-            final int weapon = r.nextInt(lang.s3locales.weapons.keySet().size()-1);
-            final String wpnid = lang.s3locales.weapons.keySet().toArray(new String[0])[weapon];
-            if (!lang.s3locales.weapons.containsKey(wpnid))
+            final int weapon = r.nextInt(ids.size()-1);
+            final String wpnid = ids.toArray(new String[0])[weapon];
+            if (!allWeapons.containsKey(wpnid))
                 continue;
             if (lastRandomWeapons3.contains(wpnid))
                 continue;
             addWeapon3(wpnid);
-            return wpnid;
+            return allWeapons.get(wpnid);
         } while (true);
     }
 
     private String getRandomWeaponName(Locale lang) {
         return lang.weapons.get(Integer.parseInt(getRandomWeaponID(lang))).name;
+    }
+    private String getRandomS3WeaponName(Locale lang) {
+        return getRandomWeapon3().localizedName.get(lang.botLocale.locale.replace("-","_"));
     }
 
     @Override
@@ -123,7 +133,6 @@ public class RandomCommand extends BaseCommand {
         }
         switch (subcmd) {
             case "weapon":
-
                 final MessageCreateBuilder mb = new MessageCreateBuilder();
                 switch (splVer) {
                     case 2:
@@ -137,22 +146,26 @@ public class RandomCommand extends BaseCommand {
                                     .addField(lang.botLocale.weaponSub, lang.weapon_subs.get(wpn.sub.id).name, true)
                                     .addField(lang.botLocale.weaponSpecial, lang.weapon_specials.get(wpn.special.id).name, true)
                                     .build());
-
                         }
                         mb.setEmbeds(embeds);
                         break;
                     case 3:
-                        final StringBuilder b = new StringBuilder();
+                        final ArrayList<MessageEmbed> embs = new ArrayList<>();
                         for (int i = 0; i < amount; ++i) {
-                            final String wpnid = getRandomWeaponID3(lang);
-                            final TranslationNode wpn = lang.s3locales.weapons.get(wpnid);
-                            b.append(wpn.name).append("\n");
+                            final Weapon w = getRandomWeapon3();
+                            embs.add(new EmbedBuilder()
+                                    .setTitle(w.localizedName.get(lang.botLocale.locale.replace("-","_")))
+                                    .setThumbnail("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/" + w.image)
+                                    .addField(lang.botLocale.weaponSub,
+                                            LInk3.getSimpleTranslatableByName(w.sub).localizedName.get(lang.botLocale.locale.replace("-","_")), true)
+                                    .addField(lang.botLocale.weaponSpecial, LInk3.getSimpleTranslatableByName(w.special).localizedName.get(lang.botLocale.locale.replace("-","_")), true)
+                                    .build());
                         }
-                        mb.setContent(b.toString());
+                        mb.setEmbeds(embs);
                         break;
                 }
 
-                ev.reply(mb.build()).queue();
+                ev.reply(mb.setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).build()).queue();
                 break;
             case "number":
                 long minimumNumber = 0;
@@ -160,18 +173,30 @@ public class RandomCommand extends BaseCommand {
                 final OptionMapping minOption = ev.getOption("minimum");
                 if (minOption != null) minimumNumber = Long.parseLong(minOption.getAsString());
                 if (minimumNumber > maximumNumber)
-                    ev.reply(lang.botLocale.cmdRandomNumMinMaxError + ThreadLocalRandom.current().nextLong(maximumNumber, minimumNumber + 1)).queue();
+                    ev.reply(lang.botLocale.cmdRandomNumMinMaxError + ThreadLocalRandom.current().nextLong(maximumNumber, minimumNumber + 1)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                 else
-                    ev.reply(ThreadLocalRandom.current().nextLong(minimumNumber, maximumNumber + 1) + "").queue();
+                    ev.reply(ThreadLocalRandom.current().nextLong(minimumNumber, maximumNumber + 1) + "").setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                 break;
             case "stage":
                 final StringBuilder stageString = new StringBuilder();
-                final Stage[] stages = lang.stages.values().toArray(new Stage[0]);
-                for (int i = 0; i < amount; ++i) {
-                    final int stage = r.nextInt(lang.stages.size() - 1);
-                    stageString.append(stages[stage].getName()).append("\n");
+                switch (splVer) {
+                    case 2:
+                        final Stage[] stages = lang.stages.values().toArray(new Stage[0]);
+                        for (int i = 0; i < amount; ++i) {
+                            final int stage = r.nextInt(lang.stages.size() - 1);
+                            stageString.append(stages[stage].getName()).append("\n");
+                        }
+                        ev.reply(stageString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        break;
+                    case 3:
+                        final TranslationNode[] s3Stages = lang.s3locales.stages.values().toArray(new TranslationNode[0]);
+                        for (int i = 0; i < amount; ++i) {
+                            final int stage = r.nextInt(lang.s3locales.stages.size() - 1);
+                            stageString.append(s3Stages[stage].name).append("\n");
+                        }
+                        ev.reply(stageString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        break;
                 }
-                ev.reply(stageString.toString().trim()).queue();
                 break;
             case "private":
                 boolean genWeapons = false;
@@ -188,67 +213,127 @@ public class RandomCommand extends BaseCommand {
                 for (int i = 0; i < players; i++) {
                     playerArray[i] = i + 1;
                 }
-                shuffleArray(playerArray);
-                final StringBuilder privateString = new StringBuilder();
-                privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
-                privateString.append(lang.botLocale.cmdRandomPrivateAlpha + ":\n");
-                privateString.append("[" + playerArray[0] + "] ");
-                if (genWeapons)
-                    privateString.append(getRandomWeaponName(lang));
-                privateString.append("\n");
-                if (players >= 4) {
-                    privateString.append("[" + playerArray[2] + "] ");
-                    if (genWeapons) {
+                if(splVer== 2) {
+                    shuffleArray(playerArray);
+                    final StringBuilder privateString = new StringBuilder();
+                    privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
+                    privateString.append(lang.botLocale.cmdRandomPrivateAlpha + ":\n");
+                    privateString.append("[" + playerArray[0] + "] ");
+                    if (genWeapons)
                         privateString.append(getRandomWeaponName(lang));
+                    privateString.append("\n");
+                    if (players >= 4) {
+                        privateString.append("[" + playerArray[2] + "] ");
+                        if (genWeapons) {
+                            privateString.append(getRandomWeaponName(lang));
+                        }
+                        privateString.append("\n");
                     }
-                    privateString.append("\n");
-                }
-                if (players >= 6) {
-                    privateString.append("[" + playerArray[4] + "] ");
+                    if (players >= 6) {
+                        privateString.append("[" + playerArray[4] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomWeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    if (players >= 8) {
+                        privateString.append("[" + playerArray[6] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomWeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    privateString.append(lang.botLocale.cmdRandomPrivateBravo + ":\n");
+                    privateString.append("[" + playerArray[1] + "] ");
                     if (genWeapons)
                         privateString.append(getRandomWeaponName(lang));
                     privateString.append("\n");
-                }
-                if (players >= 8) {
-                    privateString.append("[" + playerArray[6] + "] ");
+                    if (players >= 4) {
+                        privateString.append("[" + playerArray[3] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomWeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    if (players >= 6) {
+                        privateString.append("[" + playerArray[5] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomWeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    if (players >= 8) {
+                        privateString.append("[" + playerArray[7] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomWeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    privateString.append(lang.botLocale.cmdRandomPrivateSpec + ":\n");
+                    if (players == 3) privateString.append("[" + playerArray[2] + "]\n");
+                    if (players == 5) privateString.append("[" + playerArray[4] + "]\n");
+                    if (players == 7) privateString.append("[" + playerArray[6] + "]\n");
+                    if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
+                    if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
+                    ev.reply(privateString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                }else if(splVer == 3){
+                    shuffleArray(playerArray);
+                    final StringBuilder privateString = new StringBuilder();
+                    privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
+                    privateString.append(lang.botLocale.cmdRandomPrivateAlpha + ":\n");
+                    privateString.append("[" + playerArray[0] + "] ");
                     if (genWeapons)
-                        privateString.append(getRandomWeaponName(lang));
+                        privateString.append(getRandomS3WeaponName(lang));
                     privateString.append("\n");
-                }
-                privateString.append(lang.botLocale.cmdRandomPrivateBravo + ":\n");
-                privateString.append("[" + playerArray[1] + "] ");
-                if (genWeapons)
-                    privateString.append(getRandomWeaponName(lang));
-                privateString.append("\n");
-                if (players >= 4) {
-                    privateString.append("[" + playerArray[3] + "] ");
+                    if (players >= 4) {
+                        privateString.append("[" + playerArray[2] + "] ");
+                        if (genWeapons) {
+                            privateString.append(getRandomS3WeaponName(lang));
+                        }
+                        privateString.append("\n");
+                    }
+                    if (players >= 6) {
+                        privateString.append("[" + playerArray[4] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomS3WeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    if (players >= 8) {
+                        privateString.append("[" + playerArray[6] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomS3WeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    privateString.append(lang.botLocale.cmdRandomPrivateBravo + ":\n");
+                    privateString.append("[" + playerArray[1] + "] ");
                     if (genWeapons)
-                        privateString.append(getRandomWeaponName(lang));
+                        privateString.append(getRandomS3WeaponName(lang));
                     privateString.append("\n");
+                    if (players >= 4) {
+                        privateString.append("[" + playerArray[3] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomS3WeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    if (players >= 6) {
+                        privateString.append("[" + playerArray[5] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomS3WeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    if (players >= 8) {
+                        privateString.append("[" + playerArray[7] + "] ");
+                        if (genWeapons)
+                            privateString.append(getRandomS3WeaponName(lang));
+                        privateString.append("\n");
+                    }
+                    privateString.append(lang.botLocale.cmdRandomPrivateSpec + ":\n");
+                    if (players == 3) privateString.append("[" + playerArray[2] + "]\n");
+                    if (players == 5) privateString.append("[" + playerArray[4] + "]\n");
+                    if (players == 7) privateString.append("[" + playerArray[6] + "]\n");
+                    if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
+                    if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
+                    ev.reply(privateString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+
                 }
-                if (players >= 6) {
-                    privateString.append("[" + playerArray[5] + "] ");
-                    if (genWeapons)
-                        privateString.append(getRandomWeaponName(lang));
-                    privateString.append("\n");
-                }
-                if (players >= 8) {
-                    privateString.append("[" + playerArray[7] + "] ");
-                    if (genWeapons)
-                        privateString.append(getRandomWeaponName(lang));
-                    privateString.append("\n");
-                }
-                privateString.append(lang.botLocale.cmdRandomPrivateSpec + ":\n");
-                if (players == 3) privateString.append("[" + playerArray[2] + "]\n");
-                if (players == 5) privateString.append("[" + playerArray[4] + "]\n");
-                if (players == 7) privateString.append("[" + playerArray[6] + "]\n");
-                if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
-                if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
-                ev.reply(privateString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                 break;
             case "mode":
                 final StringBuilder modeString = new StringBuilder();
-
                 switch (splVer) {
                     case 1:
                         String mode;
@@ -266,7 +351,7 @@ public class RandomCommand extends BaseCommand {
                     default:
                         break;
                 }
-                ev.reply(modeString.toString().trim()).queue();
+                ev.reply(modeString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                 break;
         }
     }

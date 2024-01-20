@@ -1,4 +1,4 @@
-package de.erdbeerbaerlp.splatcord2.threads;
+package de.erdbeerbaerlp.splatcord2.tasks;
 
 import com.google.gson.JsonParseException;
 import de.erdbeerbaerlp.splatcord2.Main;
@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.TimerTask;
 
-public class DataUpdateThread extends TimerTask {
+public class DataUpdateTask extends TimerTask {
     @Override
     public void run() {
         try {

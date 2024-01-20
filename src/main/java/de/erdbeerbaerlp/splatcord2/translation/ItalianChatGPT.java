@@ -95,7 +95,7 @@ public class ItalianChatGPT extends EnglishBase {
         cmdRandomTeamWeapons = "Generare armi casuali? (Predefinito: falso)";
         now = "Attuale";
         cmdRandomMode = "Genera una modalità di battaglia privata casuale";
-        cmdRandomModeVersion = "Versione Splatoon di destinazione, predefinito: Splatoon 2";
+        cmdRandomModeVersion = "Versione Splatoon di destinazione, predefinito: Splatoon 3";
         mode = "Modalità";
         weaponSpecial = "Arma speciale";
         weaponSub = "Arma secondaria";

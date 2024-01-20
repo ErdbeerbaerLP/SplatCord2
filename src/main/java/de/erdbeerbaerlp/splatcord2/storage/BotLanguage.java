@@ -18,6 +18,7 @@ public enum BotLanguage {
     BotLanguage(int val, String key, EnglishBase botLocale, String s3Key) {
         this.val = val;
         this.key = key;
+        botLocale.locale = s3Key;
         this.botLocale = botLocale;
         this.s3Key = s3Key;
     }

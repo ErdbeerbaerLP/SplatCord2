@@ -92,9 +92,7 @@ public class RotationCommand extends BaseCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
                 case "splatoon1":
@@ -114,7 +112,7 @@ public class RotationCommand extends BaseCommand {
                             future.addBlankField(false);
                     }
                     if (iface.getCustomSplatfests(ev.getGuild().getIdLong())) {
-                        if (s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) {
+                        if ((s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000 ) &&((s1splatfestSplatfestival.root.Time.getEndTime() > System.currentTimeMillis() / 1000))) {
                             ev.replyEmbeds(future.build(), MessageUtil.generateSplatfestEmbedSplatfestival(s1splatfestSplatfestival, false, lang)).queue();
                             break;
                         }

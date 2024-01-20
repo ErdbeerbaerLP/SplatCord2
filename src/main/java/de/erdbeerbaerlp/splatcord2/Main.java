@@ -18,10 +18,10 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.SplatNet3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
-import de.erdbeerbaerlp.splatcord2.threads.DataUpdateThread;
-import de.erdbeerbaerlp.splatcord2.threads.RotationThread;
-import de.erdbeerbaerlp.splatcord2.threads.SalmonrunThread;
-import de.erdbeerbaerlp.splatcord2.threads.SplatnetOrderThread;
+import de.erdbeerbaerlp.splatcord2.tasks.DataUpdateTask;
+import de.erdbeerbaerlp.splatcord2.tasks.RotationTask;
+import de.erdbeerbaerlp.splatcord2.tasks.SalmonrunTask;
+import de.erdbeerbaerlp.splatcord2.tasks.SplatnetOrderTask;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.BossFileUtil;
 import net.dv8tion.jda.api.entities.User;
@@ -181,17 +181,17 @@ public class Main {
         c.set(Calendar.HOUR, c.get(Calendar.HOUR+1));
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 10);
-        final RotationThread rotationThread = new RotationThread();
-        final SalmonrunThread salmonrunThread = new SalmonrunThread();
-        final DataUpdateThread dataUpdateThread = new DataUpdateThread();
-        final SplatnetOrderThread splatnetOrderThread = new SplatnetOrderThread();
-        rotationThread.run();
-        salmonrunThread.run();
-        ti.scheduleAtFixedRate(rotationThread, c.getTime(), TimeUnit.MINUTES.toMillis(60));
-        ti.scheduleAtFixedRate(salmonrunThread, c.getTime(), TimeUnit.MINUTES.toMillis(60));
+        final RotationTask rotationTask = new RotationTask();
+        final SalmonrunTask salmonrunTask = new SalmonrunTask();
+        final DataUpdateTask dataUpdateTask = new DataUpdateTask();
+        final SplatnetOrderTask splatnetOrderTask = new SplatnetOrderTask();
+        rotationTask.run();
+        salmonrunTask.run();
+        ti.scheduleAtFixedRate(rotationTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
+        ti.scheduleAtFixedRate(salmonrunTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
         c.set(Calendar.SECOND, 30);
-        ti.scheduleAtFixedRate(dataUpdateThread, c.getTime(), TimeUnit.MINUTES.toMillis(60));
-        ti.scheduleAtFixedRate(splatnetOrderThread, TimeUnit.SECONDS.toMillis(10), TimeUnit.MINUTES.toMillis(5));
+        ti.scheduleAtFixedRate(dataUpdateTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
+        ti.scheduleAtFixedRate(splatnetOrderTask, TimeUnit.SECONDS.toMillis(10), TimeUnit.MINUTES.toMillis(5));
     }
 
     public static User getUserById(Long userid) {

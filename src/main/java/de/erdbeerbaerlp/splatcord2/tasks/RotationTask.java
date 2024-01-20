@@ -1,4 +1,4 @@
-package de.erdbeerbaerlp.splatcord2.threads;
+package de.erdbeerbaerlp.splatcord2.tasks;
 
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
@@ -13,7 +13,7 @@ import java.util.TimerTask;
 
 import static de.erdbeerbaerlp.splatcord2.Main.*;
 
-public class RotationThread extends TimerTask {
+public class RotationTask extends TimerTask {
     @Override
     public void run() {
         final Rotation currentRotation = ScheduleUtil.getCurrentRotation();

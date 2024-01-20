@@ -1,8 +1,10 @@
 package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink;
 
+import java.util.HashMap;
+
 public class LInk3Node {
     public String name, internal;
-    public LInk3Localization localizedName;
+    public HashMap<String,String> localizedName;
     public int id = -1;
 
     @Override

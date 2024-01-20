@@ -10,6 +10,8 @@ public class German extends EnglishBase {
         stagesTitle = "Aktuelle Arenen";
         futureStagesTitle = "Zukünftige Arenen";
         footer_ends = "Endet";
+        footer_ended = "Beendet";
+        online ="Online";
         footer_starts = "Startet";
         footer_closed = "Geschlossen";
         unknownCommand = "Unbekannter Befehl";
@@ -95,7 +97,7 @@ public class German extends EnglishBase {
         cmdRandomTeamWeapons = "Zufällige Waffen generieren? (Standard: false)";
         now = "Aktuell";
         cmdRandomMode = "Generiert einen zufälligen Privatkampf-Modus";
-        cmdRandomModeVersion = "Ziel Splatoon-Version, Standart: Splatoon 2";
+        cmdRandomModeVersion = "Ziel Splatoon-Version, Standart: Splatoon 3";
         mode = "Modus";
         weaponSpecial = "Spezialwaffe";
         weaponSub = "Sekundärwaffe";
@@ -169,7 +171,10 @@ public class German extends EnglishBase {
         no = "Nein";
         clearStage = "Lösche %game% Rotations-Kanal";
         clearSalmon = "Lösche %game% Salmon-Run-Kanal";
-        clearEvent = "Lösche %game% Challenge-Kanal";
+        clearEvent = "Lösche %game% Event-Kanal";
+        stage = "%game% Arena-Kanal";
+        salmon = "%game% Salmon-Run Kanal";
+        event = "%game% Event-Kanal";
         cmdSettingsMenuHeader = "Wähle Einstellungen";
         cmdSetLegacy = "Dieser Befehl ist veraltet und wird in einem Zukünftigen Update entfernt. Bitte verwende stattdessen den aktualisierten /settings befehl";
         stages = "Arenen";
@@ -177,6 +182,8 @@ public class German extends EnglishBase {
         salmonPrediction = "Vorhersage: ";
         salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
         splatfestSetting = "Custom Splatfeste aktivieren?";
+
+
     }
 
 

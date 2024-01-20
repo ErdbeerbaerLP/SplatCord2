@@ -6,6 +6,8 @@ import de.erdbeerbaerlp.splatcord2.storage.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Gear;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
@@ -142,8 +144,9 @@ public class Bot implements EventListener {
                 case "splatnet3" -> {
                     final ArrayList<Command.Choice> choices3 = new ArrayList<>();
                     int count3 = 0;
-                    for (String key : lang.s3locales.gear.keySet()) {
-                        final String name = lang.s3locales.gear.get(key).name;
+                    for (Gear g : LInk3.getAllGear()) {
+                        final String key = g.name;
+                        final String name = g.localizedName.get(lang.botLocale.locale.replace("-", "_"));
                         if (name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
                             choices3.add(new Command.Choice(name, key));
                             count3++;
@@ -309,8 +312,9 @@ public class Bot implements EventListener {
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "delete" -> {
-                    if (ev.getMessage().getInteraction().getUser().getIdLong() == ev.getUser().getIdLong())
-                        ev.getMessage().delete().queue();
+                    if (ev.getMessage().getInteraction().getUser().getIdLong() == ev.getUser().getIdLong()) {
+                        ev.getInteraction().deferEdit().submit().thenAccept((m)->m.deleteOriginal().queue());
+                    }
                 }
                 case "regenprivate" -> {
                     PrivateCommand.generatePrivate(ev);
@@ -318,28 +322,41 @@ public class Bot implements EventListener {
             }
             if (ev.getComponentId().startsWith("loadmore")) {
                 final EmbedBuilder b = new EmbedBuilder();
+                final EmbedBuilder b2 = new EmbedBuilder();
                 long time = System.currentTimeMillis() / 1000;
                 time += (TimeUnit.HOURS.toSeconds(2) + 1) * 3;
                 final CompletableFuture<InteractionHook> submit = ev.deferReply(true).submit();
                 if (ev.getComponentId().equals("loadmore3")) {
-                    for (int i = 0; i < 6; i++) {
+                    for (int i = 0; i < 4; i++) {
                         time += TimeUnit.HOURS.toSeconds(2) + 1;
                         RotationCommand.addS3Rotation(b, ScheduleUtil.getS3RotationForTimestamp(time), lang);
-                        if (i < 5)
+                        if (i < 3)
                             b.addBlankField(false);
                     }
+                    for (int i = 4; i < 8; i++) {
+                        time += TimeUnit.HOURS.toSeconds(2) + 1;
+                        RotationCommand.addS3Rotation(b2, ScheduleUtil.getS3RotationForTimestamp(time), lang);
+                        if (i < 7)
+                            b2.addBlankField(false);
+                    }
+
                 }
                 if (ev.getComponentId().equals("loadmore2")) {
-                    for (int i = 0; i < 6; i++) {
+                    for (int i = 0; i < 4; i++) {
                         time += TimeUnit.HOURS.toSeconds(2) + 1;
                         RotationCommand.addS2Rotation(b, ScheduleUtil.getS2RotationForTimestamp(time), lang);
-                        if (i < 6 - 1)
+                        if (i < 4 - 1)
                             b.addBlankField(false);
                     }
+                    for (int i = 4; i < 8; i++) {
+                        time += TimeUnit.HOURS.toSeconds(2) + 1;
+                        RotationCommand.addS2Rotation(b2, ScheduleUtil.getS2RotationForTimestamp(time), lang);
+                        if (i < 8 - 1)
+                            b2.addBlankField(false);
+                    }
                 }
-
                 submit.thenAccept((m) -> {
-                    m.editOriginalEmbeds(b.build()).queue();
+                    m.editOriginalEmbeds(b.build(),b2.build()).queue();
                 });
             } else if (ev.getComponentId().startsWith("snet3next")) {
                 int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3next", ""));
