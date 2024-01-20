@@ -43,7 +43,7 @@ public class ViewProfileCommand extends BaseCommand {
         if (subcommandName != null)
             switch (subcommandName) {
                 case "splat1":
-                    if ((profile.wiiu_nnid != null || profile.wiiu_pnid != null) && (!profile.wiiu_pnid.isBlank() || !profile.wiiu_pnid.isEmpty())) {
+                    if ((profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank()) || (profile.wiiu_pnid != null && !profile.wiiu_pnid.isEmpty())) {
                         final EmbedBuilder b = new EmbedBuilder();
                         if (profile.splat1Profile.name != null && !profile.splat1Profile.name.isBlank())
                             b.setTitle(profile.splat1Profile.name + "'s Splatoon 1 Profile");
