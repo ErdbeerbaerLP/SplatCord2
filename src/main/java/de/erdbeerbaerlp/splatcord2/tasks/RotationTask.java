@@ -28,6 +28,7 @@ public class RotationTask extends TimerTask {
                 iface.getAllS1MapChannels().forEach((serverid, channel) -> {
                     try {
                         MessageUtil.sendS1RotationFeed(serverid, channel, currentS1Rotation);
+                        Thread.sleep(100);
                     } catch (
                             Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();
@@ -46,6 +47,7 @@ public class RotationTask extends TimerTask {
                 iface.getAllS1PMapChannels().forEach((serverid, channel) -> {
                     try {
                         MessageUtil.sendS1PRotationFeed(serverid, channel, currentS1PRotation);
+                        Thread.sleep(100);
                     } catch (
                             Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();
@@ -64,6 +66,7 @@ public class RotationTask extends TimerTask {
                 iface.getAllS2MapChannels().forEach((serverid, channel) -> {
                     try {
                         MessageUtil.sendS2RotationFeed(serverid, channel, currentRotation);
+                        Thread.sleep(100);
                     } catch (
                             Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();
@@ -77,6 +80,7 @@ public class RotationTask extends TimerTask {
                 iface.getAllS3MapChannels().forEach((serverid, channel) -> {
                     try {
                         MessageUtil.sendS3RotationFeed(serverid, channel, currentS3Rotation);
+                        Thread.sleep(100);
                     } catch (
                             Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();
@@ -89,6 +93,7 @@ public class RotationTask extends TimerTask {
                 iface.getAllS3EventChannels().forEach((serverid, channel) -> {
                     try {
                         MessageUtil.sendS3EventRotationFeed(serverid, channel, currentS3Rotation);
+                        Thread.sleep(100);
                     } catch (
                             Exception e) { //Try to catch everything to prevent messages not sent to other servers on error
                         e.printStackTrace();

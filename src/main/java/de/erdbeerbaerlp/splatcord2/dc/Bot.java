@@ -77,7 +77,7 @@ public class Bot implements EventListener {
                 Main.iface.addServer(g.getIdLong());
             CommandRegistry.setCommands(g);
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch (InterruptedException ignored) {
             }
         });
@@ -470,6 +470,7 @@ public class Bot implements EventListener {
         @Override
         public void run() {
             while (true) {
+                Config.instance().loadConfig();
                 final Config.Discord.Status s = Config.instance().discord.botStatus.get(presence);
                 jda.getPresence().setPresence(Main.iface.status.isDBAlive() ? OnlineStatus.ONLINE : OnlineStatus.DO_NOT_DISTURB, Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + ""), s.streamingURL), false);
                 try {

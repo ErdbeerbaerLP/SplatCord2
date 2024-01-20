@@ -25,6 +25,7 @@ public class SalmonrunTask extends TimerTask {
                         iface.getAllSalmonChannels().forEach((serverid, channel) -> {
                             try {
                                 MessageUtil.sendSalmonFeed(serverid, channel);
+                                Thread.sleep(100);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -46,6 +47,7 @@ public class SalmonrunTask extends TimerTask {
                         iface.getAllS3SalmonChannels().forEach((serverid, channel) -> {
                             try {
                                 MessageUtil.sendS3SalmonFeed(serverid, channel);
+                                Thread.sleep(100);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
