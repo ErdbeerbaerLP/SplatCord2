@@ -127,7 +127,7 @@ public class EditProfileCommand extends BaseCommand {
                             profile.wiiu_pnid = pnid;
                             msg += "Set PNID to " + pnid + "\n";
                         }
-                        if ((profile.wiiu_nnid != null || profile.wiiu_pnid != null) && (!profile.wiiu_pnid.isBlank() || !profile.wiiu_pnid.isEmpty())) {
+                        if ((profile.wiiu_nnid != null || profile.wiiu_pnid != null) && (!profile.wiiu_nnid.isBlank() || !profile.wiiu_pnid.isEmpty())) {
 
                             if (ev.getOption("level") != null) {
                                 profile.splat1Profile.level = (Integer.parseInt(ev.getOption("level").getAsString()));
