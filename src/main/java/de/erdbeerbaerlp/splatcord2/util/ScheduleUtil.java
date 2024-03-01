@@ -137,9 +137,10 @@ public class ScheduleUtil {
         System.out.println("Before for");
         for (final EventSchedule s : schedules3.data.eventSchedules.nodes) {
             System.out.println(s.toString());
-            if (s.timePeriods[0].getStartTime() > time && s.timePeriods[s.timePeriods.length - 1].getEndTime() > time) {
-                next = true;
-            }
+            if (s.timePeriods != null && s.timePeriods.length > 0)
+                if (s.timePeriods[0].getStartTime() > time && s.timePeriods[s.timePeriods.length - 1].getEndTime() > time) {
+                    next = true;
+                }
             if (next)
                 return s;
         }

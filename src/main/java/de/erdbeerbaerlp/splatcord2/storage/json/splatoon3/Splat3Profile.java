@@ -8,6 +8,7 @@ public class Splat3Profile {
     public String splatfestTeam = null;
     public int catalogLevel = 1;
     public int tableturfLevel = 1;
+    public String loadout;
     int level = 1;
     int stars = 0;
     String name;
@@ -21,6 +22,7 @@ public class Splat3Profile {
         if (obj.get("rank") != null) profile.rank = new Rank(obj.get("rank").getAsString());
         if (obj.get("stars") != null) profile.stars = obj.get("stars").getAsInt();
         if (obj.get("name") != null && !obj.get("name").isJsonNull()) profile.name = obj.get("name").getAsString();
+        if (obj.get("loadout") != null && !obj.get("loadout").isJsonNull()) profile.loadout = obj.get("loadout").getAsString();
         if (obj.get("splatfest") != null && !obj.get("splatfest").isJsonNull())
             profile.splatfestTeam = obj.get("splatfest").getAsString();
         try {
@@ -63,6 +65,7 @@ public class Splat3Profile {
         json.addProperty("srtitle", srTitle);
         json.addProperty("stars", stars);
         json.addProperty("name", name);
+        json.addProperty("loadout", loadout);
         json.addProperty("rank", rank.toString().replace("(", "").replace(")", ""));
         json.addProperty("splatfest", splatfestTeam);
         return json;

@@ -6,14 +6,16 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
-import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3Profile;
+import de.erdbeerbaerlp.splatcord2.util.LInk3Utils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 
 public class EditProfileCommand extends BaseCommand {
@@ -70,23 +72,21 @@ public class EditProfileCommand extends BaseCommand {
         final OptionData catalogLevel = new OptionData(OptionType.INTEGER, "catalog-level", l.botLocale.cmdProfileCatalogLevelDesc, false);
         final OptionData tableturfLevel = new OptionData(OptionType.INTEGER, "tableturf-level", l.botLocale.cmdProfileTableturfLevelDesc, false);
 
-        final OptionData splatfestTeam = new OptionData(OptionType.STRING, "splatfest-team", l.botLocale.cmdProfileSplatfest, false);
-        final FestRecord node = ScheduleUtil.getSplatfestData().US.data.festRecords.nodes[0];
-        splatfestTeam.addChoice(l.s3locales.festivals.get(node.getSplatfestID()).teams[0].teamName, node.teams[0].id);
-        splatfestTeam.addChoice(l.s3locales.festivals.get(node.getSplatfestID()).teams[1].teamName, node.teams[1].id);
-        splatfestTeam.addChoice(l.s3locales.festivals.get(node.getSplatfestID()).teams[2].teamName, node.teams[2].id);
+        final OptionData splatfestTeam = new OptionData(OptionType.STRING, "splatfest-team", l.botLocale.cmdProfileSplatfest, false).setAutoComplete(true);
+        final OptionData lo3ink = new OptionData(OptionType.STRING, "loadout", "Set your loadout link. Compatible: slushiegoose.github.io; Set to 'clear' to remove");
+
 
         splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
         splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1, mainWeapon2);
-        splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam, tableturfLevel, catalogLevel);
+        splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam, tableturfLevel, catalogLevel, lo3ink);
 
         addSubcommands(splat2, splat1, splat3);
     }
 
     static String formatToFC(long input) {
         String plain = input + "";
-        if(plain.length()< 12){
-            plain = String.join("", Collections.nCopies(12-plain.length(), "0")) +plain;
+        if (plain.length() < 12) {
+            plain = String.join("", Collections.nCopies(12 - plain.length(), "0")) + plain;
         }
         return String.format("SW-%1$s-%2$s-%3$s", plain.substring(0, 4), plain.substring(4, 8), plain.substring(8, 12));
     }
@@ -167,9 +167,9 @@ public class EditProfileCommand extends BaseCommand {
                         OptionMapping switchFCOption = ev.getOption("switch-fc");
                         if (switchFCOption != null) {
                             final String fc = switchFCOption.getAsString().replaceAll("[^\\d.]", "");
-                            if(fc.length() != 12){
+                            if (fc.length() != 12) {
                                 msg += lang.botLocale.cmdProfileSwitchFCFormatNotValid + "\n";
-                            }else {
+                            } else {
                                 long switchFC = Long.parseLong(fc);
                                 profile.switch_fc = switchFC;
                                 msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
@@ -255,9 +255,9 @@ public class EditProfileCommand extends BaseCommand {
                         OptionMapping switchFCOption = ev.getOption("switch-fc");
                         if (switchFCOption != null) {
                             final String fc = switchFCOption.getAsString().replaceAll("[^\\d.]", "");
-                            if(fc.length() != 12){
+                            if (fc.length() != 12) {
                                 msg += lang.botLocale.cmdProfileSwitchFCFormatNotValid + "\n";
-                            }else {
+                            } else {
                                 long switchFC = Long.parseLong(fc);
                                 profile.switch_fc = switchFC;
                                 msg += lang.botLocale.cmdProfileFCSet + formatToFC(switchFC) + "\n";
@@ -302,6 +302,36 @@ public class EditProfileCommand extends BaseCommand {
                                 profile.splat3Profile.splatfestTeam = ev.getOption("splatfest-team").getAsString();
                                 msg += lang.botLocale.cmdProfileSplatfestSet + lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam).teamName + "\n";
                             }
+
+                            if (ev.getOption("loadout") != null) {
+                                try {
+                                    final String param = ev.getOption("loadout").getAsString();
+                                    if(param.equals("clear")){
+                                        profile.splat3Profile.loadout = null;
+                                    }
+                                    final URL lInk = new URL(param);
+                                    if (lInk.getHost().equals("slushiegoose.github.io")) {
+                                        int indexOfHash = param.indexOf("#");
+                                        final String code = param.substring(indexOfHash + 1, param.length());
+                                        try {
+                                            final LInk3Profile decode = LInk3Utils.decode(code);
+                                            if (decode == null)
+                                                throw new Exception(); //Also go to catch
+                                            profile.splat3Profile.loadout = code;
+                                            msg += "Updated your loadout\n";
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                            msg += "Error in loadout url";
+                                        }
+                                    } else {
+                                        msg += "Loadout is not a supported URL\n";
+                                    }
+                                } catch (MalformedURLException e) {
+
+                                    msg += "Loadout is not a valid URL\n";
+                                }
+                            }
+
 
                             Main.iface.updateSplatProfile(profile);
                         } else {

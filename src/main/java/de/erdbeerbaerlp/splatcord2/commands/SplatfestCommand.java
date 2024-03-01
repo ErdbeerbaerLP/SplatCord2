@@ -27,7 +27,7 @@ public class SplatfestCommand extends BaseCommand {
         final OptionData d = new OptionData(OptionType.STRING, "splatfest", l.botLocale.cmdSplatfestDescS3, true);
         d.setAutoComplete(true);
         spl3.addOptions(d);
-        addSubcommands(spl1,spl12, spl3);
+        addSubcommands(/*spl1,spl12, */spl3);
 
     }
 
@@ -45,6 +45,7 @@ public class SplatfestCommand extends BaseCommand {
                 final OptionMapping sfOption = ev.getOption("splatfest");
                 final String festID = sfOption.getAsString();
                 final FestRecord fest = ScheduleUtil.getSplatfestByID(festID);
+
                 if (fest == null) return;
                 submit.thenAccept((s) -> s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbed(fest, true, lang)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue());
             }

@@ -28,7 +28,9 @@ import net.dv8tion.jda.api.entities.User;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
+import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.lang.reflect.Type;
@@ -61,9 +63,20 @@ public class Main {
     public static boolean splatoon1PretendoStatus = false;
     public static CoOpSchedules coop_schedules;
     public static Map<String, Weapon> weaponData = new HashMap<>();
+    public static Font splatfont2;
+
 
     public static void main(String[] args) throws Exception {
         Config.instance().loadConfig();
+
+        try {
+            InputStream fontStream = Main.class.getResourceAsStream("/assets/fonts/Splatfont.ttf");
+            splatfont2 = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         try {
             iface = new DatabaseInterface();
         } catch (SQLException e) {

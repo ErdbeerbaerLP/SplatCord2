@@ -5,10 +5,10 @@ import de.erdbeerbaerlp.splatcord2.commands.*;
 import de.erdbeerbaerlp.splatcord2.storage.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
-import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Gear;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.SplatfestRegion;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
@@ -157,64 +157,109 @@ public class Bot implements EventListener {
                 }
                 case "editprofile" -> {
                     switch (ev.getFocusedOption().getName()) {
-                        case "main1":
-                        case "main2":
-                            final ArrayList<Command.Choice> weapons = new ArrayList<>();
-                            int count2 = 0;
-                            for (Integer key : lang.weapons.keySet()) {
-                                final Weapon wp = lang.weapons.get(key);
-                                if (wp.name.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
-                                    weapons.add(new Command.Choice(wp.name, key));
-                                    count2++;
-                                    if (count2 >= 20) break;
+                        case "splatfest-team":
+                            final ArrayList<Command.Choice> choices = new ArrayList<>();
+                            final SplatfestRegion[] regions = new SplatfestRegion[]{ScheduleUtil.getSplatfestData().US, ScheduleUtil.getSplatfestData().EU, ScheduleUtil.getSplatfestData().JP, ScheduleUtil.getSplatfestData().AP};
+                            int count = 0;
+                            for (final SplatfestRegion r : regions) {
+                                for (final FestRecord fest : r.data.festRecords.nodes) {
+                                    Locale dispLang = lang;
+                                    if (!lang.s3locales.festivals.containsKey(fest.getSplatfestID())) {
+                                        for (Locale lan : Main.translations.values()) {
+                                            if (lan.s3locales.festivals.containsKey(fest.getSplatfestID()))
+                                                dispLang = lan;
+                                            break;
+                                        }
+                                        if (!dispLang.s3locales.festivals.containsKey(fest.getSplatfestID())) continue;
+                                    }
+                                    for (int i = 0; i < fest.teams.length; i++) {
+                                        final String dispName = dispLang.s3locales.festivals.get(fest.getSplatfestID()).title + " - " + dispLang.s3locales.festivals.get(fest.getSplatfestID()).teams[i].teamName;
+                                        if (dispName.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                                            choices.add(new Command.Choice(dispName, fest.getSplatfestID() + ";" + i));
+                                            count++;
+                                            if (count >= 23) {
+                                                ev.replyChoices(choices).queue();
+                                                return;
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                            ev.replyChoices(weapons).queue();
-                            break;
+                            ev.replyChoices(choices).queue();
                     }
                 }
                 case "splatfest", "splatfestdebug" -> {
-                    final ArrayList<Command.Choice> splatfests = new ArrayList<>();
-                    int countsplatfest = 0;
-                    for (FestRecord f : ScheduleUtil.getSplatfestData().US.data.festRecords.nodes) {
-                        final String title = lang.s3locales.festivals.get(f.getSplatfestID()).title;
-                        if (title.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
-                            splatfests.add(new Command.Choice(title, f.getSplatfestID()));
-                            countsplatfest++;
-                            if (countsplatfest >= 20) break;
+                    final ArrayList<Command.Choice> choices = new ArrayList<>();
+                    final SplatfestRegion[] regions = new SplatfestRegion[]{ScheduleUtil.getSplatfestData().US, ScheduleUtil.getSplatfestData().EU, ScheduleUtil.getSplatfestData().JP, ScheduleUtil.getSplatfestData().AP};
+                    int count = 0;
+                    for (int region = 0; region < regions.length; region++) {
+                        final SplatfestRegion r = regions[region];
+                        String regionString = switch (region) {
+                            case 0 -> "US";
+                            case 1 -> "Europe";
+                            case 2 -> "Japan";
+                            case 3 -> "Hong Kong, S. Korea";
+                            default -> "Unknown Region";
+                        };
+                        for (final FestRecord fest : r.data.festRecords.nodes) {
+                            Locale dispLang = lang;
+                            if (!lang.s3locales.festivals.containsKey(fest.getSplatfestID())) {
+                                for (Locale lan : Main.translations.values()) {
+                                    if (lan.s3locales.festivals.containsKey(fest.getSplatfestID())) {
+                                        dispLang = lan;
+                                        break;
+                                    }
+                                }
+                                if (!dispLang.s3locales.festivals.containsKey(fest.getSplatfestID())) continue;
+                            }
+                            final String dispName = dispLang.s3locales.festivals.get(fest.getSplatfestID()).title + " (" + regionString + ")";
+                            if (dispName.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                                choices.add(new Command.Choice(dispName, fest.getSplatfestID()));
+                                count++;
+                                if (count >= 23) {
+                                    ev.replyChoices(choices).queue();
+                                    return;
+                                }
+                            }
                         }
                     }
-                    ev.replyChoices(splatfests).queue();
+                    ev.replyChoices(choices).queue();
                 }
             }
         } else if (event instanceof EntitySelectInteractionEvent ev) {
             switch (ev.getComponentId()) {
                 case "s1channel" -> {
+                    if (checkPerms(ev)) return;
                     Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s1channelPretendo" -> {
+                    if (checkPerms(ev)) return;
                     Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS1PRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s2channel" -> {
+                    if (checkPerms(ev)) return;
                     Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS2RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentRotation());
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s3channel" -> {
+                    if (checkPerms(ev)) return;
                     Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS3RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s2salmon" -> {
+                    if (checkPerms(ev)) return;
                     Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendSalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s3salmon" -> {
+                    if (checkPerms(ev)) return;
                     Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     MessageUtil.sendS3SalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                     ev.getInteraction().deferEdit().queue();
@@ -233,7 +278,7 @@ public class Bot implements EventListener {
                 case "language" -> {
                     System.out.println(ev.getInteraction().getValues().get(0) + " language");
                     Main.iface.setServerLang(ev.getGuild().getIdLong(), BotLanguage.fromInt(Integer.parseInt(ev.getInteraction().getValues().get(0))));
-                    ev.getInteraction().editMessage(SettingsCommand.getMenu("generic", Main.iface.getServerLang(ev.getGuild().getIdLong()))).queue();
+                    ev.getInteraction().editMessage(SettingsCommand.getMenu("generic", ev.getGuild().getIdLong())).queue();
                     CommandRegistry.setCommands(ev.getGuild());
                     return;
                 }
@@ -251,7 +296,7 @@ public class Bot implements EventListener {
                 }
             }
             if (ev.getComponentId().equals("settingSel")) {
-                ev.getInteraction().deferEdit().submit().thenAccept((a) -> a.editOriginal((SettingsCommand.getMenu(ev.getInteraction().getValues().get(0), Main.iface.getServerLang(ev.getGuild().getIdLong())))).queue());
+                ev.getInteraction().deferEdit().submit().thenAccept((a) -> a.editOriginal((SettingsCommand.getMenu(ev.getInteraction().getValues().get(0), ev.getGuild().getIdLong()))).queue());
             } else
                 ev.reply("Selected " + ev.getValues().get(0)).setEphemeral(true).queue();
         } else if (event instanceof final GuildJoinEvent ev) {
@@ -287,7 +332,8 @@ public class Bot implements EventListener {
                 case "s1clear" -> {
                     Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), null);
                     ev.getInteraction().deferEdit().queue();
-                }case "s1pclear" -> {
+                }
+                case "s1pclear" -> {
                     Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), null);
                     ev.getInteraction().deferEdit().queue();
                 }
@@ -313,7 +359,7 @@ public class Bot implements EventListener {
                 }
                 case "delete" -> {
                     if (ev.getMessage().getInteraction().getUser().getIdLong() == ev.getUser().getIdLong()) {
-                        ev.getInteraction().deferEdit().submit().thenAccept((m)->m.deleteOriginal().queue());
+                        ev.getInteraction().deferEdit().submit().thenAccept((m) -> m.deleteOriginal().queue());
                     }
                 }
                 case "regenprivate" -> {
@@ -356,7 +402,7 @@ public class Bot implements EventListener {
                     }
                 }
                 submit.thenAccept((m) -> {
-                    m.editOriginalEmbeds(b.build(),b2.build()).queue();
+                    m.editOriginalEmbeds(b.build(), b2.build()).queue();
                 });
             } else if (ev.getComponentId().startsWith("snet3next")) {
                 int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3next", ""));
@@ -426,6 +472,7 @@ public class Bot implements EventListener {
             final String prediction = switch (currentS3Rotation.getCoop().__splatoon3ink_king_salmonid_guess) {
                 case "Cohozuna" -> String.valueOf(Emote.COHOZUNA);
                 case "Horrorboros" -> String.valueOf(Emote.HORRORBOROS);
+                case "Megalodontia" -> String.valueOf(Emote.MEGALODONTIA);
                 default -> String.valueOf(Emote.ERROR_CONTACT_DEVELOPER);
             };
             final ArrayList<MessageEmbed> embeds = new ArrayList<>();

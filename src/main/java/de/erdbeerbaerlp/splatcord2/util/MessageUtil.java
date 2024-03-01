@@ -368,6 +368,16 @@ public class MessageUtil {
     }
 
     public static MessageEmbed generateSplatfestEmbed(FestRecord fest, boolean command, Locale l) {
+        Locale dispLang = l;
+        if (!l.s3locales.festivals.containsKey(fest.getSplatfestID())) {
+            for (Locale lan : Main.translations.values()) {
+                if (lan.s3locales.festivals.containsKey(fest.getSplatfestID())) {
+                    dispLang = lan;
+                    break;
+                }
+            }
+            if (!dispLang.s3locales.festivals.containsKey(fest.getSplatfestID())) return null;
+        }
         final EmbedBuilder b = new EmbedBuilder();
         final String splatfestID = fest.getSplatfestID();
         if (fest.getEndTime() < System.currentTimeMillis() / 1000) {
@@ -385,11 +395,11 @@ public class MessageUtil {
         }
         if (command) b.setTitle(l.botLocale.splatfestEmbedTitle);
         b.setImage(fest.image.url);
-        b.setDescription(l.s3locales.festivals.get(splatfestID).title);
-        b.addField(l.botLocale.splatfestTeams, l.s3locales.festivals.get(splatfestID).teams[0].teamName + ", " + l.s3locales.festivals.get(splatfestID).teams[1].teamName + ", " + l.s3locales.festivals.get(splatfestID).teams[2].teamName, false);
+        b.setDescription(dispLang.s3locales.festivals.get(splatfestID).title);
+        b.addField(l.botLocale.splatfestTeams, dispLang.s3locales.festivals.get(splatfestID).teams[0].teamName + ", " + dispLang.s3locales.festivals.get(splatfestID).teams[1].teamName + ", " + dispLang.s3locales.festivals.get(splatfestID).teams[2].teamName, false);
         if (fest.getWinningTeam() != null) {
             b.setColor(fest.getWinningTeam().color.toColor());
-            b.addField(l.botLocale.splatfestTeamWinner, l.s3locales.festivals.get(splatfestID).teams[convertIdToTeamNum(fest.getWinningTeam().id)].teamName, false);
+            b.addField(l.botLocale.splatfestTeamWinner, dispLang.s3locales.festivals.get(splatfestID).teams[convertIdToTeamNum(fest.getWinningTeam().id)].teamName, false);
         }
 
         return b.build();

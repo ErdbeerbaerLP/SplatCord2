@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class LInk3 {
     public static LInk3Node[] adjectives, subjects;
     public static Brand[] brands;
-    public static Badge[] badges;
+    public static ImageNode[] badges;
     public static Splashtag[] splashtags;
 
     public static Gear[] hat, clothes, shoes;
@@ -23,7 +23,7 @@ public class LInk3 {
     public static void init() {
         adjectives = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/adjectives.json"), LInk3Node[].class);
         subjects = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/subjects.json"), LInk3Node[].class);
-        badges = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/badges.json"), Badge[].class);
+        badges = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/badges.json"), ImageNode[].class);
         splashtags = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/splashtags.json"), Splashtag[].class);
         hat = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/hats.json"), Gear[].class);
         clothes = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/clothes.json"), Gear[].class);
@@ -31,7 +31,7 @@ public class LInk3 {
         weaponTypes = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/weapons.json"), WeaponType[].class);
         subs = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/subs.json"), ImageNode[].class);
         specials = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/specials.json"), ImageNode[].class);
-        skills = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/specials.json"), ImageNode[].class);
+        skills = Main.gson.fromJson(getFromURL("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/data/json/skills.json"), ImageNode[].class);
     }
 
     public static ImageNode getSimpleTranslatableByName(final String name){
@@ -48,7 +48,8 @@ public class LInk3 {
     }
 
     public static LInk3Node getFromID(LInk3Node[] from, int id){
-        for (final LInk3Node node : from) {
+        for (final LInk3Node node
+                : from) {
             if(node.id == id) return node;
         }
         return null;

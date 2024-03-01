@@ -10,7 +10,7 @@ public class EnglishBase {
 
     public String langName = "English (Default, by @ErdbeerbaerLP)";
 
-    public String salmonStage = "Stages:";
+    public String salmonStage = "Stage:";
     public String weapons = "Weapons:";
     public String stagesTitle = "Current Stages";
     public String futureStagesTitle = "Future Stages";
@@ -205,6 +205,7 @@ public class EnglishBase {
     public String salmonPrediction = "Prediction: ";
     public String stages = "Stages";
     public String splatfestSetting = "Custom Splatfests enabled?";
+    public String cmdSettingsSplatfestRegion = "Splatfest region";
 
 
     public String getS1MapName(int mapid) {

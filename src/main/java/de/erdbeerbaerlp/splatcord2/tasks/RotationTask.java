@@ -16,6 +16,7 @@ import static de.erdbeerbaerlp.splatcord2.Main.*;
 public class RotationTask extends TimerTask {
     @Override
     public void run() {
+        System.out.println("Running RotationTask");
         final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         final int currentS1RotationInt = RotationTimingUtil.getRotationForInstant(Instant.now());

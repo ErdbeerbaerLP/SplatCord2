@@ -43,12 +43,16 @@ public class RandomCommand extends BaseCommand {
         team.addOption(OptionType.BOOLEAN, "weapons", l.botLocale.cmdRandomTeamWeapons);
         final SubcommandData mode = new SubcommandData("mode", l.botLocale.cmdRandomMode);
         OptionData splVersions = new OptionData(OptionType.INTEGER, "version", l.botLocale.cmdRandomModeVersion);
+        OptionData splVersions2 = new OptionData(OptionType.INTEGER, "version", l.botLocale.cmdRandomModeVersion);
         splVersions.addChoice("Splatoon 3", 3);
+        splVersions2.addChoice("Splatoon 3", 3);
         splVersions.addChoice("Splatoon 2", 2);
+        splVersions2.addChoice("Splatoon 2", 2);
+        splVersions2.addChoice("Splatoon 1", 1);
         weapon.addOptions(splVersions);
         stage.addOptions(splVersions);
-        splVersions.addChoice("Splatoon 1", 1);
-        mode.addOptions(splVersions);
+        team.addOptions(splVersions);
+        mode.addOptions(splVersions2);
         addSubcommands(weapon, number, stage, team, mode);
     }
 
@@ -72,6 +76,7 @@ public class RandomCommand extends BaseCommand {
         lastRandomWeapons.add(wpnID);
         if (lastRandomWeapons.size() > 8) lastRandomWeapons.remove(0);
     }
+
     private void addWeapon3(String wpnID) {
         lastRandomWeapons3.add(wpnID);
         if (lastRandomWeapons3.size() > 8) lastRandomWeapons3.remove(0);
@@ -90,12 +95,13 @@ public class RandomCommand extends BaseCommand {
             return wpnid;
         } while (true);
     }
+
     private Weapon getRandomWeapon3() {
         final HashMap<String, Weapon> allWeapons = LInk3.getAllWeapons();
         final Set<String> ids = allWeapons.keySet();
         final Random r = new Random();
         do {
-            final int weapon = r.nextInt(ids.size()-1);
+            final int weapon = r.nextInt(ids.size() - 1);
             final String wpnid = ids.toArray(new String[0])[weapon];
             if (!allWeapons.containsKey(wpnid))
                 continue;
@@ -109,8 +115,9 @@ public class RandomCommand extends BaseCommand {
     private String getRandomWeaponName(Locale lang) {
         return lang.weapons.get(Integer.parseInt(getRandomWeaponID(lang))).name;
     }
+
     private String getRandomS3WeaponName(Locale lang) {
-        return getRandomWeapon3().localizedName.get(lang.botLocale.locale.replace("-","_"));
+        return getRandomWeapon3().localizedName.get(lang.botLocale.locale.replace("-", "_"));
     }
 
     @Override
@@ -154,11 +161,11 @@ public class RandomCommand extends BaseCommand {
                         for (int i = 0; i < amount; ++i) {
                             final Weapon w = getRandomWeapon3();
                             embs.add(new EmbedBuilder()
-                                    .setTitle(w.localizedName.get(lang.botLocale.locale.replace("-","_")))
+                                    .setTitle(w.localizedName.get(lang.botLocale.locale.replace("-", "_")))
                                     .setThumbnail("https://raw.githubusercontent.com/slushiegoose/slushiegoose.github.io/master/en_US/" + w.image)
                                     .addField(lang.botLocale.weaponSub,
-                                            LInk3.getSimpleTranslatableByName(w.sub).localizedName.get(lang.botLocale.locale.replace("-","_")), true)
-                                    .addField(lang.botLocale.weaponSpecial, LInk3.getSimpleTranslatableByName(w.special).localizedName.get(lang.botLocale.locale.replace("-","_")), true)
+                                            LInk3.getSimpleTranslatableByName(w.sub).localizedName.get(lang.botLocale.locale.replace("-", "_")), true)
+                                    .addField(lang.botLocale.weaponSpecial, LInk3.getSimpleTranslatableByName(w.special).localizedName.get(lang.botLocale.locale.replace("-", "_")), true)
                                     .build());
                         }
                         mb.setEmbeds(embs);
@@ -213,10 +220,13 @@ public class RandomCommand extends BaseCommand {
                 for (int i = 0; i < players; i++) {
                     playerArray[i] = i + 1;
                 }
-                if(splVer== 2) {
+                if (splVer == 2) {
                     shuffleArray(playerArray);
                     final StringBuilder privateString = new StringBuilder();
-                    privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
+                    privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n");
+                    final Stage[] stages = lang.stages.values().toArray(new Stage[0]);
+                    final int stage = r.nextInt(lang.stages.size() - 1);
+                    privateString.append(lang.botLocale.salmonStage+stages[stage].getName()+"\n\n");
                     privateString.append(lang.botLocale.cmdRandomPrivateAlpha + ":\n");
                     privateString.append("[" + playerArray[0] + "] ");
                     if (genWeapons)
@@ -271,10 +281,13 @@ public class RandomCommand extends BaseCommand {
                     if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
                     if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
                     ev.reply(privateString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
-                }else if(splVer == 3){
+                } else if (splVer == 3) {
                     shuffleArray(playerArray);
                     final StringBuilder privateString = new StringBuilder();
-                    privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n\n");
+                    privateString.append(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name).append("\n");
+                    final TranslationNode[] s3Stages = lang.s3locales.stages.values().toArray(new TranslationNode[0]);
+                    final int stage = r.nextInt(lang.s3locales.stages.size() - 1);
+                    privateString.append(lang.botLocale.salmonStage + s3Stages[stage].name + "\n\n");
                     privateString.append(lang.botLocale.cmdRandomPrivateAlpha + ":\n");
                     privateString.append("[" + playerArray[0] + "] ");
                     if (genWeapons)

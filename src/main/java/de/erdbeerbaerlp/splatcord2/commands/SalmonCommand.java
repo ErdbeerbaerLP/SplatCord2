@@ -75,11 +75,13 @@ public class SalmonCommand extends BaseCommand {
                     final String prediction = switch (currentS3Rotation.getCoop().__splatoon3ink_king_salmonid_guess) {
                         case "Cohozuna" -> String.valueOf(Emote.COHOZUNA);
                         case "Horrorboros" -> String.valueOf(Emote.HORRORBOROS);
+                        case "Megalodontia" -> String.valueOf(Emote.MEGALODONTIA);
                         default -> String.valueOf(Emote.ERROR_CONTACT_DEVELOPER);
                     };
                     final String prediction2 = switch (nextRotation.__splatoon3ink_king_salmonid_guess) {
                         case "Cohozuna" -> String.valueOf(Emote.COHOZUNA);
                         case "Horrorboros" -> String.valueOf(Emote.HORRORBOROS);
+                        case "Megalodontia" -> String.valueOf(Emote.MEGALODONTIA);
                         default -> String.valueOf(Emote.ERROR_CONTACT_DEVELOPER);
                     };
                     ev.replyEmbeds(new EmbedBuilder().setTitle(lang.botLocale.salmonRunTitle + " (Splatoon 3)")

@@ -20,6 +20,7 @@ import java.util.TimerTask;
 public class DataUpdateTask extends TimerTask {
     @Override
     public void run() {
+        System.out.println("Starting data update...");
         try {
             ScheduleUtil.updateS2RotationData();
             Main.splatoon2inkStatus = true;

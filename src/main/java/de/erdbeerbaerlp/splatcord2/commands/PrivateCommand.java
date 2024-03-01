@@ -4,7 +4,9 @@ import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.GameRule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.TranslationNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -49,6 +51,7 @@ public class PrivateCommand extends BaseCommand {
 
     public static void generatePrivate(GenericInteractionCreateEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+
         InteractionHook cmdmsg = null;
         if (ev instanceof SlashCommandInteractionEvent e) {
             cmdmsg = e.deferReply().complete();
@@ -56,6 +59,10 @@ public class PrivateCommand extends BaseCommand {
             cmdmsg = e.deferEdit().complete();
         }
         final long roomID = Main.iface.getUserRoom(ev.getUser().getIdLong());
+        if(Main.iface.getPlayersInRoom(roomID).size()<=1){
+            cmdmsg.editOriginal(lang.botLocale.cmdPrivateNotEnoughPlayers).queue();
+            return;
+        }
         final int roomVersion = Main.iface.getGameVersionOfRoom(roomID);
         final ArrayList<Long> playersInRoom = Main.iface.getPlayersInRoom(roomID);
         if (playersInRoom.size() <= 1) {
@@ -92,6 +99,9 @@ public class PrivateCommand extends BaseCommand {
                 curPlayer++;
             }
             b.setTitle(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
+            final Stage[] stages = lang.stages.values().toArray(new Stage[0]);
+                final int stage = new Random().nextInt(lang.stages.size() - 1);
+            b.addField(lang.botLocale.salmonStage,stages[stage].getName(),false);
             b.addField(lang.botLocale.cmdRandomPrivateAlpha, alpha.toString(), true);
             b.addField(lang.botLocale.cmdRandomPrivateBravo, bravo.toString(), true);
             if (!spectator.toString().isEmpty())
@@ -113,6 +123,9 @@ public class PrivateCommand extends BaseCommand {
                 curPlayer++;
             }
             b.setTitle(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
+            final TranslationNode[] s3Stages = lang.s3locales.stages.values().toArray(new TranslationNode[0]);
+            final int stage = new Random().nextInt(lang.s3locales.stages.size() - 1);
+            b.addField(lang.botLocale.salmonStage,s3Stages[stage].name,false);
             b.addField(lang.botLocale.cmdRandomPrivateAlpha, alpha.toString(), true);
             b.addField(lang.botLocale.cmdRandomPrivateBravo, bravo.toString(), true);
             if (!spectator.toString().isEmpty())

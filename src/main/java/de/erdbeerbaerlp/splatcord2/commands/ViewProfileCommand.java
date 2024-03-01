@@ -3,6 +3,9 @@ package de.erdbeerbaerlp.splatcord2.commands;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3Profile;
+import de.erdbeerbaerlp.splatcord2.util.ImageUtil;
+import de.erdbeerbaerlp.splatcord2.util.LInk3Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -12,6 +15,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 
 public class ViewProfileCommand extends BaseCommand {
     public ViewProfileCommand(Locale l) {
@@ -94,25 +99,34 @@ public class ViewProfileCommand extends BaseCommand {
                     break;
                 case "splat3":
                     if (profile.switch_fc != -1) {
-                        final EmbedBuilder b = new EmbedBuilder();
-                        if (profile.splat3Profile.getName() != null && !profile.splat3Profile.getName().isBlank())
-                            b.setTitle(profile.splat3Profile.getName() + "'s Splatoon 3 Profile");
-                        else
-                            b.setTitle(m.getEffectiveName() + "'s Splatoon 3 Profile");
-                        b.addField(lang.botLocale.cmdProfileLevel, profile.splat3Profile.getLevel(), true);
-                        b.addField(lang.botLocale.cmdProfileCatalogLevel, profile.splat3Profile.catalogLevel + "", true);
-                        b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel + "", true);
-                        b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
-                        b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
-                        if(lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam) != null)
-                            b.addField(lang.botLocale.cmdProfileSplatfest, lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam).teamName , true);
-                        else
-                            b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.unset, true);
-
-                        String footer = "Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc);
-                        b.setFooter(footer);
-
-                        ev.replyEmbeds(b.build()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        ev.deferReply().submit().thenAccept((msg) -> {
+                            final MessageEditBuilder mb = new MessageEditBuilder();
+                            final EmbedBuilder b = new EmbedBuilder();
+                            if (profile.splat3Profile.getName() != null && !profile.splat3Profile.getName().isBlank())
+                                b.setTitle(profile.splat3Profile.getName() + "'s Splatoon 3 Profile");
+                            else
+                                b.setTitle(m.getEffectiveName() + "'s Splatoon 3 Profile");
+                            b.addField(lang.botLocale.cmdProfileLevel, profile.splat3Profile.getLevel(), true);
+                            b.addField(lang.botLocale.cmdProfileCatalogLevel, profile.splat3Profile.catalogLevel + "", true);
+                            b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel + "", true);
+                            b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
+                            b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
+                            if (lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam) != null)
+                                b.addField(lang.botLocale.cmdProfileSplatfest, lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam).teamName, true);
+                            else
+                                b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.unset, true);
+                            if (profile.splat3Profile.loadout != null && !profile.splat3Profile.loadout.isEmpty()) {
+                                final LInk3Profile loadout = LInk3Utils.decode(profile.splat3Profile.loadout);
+                                final byte[] img = ImageUtil.generateLoadoutImage(loadout, lang);
+                                mb.setAttachments(FileUpload.fromData(img,"splashtag.png"));
+                                b.setImage("attachment://splashtag.png");
+                                b.setColor(loadout.splashtag.color.toColor());
+                            }
+                            b.setFooter("Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc));
+                            mb.setEmbeds(b.build());
+                            mb.setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1")));
+                            msg.editOriginal(mb.build()).queue();
+                        });
                     } else {
                         ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }

@@ -235,6 +235,7 @@ public class DatabaseInterface implements AutoCloseable {
         return true;
     }
 
+
     public boolean getCustomSplatfests(final long serverID) {
         try (final ResultSet res = query("SELECT customSplatfest FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {

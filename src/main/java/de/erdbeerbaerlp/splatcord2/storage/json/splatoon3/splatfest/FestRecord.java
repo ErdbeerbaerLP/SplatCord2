@@ -2,11 +2,10 @@ package de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest;
 
 import de.erdbeerbaerlp.splatcord2.storage.json.Image;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Base64;
 
 public class FestRecord {
+    public String __splatoon3ink_id;
     public String id;
     public String state;
     public String startTime;
@@ -26,7 +25,7 @@ public class FestRecord {
     }
 
     public String getSplatfestID() {
-        return new String(Base64.getDecoder().decode(id), StandardCharsets.UTF_8).split(":")[1];
+        return __splatoon3ink_id;
     }
 
     public SplatfestTeam getWinningTeam() {

@@ -5,7 +5,7 @@ public class German extends EnglishBase {
         s1FestStr = "EUde";
         langName = "German/Deutsch (100% translated, by @ErdbeerbaerLP";
 
-        salmonStage = "Arenen:";
+        salmonStage = "Arena:";
         weapons = "Waffen:";
         stagesTitle = "Aktuelle Arenen";
         futureStagesTitle = "Zukünftige Arenen";
@@ -182,7 +182,7 @@ public class German extends EnglishBase {
         salmonPrediction = "Vorhersage: ";
         salmonFeedMsg = "Aktuelle Salmon Runs werden nun regelmäßig in diesen Kanal gesendet\n"+cmdSetLegacy;
         splatfestSetting = "Custom Splatfeste aktivieren?";
-
+        cmdSettingsSplatfestRegion = "Splatfest-Region";
 
     }
 
