@@ -29,6 +29,8 @@ public class Config {
     public WiiUKeys wiiuKeys = new WiiUKeys();
     @TomlComment("Do not edit these vars, they are used by the bot itself to store stuff between restarts")
     public DoNotEdit doNotEdit = new DoNotEdit();
+    @TomlComment("API Configuration")
+    public Web web = new Web();
 
     public static Config instance() {
         return INSTANCE;
@@ -58,6 +60,9 @@ public class Config {
         }
     }
 
+    public static class Web{
+        public int port = 8080;
+    }
     public static class Discord {
         @TomlIgnore
         static ArrayList<Status> defaultStatuses = new ArrayList<>();

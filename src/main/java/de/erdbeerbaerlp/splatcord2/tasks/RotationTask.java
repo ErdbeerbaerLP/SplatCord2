@@ -1,5 +1,6 @@
 package de.erdbeerbaerlp.splatcord2.tasks;
 
+import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
@@ -19,9 +20,10 @@ public class RotationTask extends TimerTask {
         System.out.println("Running RotationTask");
         final Rotation currentRotation = ScheduleUtil.getCurrentRotation();
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
-        final int currentS1RotationInt = RotationTimingUtil.getRotationForInstant(Instant.now());
+        final int currentS1RotationInt = RotationTimingUtil.getRotationForInstant(Instant.now(), s1rotations);
         final Phase currentS1Rotation = s1rotations.root.Phases[currentS1RotationInt];
-        final Phase currentS1PRotation = s1rotationsPretendo.root.Phases[currentS1RotationInt];
+        final int currentS1PRotationInt = RotationTimingUtil.getRotationForInstant(Instant.now(), s1rotationsPretendo);
+        final Phase currentS1PRotation = s1rotationsPretendo.root.Phases[currentS1PRotationInt];
 
         try {
             //Splatoon 1 Rotations

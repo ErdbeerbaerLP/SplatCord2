@@ -18,12 +18,10 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.SplatNet3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
-import de.erdbeerbaerlp.splatcord2.tasks.DataUpdateTask;
-import de.erdbeerbaerlp.splatcord2.tasks.RotationTask;
-import de.erdbeerbaerlp.splatcord2.tasks.SalmonrunTask;
-import de.erdbeerbaerlp.splatcord2.tasks.SplatnetOrderTask;
+import de.erdbeerbaerlp.splatcord2.tasks.*;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.BossFileUtil;
+import io.javalin.Javalin;
 import net.dv8tion.jda.api.entities.User;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -40,6 +38,9 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+
+import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.path;
 
 public class Main {
 
@@ -186,6 +187,32 @@ public class Main {
             e.printStackTrace();
         }
 
+        Javalin api = Javalin.create(config -> {
+            config.routing.caseInsensitiveRoutes = true;
+        }).routes(() -> {
+            path("/", ()->{
+                get((ctx)->{
+                    ctx.redirect("https://splatcord.ink/?API");
+                });
+            });
+            path("/stats", () -> {
+                get(API::stats);
+            });
+            path("/status", () -> {
+                get(API::status);
+            });
+            path("/s1rotations", () -> {
+
+            });
+            path("/s2rotations", () -> {
+
+            });
+            path("/s3rotations", () -> {
+
+            });
+        });
+        api.start(Config.instance().web.port);
+        bot.presence.start();
         startTime = Instant.now();
         Timer ti = new Timer();
 
@@ -198,13 +225,15 @@ public class Main {
         final SalmonrunTask salmonrunTask = new SalmonrunTask();
         final DataUpdateTask dataUpdateTask = new DataUpdateTask();
         final SplatnetOrderTask splatnetOrderTask = new SplatnetOrderTask();
-        rotationTask.run();
-        salmonrunTask.run();
         ti.scheduleAtFixedRate(rotationTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
         ti.scheduleAtFixedRate(salmonrunTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
         c.set(Calendar.SECOND, 30);
         ti.scheduleAtFixedRate(dataUpdateTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
         ti.scheduleAtFixedRate(splatnetOrderTask, TimeUnit.SECONDS.toMillis(10), TimeUnit.MINUTES.toMillis(5));
+        ti.scheduleAtFixedRate(new StatisticRecordTask(),TimeUnit.SECONDS.toMillis(20), TimeUnit.MINUTES.toMillis(15));
+
+        rotationTask.run();
+        salmonrunTask.run();
     }
 
     public static User getUserById(Long userid) {

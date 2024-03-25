@@ -18,4 +18,17 @@ public class Schedule3 {
 
         return Instant.parse(endTime).toEpochMilli() / 1000;
     }
+
+    public MatchSetting getRegularSFMatch(){
+        for (MatchSetting f : festMatchSettings) {
+            if(f.festMode.equals("REGULAR")) return f;
+        }
+        return null;
+    }
+    public MatchSetting getProSFMatch(){
+        for (MatchSetting f : festMatchSettings) {
+            if(f.festMode.equals("CHALLENGE")) return f;
+        }
+        return null;
+    }
 }

@@ -96,17 +96,17 @@ public class RotationCommand extends BaseCommand {
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
                 case "splatoon1":
-                    final Phase currentS1Rotation = Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())];
+                    final Phase currentS1Rotation = Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotations)];
                     final ArrayList<Phase> nextS1Rotations = new ArrayList<>();
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1)]);
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2)]);
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3)]);
+                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1, Main.s1rotations)]);
+                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2, Main.s1rotations)]);
+                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3, Main.s1rotations)]);
                     final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 " + Emote.NINTENDO_NETWORK + ")");
                     addS1Rotation(future, currentS1Rotation, lang, -1);
                     future.addBlankField(false);
                     long time = Instant.now().toEpochMilli();
                     for (int i = 0; i < nextS1Rotations.size(); i++) {
-                        time = RotationTimingUtil.getNextRotationStart(time + 1);
+                        time = RotationTimingUtil.getNextRotationStart(time + 1, Main.s1rotations);
                         addS1Rotation(future, nextS1Rotations.get(i), lang, time + 1);
                         if (i < nextS1Rotations.size() - 1)
                             future.addBlankField(false);
@@ -120,17 +120,17 @@ public class RotationCommand extends BaseCommand {
                     ev.replyEmbeds(future.build()).queue();
                     break;
                 case "splatoon1pretendo":
-                    final Phase currentS1RotationP = Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())];
+                    final Phase currentS1RotationP = Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotationsPretendo)];
                     final ArrayList<Phase> nextS1RotationsP = new ArrayList<>();
-                    nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1)]);
-                    nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2)]);
-                    nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3)]);
+                    nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1, Main.s1rotationsPretendo)]);
+                    nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2, Main.s1rotationsPretendo)]);
+                    nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3, Main.s1rotationsPretendo)]);
                     final EmbedBuilder futureP = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 " + Emote.PRETENDO_NETWORK + ")");
                     addS1Rotation(futureP, currentS1RotationP, lang, -1);
                     futureP.addBlankField(false);
                     long timeP = Instant.now().toEpochMilli();
                     for (int i = 0; i < nextS1RotationsP.size(); i++) {
-                        timeP = RotationTimingUtil.getNextRotationStart(timeP + 1);
+                        timeP = RotationTimingUtil.getNextRotationStart(timeP + 1, Main.s1rotationsPretendo);
                         addS1Rotation(futureP, nextS1RotationsP.get(i), lang, timeP + 1);
                         if (i < nextS1RotationsP.size() - 1)
                             futureP.addBlankField(false);

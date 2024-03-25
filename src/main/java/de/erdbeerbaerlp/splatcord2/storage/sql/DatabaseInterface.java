@@ -13,6 +13,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Order;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,7 @@ public class DatabaseInterface implements AutoCloseable {
                 "`splatoon2-profile` JSON NULL COMMENT 'Profile data for Splatoon 2',\n" +
                 "`splatoon3-profile` JSON NULL COMMENT 'Profile data for Splatoon 3',\n" +
                 "`snet2orders` JSON NULL COMMENT 'Orders for Splatnet2',\n" +
+                "`snet3orders` JSON NULL COMMENT 'Orders for Splatnet2',\n" +
                 "`pb-id` bigint DEFAULT '0',\n" +
                 "UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,\n" +
                 "PRIMARY KEY (`id`));");
@@ -71,6 +73,10 @@ public class DatabaseInterface implements AutoCloseable {
                 "  `roomowner` bigint NOT NULL,\n" +
                 "  PRIMARY KEY (`roomid`)\n" +
                 ")");
+        runUpdate("CREATE TABLE IF NOT EXISTS `server_stats` (\n" +
+                "  `timestamp` BIGINT NOT NULL,\n" +
+                "  `servercount` INT NOT NULL,\n" +
+                "  PRIMARY KEY (`timestamp`));\n");
     }
 
     private void connect() throws SQLException {
@@ -223,7 +229,21 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return BotLanguage.ENGLISH;
     }
-
+    public void addServerStatistic(int serverCount){
+        runUpdate("INSERT INTO `server_stats` (timestamp, servercount) values ("+ Instant.now().toEpochMilli()+", "+ serverCount+")");
+    }
+    public HashMap<Long, Integer> getServerStats() {
+        final HashMap<Long, Integer> out = new HashMap<Long, Integer>();
+        try (final ResultSet res = query("SELECT timestamp,servercount FROM `server_stats` ORDER BY `timestamp` DESC LIMIT 1000;")) {
+            while (res != null && res.next()) {
+                if (!res.wasNull())
+                    out.put(res.getLong(1), res.getInt(2));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return out;
+    }
     public boolean getDeleteMessage(final long serverID) {
         try (final ResultSet res = query("SELECT deleteMessage FROM servers WHERE serverid = " + serverID)) {
             if (res.next()) {
@@ -598,6 +618,17 @@ public class DatabaseInterface implements AutoCloseable {
     @Override
     public void close() throws Exception {
         conn.close();
+    }
+
+    public int countLanguage(int lang) {
+        try (final ResultSet res = query("SELECT COUNT(*) AS cnt FROM servers WHERE lang = " + lang)) {
+            if (res.next()) {
+                return res.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     public class StatusThread extends Thread {

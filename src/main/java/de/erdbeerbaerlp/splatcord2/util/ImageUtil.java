@@ -68,12 +68,12 @@ public class ImageUtil {
             g.drawImage(splashtag, 0, 0, null);
 
             g.setFont(Main.splatfont2.deriveFont(60f));
-            g.drawString(profile.name,(w-g.getFontMetrics().stringWidth(profile.name))/2,(splashtag.getHeight()/2)+g.getFontMetrics().getHeight()/5);
+            drawTextWithOutline(g,profile.name,(w-g.getFontMetrics().stringWidth(profile.name))/2,(splashtag.getHeight()/2)+g.getFontMetrics().getHeight()/5);
 
             g.setFont(Main.splatfont2.deriveFont(26f));
-            g.drawString(profile.adjective.localizedName.get(l.botLocale.locale.replace("-","_")),1,g.getFontMetrics().getHeight()/2+6);
-            g.drawString(profile.subject.localizedName.get(l.botLocale.locale.replace("-","_")),1+g.getFontMetrics().stringWidth(profile.adjective.localizedName.get(l.botLocale.locale.replace("-","_")))+g.getFontMetrics().charWidth('-'),g.getFontMetrics().getHeight()/2+5);
-            g.drawString("#"+ profile.discriminator,1,splashtag.getHeight()-(g.getFontMetrics().getHeight()/4));
+            drawTextWithOutline(g,profile.adjective.localizedName.get(l.botLocale.locale.replace("-","_")),1,g.getFontMetrics().getHeight()/2+6);
+            drawTextWithOutline(g,profile.subject.localizedName.get(l.botLocale.locale.replace("-","_")),1+g.getFontMetrics().stringWidth(profile.adjective.localizedName.get(l.botLocale.locale.replace("-","_")))+g.getFontMetrics().charWidth('-'),g.getFontMetrics().getHeight()/2+5);
+            drawTextWithOutline(g,"#"+ profile.discriminator,1,splashtag.getHeight()-(g.getFontMetrics().getHeight()/4));
 
             int bx, by, bgap,bsize;
             bsize = 72;
@@ -143,6 +143,21 @@ public class ImageUtil {
             e.printStackTrace();
         }
         return null;
+    }
+    private static void drawTextWithOutline(Graphics g, String text, int x, int y) {
+        // Save the current color
+        Color originalColor = g.getColor();
+
+        // Draw the text with a dark outline
+        g.setColor(Color.BLACK);
+        g.drawString(text, x - 1, y - 1);
+        g.drawString(text, x + 1, y - 1);
+        g.drawString(text, x - 1, y + 1);
+        g.drawString(text, x + 1, y + 1);
+
+        // Draw the actual text in the desired color
+        g.setColor(originalColor);
+        g.drawString(text, x, y);
     }
     public static byte[] generateSR2Image(Detail rotation) {
         try {

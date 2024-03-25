@@ -5,6 +5,7 @@ import java.util.Arrays;
 public class MatchSetting {
     public Rule vsRule;
     public Stage[] vsStages;
+    public String festMode;
 
     @Override
     public String toString() {

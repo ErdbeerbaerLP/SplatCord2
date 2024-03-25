@@ -57,7 +57,7 @@ import static net.dv8tion.jda.api.Permission.MANAGE_SERVER;
 public class Bot implements EventListener {
     public final JDA jda;
     @SuppressWarnings("FieldCanBeLocal")
-    private final StatusUpdater presence;
+    public final StatusUpdater presence;
 
     public Bot() throws LoginException, InterruptedException {
         CommandRegistry.registerAllBaseCommands();
@@ -67,10 +67,9 @@ public class Bot implements EventListener {
         b.disableCache(CacheFlag.ONLINE_STATUS);
         b.disableCache(CacheFlag.ACTIVITY, CacheFlag.VOICE_STATE, CacheFlag.EMOJI, CacheFlag.CLIENT_STATUS);
         b.setChunkingFilter(ChunkingFilter.ALL);
+        b.setActivity(Activity.of(Activity.ActivityType.CUSTOM_STATUS, "Bot is starting..."));
+        b.setStatus(OnlineStatus.DO_NOT_DISTURB);
         jda = b.build().awaitReady();
-        presence = new StatusUpdater();
-        presence.start();
-
         final ArrayList<Long> knownIDs = Main.iface.getAllServers();
         jda.getGuilds().forEach((g) -> {
             if (!knownIDs.contains(g.getIdLong()))
@@ -81,6 +80,10 @@ public class Bot implements EventListener {
             } catch (InterruptedException ignored) {
             }
         });
+
+
+        presence = new StatusUpdater();
+
 
     }
 
@@ -231,13 +234,13 @@ public class Bot implements EventListener {
                 case "s1channel" -> {
                     if (checkPerms(ev)) return;
                     Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
+                    MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotations)]);
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s1channelPretendo" -> {
                     if (checkPerms(ev)) return;
                     Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS1PRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now())]);
+                    MessageUtil.sendS1PRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotationsPretendo)]);
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s2channel" -> {
@@ -510,22 +513,38 @@ public class Bot implements EventListener {
     }
 
 
-    private class StatusUpdater extends Thread {
+    public class StatusUpdater extends Thread {
         final Random r = new Random();
         int presence = 0;
 
         @Override
         public void run() {
             while (true) {
-                Config.instance().loadConfig();
-                final Config.Discord.Status s = Config.instance().discord.botStatus.get(presence);
-                jda.getPresence().setPresence(Main.iface.status.isDBAlive() ? OnlineStatus.ONLINE : OnlineStatus.DO_NOT_DISTURB, Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + ""), s.streamingURL), false);
                 try {
                     //noinspection BusyWait
                     sleep(1000 * (r.nextInt(29) + 2));
                 } catch (InterruptedException e) {
                     return;
                 }
+                Config.instance().loadConfig();
+                if (!Main.iface.status.isDBAlive()) {
+                    jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.of(Activity.ActivityType.CUSTOM_STATUS, "⚠ Database is down!"));
+                    return;
+                }
+                boolean partialOutage = false;
+                if (!Main.splatoon2inkStatus && !Main.splatoon3inkStatus && !Main.splatoon1PretendoStatus && !Main.splatoon1Status) {
+                    jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.of(Activity.ActivityType.CUSTOM_STATUS, "Total Service outage! - /status"));
+                    return;
+                }
+                if (!Main.splatoon2inkStatus || !Main.splatoon3inkStatus || !Main.splatoon1PretendoStatus || !Main.splatoon1Status) {
+                    partialOutage = true;
+                    if (r.nextBoolean()) {
+                        jda.getPresence().setPresence(OnlineStatus.IDLE, Activity.of(Activity.ActivityType.CUSTOM_STATUS, "Partial Service outage! - /status"));
+                        return;
+                    }
+                }
+                final Config.Discord.Status s = Config.instance().discord.botStatus.get(presence);
+                jda.getPresence().setPresence(partialOutage ? OnlineStatus.IDLE : OnlineStatus.ONLINE, Activity.of(s.type, s.message.replace("%servercount%", jda.getGuilds().size() + ""), s.streamingURL));
                 presence++;
                 if (presence >
                         Config.instance().discord.botStatus.size() - 1) presence = 0;
