@@ -24,8 +24,16 @@ import static de.erdbeerbaerlp.splatcord2.Main.*;
 import static de.erdbeerbaerlp.splatcord2.commands.Splatnet2Command.repeat;
 
 public class SplatnetOrderTask extends TimerTask {
+    private boolean currentlyRunning = false;
+
     @Override
     public void run() {
+        System.out.println("Running SplatnetOrderTask");
+        if(currentlyRunning){
+            System.out.println("Skipping due to already running...");
+            return;
+        }
+        currentlyRunning = true;
         try {
             final HashMap<Long, Order[]> allOrders = iface.getAllS2Orders();
             for (Merchandise m : splatNet2.merchandises) {
@@ -106,6 +114,7 @@ public class SplatnetOrderTask extends TimerTask {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        currentlyRunning = false;
 
     }
 }

@@ -11,8 +11,16 @@ import static de.erdbeerbaerlp.splatcord2.Main.coop_schedules;
 import static de.erdbeerbaerlp.splatcord2.Main.iface;
 
 public class SalmonrunTask extends TimerTask {
+    private boolean currentlyRunning = false;
+
     @Override
     public void run() {
+        System.out.println("Running SalmonrunTask");
+        if(currentlyRunning){
+            System.out.println("Skipping due to already running...");
+            return;
+        }
+        currentlyRunning = true;
         long salmonEndTime = coop_schedules.details[0].end_time;
             final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
             try {
@@ -61,5 +69,6 @@ public class SalmonrunTask extends TimerTask {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            currentlyRunning = false;
     }
 }

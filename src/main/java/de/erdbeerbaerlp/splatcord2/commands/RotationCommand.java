@@ -20,18 +20,15 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import static de.erdbeerbaerlp.splatcord2.Main.iface;
-import static de.erdbeerbaerlp.splatcord2.Main.s1splatfestSplatfestival;
-
 public class RotationCommand extends BaseCommand {
     public RotationCommand(Locale l) {
         super("rotation", l.botLocale.cmdRotationDesc);
-        final SubcommandData splat1 = new SubcommandData("splatoon1", "(Nintendo Network) " + l.botLocale.cmdRotationDesc);
-        final SubcommandData splat1pretendo = new SubcommandData("splatoon1pretendo", "(Pretendo Network) " + l.botLocale.cmdRotationDesc);
+        final SubcommandData splat1 = new SubcommandData("splatoon1",  l.botLocale.cmdRotationDesc);
+        //final SubcommandData splat1pretendo = new SubcommandData("splatoon1pretendo", "(Pretendo Network) " + l.botLocale.cmdRotationDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdRotationDesc);
         final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdRotationDesc);
 
-        addSubcommands(splat3, splat2, splat1, splat1pretendo);
+        addSubcommands(splat3, splat2, splat1/*, splat1pretendo*/);
     }
 
     public static void addS2Rotation(EmbedBuilder future, Rotation currentRotation, Locale lang) {
@@ -95,13 +92,13 @@ public class RotationCommand extends BaseCommand {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
-                case "splatoon1":
+                case "splatoon1":/*
                     final Phase currentS1Rotation = Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotations)];
                     final ArrayList<Phase> nextS1Rotations = new ArrayList<>();
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1, Main.s1rotations)]);
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2, Main.s1rotations)]);
                     nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3, Main.s1rotations)]);
-                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 " + Emote.NINTENDO_NETWORK + ")");
+                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + " (Splatoon 1 " + Emote.NINTENDO_NETWORK + ")");
                     addS1Rotation(future, currentS1Rotation, lang, -1);
                     future.addBlankField(false);
                     long time = Instant.now().toEpochMilli();
@@ -119,13 +116,13 @@ public class RotationCommand extends BaseCommand {
                     }
                     ev.replyEmbeds(future.build()).queue();
                     break;
-                case "splatoon1pretendo":
+                case "splatoon1pretendo":*/
                     final Phase currentS1RotationP = Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotationsPretendo)];
                     final ArrayList<Phase> nextS1RotationsP = new ArrayList<>();
                     nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1, Main.s1rotationsPretendo)]);
                     nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2, Main.s1rotationsPretendo)]);
                     nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3, Main.s1rotationsPretendo)]);
-                    final EmbedBuilder futureP = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 1 " + Emote.PRETENDO_NETWORK + ")");
+                    final EmbedBuilder futureP = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + " (Splatoon 1 " + Emote.PRETENDO_NETWORK + ")");
                     addS1Rotation(futureP, currentS1RotationP, lang, -1);
                     futureP.addBlankField(false);
                     long timeP = Instant.now().toEpochMilli();
@@ -142,7 +139,7 @@ public class RotationCommand extends BaseCommand {
                     final Rotation currentS2Rotation = ScheduleUtil.getCurrentRotation();
                     final ArrayList<Rotation> nextS2Rotations = ScheduleUtil.getNext3Rotations();
 
-                    final EmbedBuilder s2EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 2)");
+                    final EmbedBuilder s2EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + " (Splatoon 2)");
                     addS2Rotation(s2EmbedBuilder, currentS2Rotation, lang, true);
                     s2EmbedBuilder.addBlankField(false);
                     for (int i = 0; i < nextS2Rotations.size(); i++) {
@@ -157,7 +154,7 @@ public class RotationCommand extends BaseCommand {
                     System.out.println(currentS3Rotation);
                     final ArrayList<S3Rotation> nextS3Rotations = ScheduleUtil.getS3Next3Rotations();
 
-                    final EmbedBuilder s3EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + "(Splatoon 3)");
+                    final EmbedBuilder s3EmbedBuilder = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + " (Splatoon 3)");
                     addS3Rotation(s3EmbedBuilder, currentS3Rotation, lang, true);
                     s3EmbedBuilder.addBlankField(false);
                     for (int i = 0; i < nextS3Rotations.size(); i++) {

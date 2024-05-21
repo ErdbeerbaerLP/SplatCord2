@@ -4,6 +4,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
 
 public class Rotation {
     private final Schedule regular, gachi, league;
+    public String image;
 
     public Rotation(Schedule regular, Schedule ranked, Schedule league) {
         this.regular = regular;

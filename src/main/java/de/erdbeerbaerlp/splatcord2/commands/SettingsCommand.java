@@ -63,8 +63,8 @@ public class SettingsCommand extends BaseCommand {
                 mb.addActionRow(StringSelectMenu.create("msgdelete").setPlaceholder(lang.botLocale.cmdSettingsDelMsg).addOptions(yesNo).build());
                 break;
             case "s1":
-                mb.addActionRow(EntitySelectMenu.create("s1channel", EntitySelectMenu.SelectTarget.CHANNEL).setPlaceholder(lang.botLocale.stage.replace("%game%", "Splatoon 1 - Nintendo Network")).setChannelTypes(ChannelType.NEWS, ChannelType.TEXT, ChannelType.GUILD_PUBLIC_THREAD).build());
-                mb.addActionRow(EntitySelectMenu.create("s1channelPretendo", EntitySelectMenu.SelectTarget.CHANNEL).setPlaceholder(lang.botLocale.stage.replace("%game%", "Splatoon 1 - Pretendo Network")).setChannelTypes(ChannelType.NEWS, ChannelType.TEXT, ChannelType.GUILD_PUBLIC_THREAD).build());
+                mb.addActionRow(EntitySelectMenu.create("s1channel", EntitySelectMenu.SelectTarget.CHANNEL).setPlaceholder(lang.botLocale.stage.replace("%game%", "Splatoon 1 - Pretendo Network")).setChannelTypes(ChannelType.NEWS, ChannelType.TEXT, ChannelType.GUILD_PUBLIC_THREAD).build());
+                //mb.addActionRow(EntitySelectMenu.create("s1channelPretendo", EntitySelectMenu.SelectTarget.CHANNEL).setPlaceholder(lang.botLocale.stage.replace("%game%", "Splatoon 1 - Pretendo Network")).setChannelTypes(ChannelType.NEWS, ChannelType.TEXT, ChannelType.GUILD_PUBLIC_THREAD).build());
                 mb.addActionRow(StringSelectMenu.create("s1customSplatfest").setPlaceholder(lang.botLocale.splatfestSetting).addOptions(yesNo).build());
                 break;
             case "s2":
@@ -77,7 +77,7 @@ public class SettingsCommand extends BaseCommand {
                 mb.addActionRow(EntitySelectMenu.create("s3event", EntitySelectMenu.SelectTarget.CHANNEL).setPlaceholder(lang.botLocale.event.replace("%game%", "Splatoon 3")).setChannelTypes(ChannelType.NEWS, ChannelType.TEXT, ChannelType.GUILD_PUBLIC_THREAD).build());
                 break;
             case "reset":
-                mb.addActionRow(Button.danger("s1clear", lang.botLocale.clearStage.replace("%game%", "Splatoon 1")),Button.danger("s1pclear", lang.botLocale.clearStage.replace("%game%", "Splatoon 1 (Pretendo)")));
+                mb.addActionRow(Button.danger("s1clear", lang.botLocale.clearStage.replace("%game%", "Splatoon 1"))/*,Button.danger("s1pclear", lang.botLocale.clearStage.replace("%game%", "Splatoon 1 (Pretendo)"))*/);
                 mb.addActionRow(Button.danger("s2clear", lang.botLocale.clearStage.replace("%game%", "Splatoon 2")),Button.danger("s2clears", lang.botLocale.clearSalmon.replace("%game%", "Splatoon 2")));
                 mb.addActionRow(Button.danger("s3clear", lang.botLocale.clearStage.replace("%game%", "Splatoon 3")),Button.danger("s3clears", lang.botLocale.clearSalmon.replace("%game%", "Splatoon 3")),Button.danger("s3cleare", lang.botLocale.clearEvent.replace("%game%", "Splatoon 3")));
                 break;

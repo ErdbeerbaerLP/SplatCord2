@@ -17,12 +17,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class ScheduleUtil {
 
     private static Schedules schedules;
-    private static Schedules3 schedules3;
+    public static Schedules3 schedules3;
     private static SplatfestData sf3;
 
     public static Rotation getS2RotationForTimestamp(long timestamp) {
@@ -48,6 +49,7 @@ public class ScheduleUtil {
 
         return new Rotation(regular, ranked, league);
     }
+
 
     public static S3Rotation getS3RotationForTimestamp(long timestamp) {
         Schedule3 regular = null, bankara = null, xBattle = null, fest = null;
@@ -239,4 +241,22 @@ public class ScheduleUtil {
         }
         return null;
     }
+
+    public static HashMap<Long, Rotation> getAllS2Rotations() {
+        final HashMap<Long,Rotation> out = new HashMap<>();
+        for (int i = 0; i < schedules.regular.length; i++) {
+            final Rotation r = new Rotation(schedules.regular[i],schedules.gachi[i],schedules.league[i]);
+            out.put(r.getRegular().start_time, r);
+        }
+        return out;
+    }
+    public static HashMap<Long, Detail> getAllS2CoOpRotations() {
+        final HashMap<Long,Detail> out = new HashMap<>();
+        for (int i = 0; i < Main.coop_schedules.details.length; i++) {
+            final Detail detail = Main.coop_schedules.details[i];
+            out.put(detail.start_time, detail);
+        }
+        return out;
+    }
+
 }

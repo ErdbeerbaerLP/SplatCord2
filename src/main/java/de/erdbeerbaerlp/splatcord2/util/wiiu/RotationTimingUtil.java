@@ -1,8 +1,10 @@
 package de.erdbeerbaerlp.splatcord2.util.wiiu;
 
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.RotationByml;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class RotationTimingUtil {
@@ -34,5 +36,16 @@ public class RotationTimingUtil {
         if(offset >= length) return length;
 
         return (int) (offset);
+    }
+
+    public static HashMap<Long, Phase> getAllRotations(final RotationByml r){
+        final HashMap<Long, Phase> out = new HashMap<>();
+        final long base = getBaseTimestamp(r);
+        long ts = base;
+        for(int i=0;i<179;i++){
+            out.put(ts,r.root.Phases[getRotationForInstant(Instant.ofEpochMilli(ts), r)]);
+            ts += rotationIncrement;
+        }
+        return out;
     }
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class SplatfestByml {
     public RotationBymlRoot root = new RotationBymlRoot();
+    public String image = null;
 
     @Override
     public String toString() {
@@ -74,6 +75,11 @@ public class SplatfestByml {
 
             public long getStartTime(){
                 return getTime(Start.value);
+            }
+            public long getAnnounceTime(){
+                return getTime(Announce.value);
+            }public long getResultTime(){
+                return getTime(Result.value);
             }
             public long getEndTime(){
                 return getTime(End.value);

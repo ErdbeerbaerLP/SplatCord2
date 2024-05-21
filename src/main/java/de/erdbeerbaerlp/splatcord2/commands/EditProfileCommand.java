@@ -28,7 +28,7 @@ public class EditProfileCommand extends BaseCommand {
 
 
         //Common
-        final OptionData wiiuNNID = new OptionData(OptionType.STRING, "nintendo-id", l.botLocale.cmdProfileNNIDDesc, false);
+        //final OptionData wiiuNNID = new OptionData(OptionType.STRING, "nintendo-id", l.botLocale.cmdProfileNNIDDesc, false);
         final OptionData wiiuPNID = new OptionData(OptionType.STRING, "pretendo-id", l.botLocale.cmdProfilePNIDDesc, false);
         final OptionData switchfc = new OptionData(OptionType.STRING, "switch-fc", l.botLocale.cmdProfileSwitchFCDesc, false);
         final OptionData splatlevel = new OptionData(OptionType.INTEGER, "level", l.botLocale.cmdProfileLevelDesc, false);
@@ -76,7 +76,7 @@ public class EditProfileCommand extends BaseCommand {
         final OptionData lo3ink = new OptionData(OptionType.STRING, "loadout", "Set your loadout link. Compatible: slushiegoose.github.io; Set to 'clear' to remove");
 
 
-        splat1.addOptions(wiiuNNID, wiiuPNID, splatname, splatlevel, rank);
+        splat1.addOptions(/*wiiuNNID, */wiiuPNID, splatname, splatlevel, rank);
         splat2.addOptions(switchfc, splatlevel, splatname, rainmaker, splatzones, towercontrol, clamblitz, salmon2Title, mainWeapon1, mainWeapon2);
         splat3.addOptions(switchfc, splatlevel, splatname, rank, salmon3Title, splatfestTeam, tableturfLevel, catalogLevel, lo3ink);
 

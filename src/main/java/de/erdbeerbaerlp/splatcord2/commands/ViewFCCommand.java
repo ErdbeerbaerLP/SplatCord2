@@ -16,15 +16,16 @@ public class ViewFCCommand extends BaseCommand {
     public ViewFCCommand(Locale l) {
         super("viewfc", l.botLocale.cmdViewFC);
         final SubcommandData sw = new SubcommandData("switch", l.botLocale.cmdViewFC);
-        final SubcommandData wiiupnid = new SubcommandData("wiiu", l.botLocale.cmdViewNNID);
-        final SubcommandData wiiunnid = new SubcommandData("wiiu-pretendo", l.botLocale.cmdViewPNID);
+
+        final SubcommandData wiiupnid = new SubcommandData("wiiu", l.botLocale.cmdViewPNID);
+//        final SubcommandData wiiunnid = new SubcommandData("wiiu-pretendo", l.botLocale.cmdViewPNID);
 
         OptionData user = new OptionData(OptionType.USER, "user", l.botLocale.cmdProfileUserDesc, false);
         sw.addOptions(user);
         wiiupnid.addOptions(user);
-        wiiunnid.addOptions(user);
+        //wiiunnid.addOptions(user);
 
-        addSubcommands(sw, wiiunnid, wiiupnid);
+        addSubcommands(sw,/* wiiunnid,*/ wiiupnid);
     }
 
     @Override
@@ -48,14 +49,14 @@ public class ViewFCCommand extends BaseCommand {
                         ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
-                case "wiiu":
+                case "wiiu":/*
                     if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isEmpty()) {
                         ev.reply("NNID: " + profile.wiiu_nnid).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     } else {
                         ev.reply(lang.botLocale.cmdProfileMissingNNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
                     break;
-                case "wiiu-pretendo":
+                case "wiiu-pretendo":*/
                     if (profile.wiiu_pnid != null && !profile.wiiu_pnid.isEmpty()) {
                         ev.reply("PNID: " + profile.wiiu_pnid).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
                     } else {

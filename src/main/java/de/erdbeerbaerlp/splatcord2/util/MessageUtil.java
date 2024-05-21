@@ -174,15 +174,17 @@ public class MessageUtil {
 
     public static MessageCreateData getMapMessage(final Long serverid, final Rotation r) {
         final Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        final EmbedBuilder b = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 2)");
+        final EmbedBuilder b = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + " (Splatoon 2)");
         addS2Embed(lang, r, b);
+        if (r.image != null) b.setImage(r.image);
         return new MessageCreateBuilder().setEmbeds(b.build()).build();
     }
 
     public static MessageCreateData getS3MapMessage(final Long serverid, final S3Rotation r) {
         final Locale lang = Main.translations.get(iface.getServerLang(serverid));
-        final EmbedBuilder emb = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 3)");
+        final EmbedBuilder emb = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + " (Splatoon 3)");
         addS3Embed(lang, r, emb);
+        if (r.image != null) emb.setImage(r.image);
         return new MessageCreateBuilder().setEmbeds(emb.build()).build();
     }
 
@@ -262,19 +264,27 @@ public class MessageUtil {
     public static MessageCreateData getS1Message(Long serverid, Phase currentRotation) {
         final Locale lang = Main.translations.get(iface.getServerLang(serverid));
         final MessageCreateBuilder builder = new MessageCreateBuilder();
-        builder.setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 1 " + Emote.NINTENDO_NETWORK + ")")
-                .addField(Emote.REGULAR +
-                                lang.game_modes.get("regular").name,
-                        lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
-                                ", " + lang.botLocale.getS1MapName(currentRotation.RegularStages[1].MapID.value)
-                        , true)
-                .addField(Emote.RANKED +
-                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang, currentRotation.GachiRule.value) + ")",
-                        lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
-                                ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
-                        , true).build());
+
+        if ((s1splatfestPretendo.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && (s1splatfestPretendo.root.Time.getEndTime() > System.currentTimeMillis() / 1000)) {
+            builder.setEmbeds(generateSplatfestEmbedPretendo(s1splatfestPretendo, false, lang));
+        } else {
+            final EmbedBuilder b = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + " (Splatoon 1 " + Emote.PRETENDO_NETWORK + ")")
+                    .addField(Emote.REGULAR +
+                                    lang.game_modes.get("regular").name,
+                            lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
+                                    ", " + lang.botLocale.getS1MapName(currentRotation.RegularStages[1].MapID.value)
+                            , true)
+                    .addField(Emote.RANKED +
+                                    lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang, currentRotation.GachiRule.value) + ")",
+                            lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
+                                    ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
+                            , true);
+            if (currentRotation.image != null) b.setImage(currentRotation.image);
+            builder.setEmbeds(b.build());
+        }
         if (iface.getCustomSplatfests(serverid)) {
-            if ((s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000 ) &&((s1splatfestSplatfestival.root.Time.getEndTime() > System.currentTimeMillis() / 1000))) {
+            if (s1splatfestSplatfestival.root.FestivalId.value.equals("4100")) return builder.build();
+            if ((s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && ((s1splatfestSplatfestival.root.Time.getEndTime() > System.currentTimeMillis() / 1000))) {
                 builder.addEmbeds(generateSplatfestEmbedSplatfestival(s1splatfestSplatfestival, false, lang));
             }
         }
@@ -287,8 +297,8 @@ public class MessageUtil {
         final MessageCreateBuilder builder = new MessageCreateBuilder();
         if ((s1splatfestPretendo.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && (s1splatfestPretendo.root.Time.getEndTime() > System.currentTimeMillis() / 1000)) {
             builder.setEmbeds(generateSplatfestEmbedPretendo(s1splatfestPretendo, false, lang));
-        } else
-            builder.setEmbeds(new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + "(Splatoon 1 " + Emote.PRETENDO_NETWORK + ")")
+        } else {
+            final EmbedBuilder b = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + " (Splatoon 1 " + Emote.PRETENDO_NETWORK + ")")
                     .addField(Emote.REGULAR +
                                     lang.game_modes.get("regular").name,
                             lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
@@ -298,7 +308,17 @@ public class MessageUtil {
                                     lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang, currentRotation.GachiRule.value) + ")",
                             lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
                                     ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
-                            , true).build());
+                            , true);
+
+            if (currentRotation.image != null) b.setImage(currentRotation.image);
+            builder.setEmbeds(b.build());
+            if (iface.getCustomSplatfests(serverid)) {
+                if (s1splatfestSplatfestival.root.FestivalId.value.equals("4100")) return builder.build();
+                if ((s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && ((s1splatfestSplatfestival.root.Time.getEndTime() > System.currentTimeMillis() / 1000))) {
+                    builder.addEmbeds(generateSplatfestEmbedSplatfestival(s1splatfestSplatfestival, false, lang));
+                }
+            }
+        }
         return builder.build();
     }
 
@@ -408,24 +428,25 @@ public class MessageUtil {
     public static MessageEmbed generateSplatfestEmbedPretendo(SplatfestByml fest, boolean command, Locale l) {
         final EmbedBuilder b = new EmbedBuilder();
         if (fest.root.Time.getEndTime() < System.currentTimeMillis() / 1000) {
-            b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.splatfestEmbedTitle + " " + Emote.PRETENDO_NETWORK);
+            b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.splatfestEmbedTitle + " " + Emote.PRETENDO_NETWORK);
             b.setFooter(l.botLocale.footer_ended);
             b.setTimestamp(Instant.ofEpochSecond(fest.root.Time.getEndTime()));
         } else if (fest.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) {
-            b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.runningSplatfestTitle + " " + Emote.PRETENDO_NETWORK);
+            b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.runningSplatfestTitle + " " + Emote.PRETENDO_NETWORK);
             b.setFooter(l.botLocale.footer_ends);
             b.setTimestamp(Instant.ofEpochSecond(fest.root.Time.getEndTime()));
         } else if (fest.root.Time.getStartTime() > System.currentTimeMillis() / 1000) {
-            b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.newSplatfestTitle + " " + Emote.PRETENDO_NETWORK);
+            b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.newSplatfestTitle + " " + Emote.PRETENDO_NETWORK);
             b.setFooter(l.botLocale.footer_starts);
             b.setTimestamp(Instant.ofEpochSecond(fest.root.Time.getStartTime()));
         }
 
-        if (command) b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.splatfestEmbedTitle);
-        b.addField(l.botLocale.mode, GameModeUtil.translateS1(l,fest.root.Rule.value), true);
+        if (command) b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.splatfestEmbedTitle);
+        b.addField(l.botLocale.mode, GameModeUtil.translateS1(l, fest.root.Rule.value), true);
         b.addField(l.botLocale.splatfestTeams, fest.root.Teams[0].ShortName.get(l.botLocale.s1FestStr).value + ", " + fest.root.Teams[1].ShortName.get(l.botLocale.s1FestStr).value, true);
         b.addField(l.botLocale.stages, l.botLocale.getS1MapName(Integer.parseInt(fest.root.Stages[0].MapID.value)) + ", " + l.botLocale.getS1MapName(Integer.parseInt(fest.root.Stages[1].MapID.value)) + ", " + l.botLocale.getS1MapName(Integer.parseInt(fest.root.Stages[2].MapID.value)), false);
 
+        if (fest.image != null) b.setImage(fest.image);
         return b.build();
     }
 
@@ -433,24 +454,26 @@ public class MessageUtil {
         final EmbedBuilder b = new EmbedBuilder();
         b.setDescription("Powered by [Splatfestival](https://discord.gg/grMSxZf)");
         if (fest.root.Time.getEndTime() < System.currentTimeMillis() / 1000) {
-            b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.splatfestEmbedTitle);
+            b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.splatfestEmbedTitle);
             b.setFooter(l.botLocale.footer_ended);
             b.setTimestamp(Instant.ofEpochSecond(fest.root.Time.getEndTime()));
         } else if (fest.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) {
-            b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.runningSplatfestTitle);
+            b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.runningSplatfestTitle);
             b.setFooter(l.botLocale.footer_ends);
             b.setTimestamp(Instant.ofEpochSecond(fest.root.Time.getEndTime()));
         } else if (fest.root.Time.getStartTime() > System.currentTimeMillis() / 1000) {
-            b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.newSplatfestTitle);
+            b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.newSplatfestTitle);
             b.setFooter(l.botLocale.footer_starts);
             b.setTimestamp(Instant.ofEpochSecond(fest.root.Time.getStartTime()));
         }
 
-        if (command) b.setTitle(Emote.SPLATFEST_SPL1+ " "+l.botLocale.splatfestEmbedTitle);
-        b.addField(l.botLocale.mode, GameModeUtil.translateS1(l,fest.root.Rule.value), true);
+        if (command) b.setTitle(Emote.SPLATFEST_SPL1 + " " + l.botLocale.splatfestEmbedTitle);
+        b.addField(l.botLocale.mode, GameModeUtil.translateS1(l, fest.root.Rule.value), true);
         b.addField(l.botLocale.splatfestTeams, fest.root.Teams[0].ShortName.get(l.botLocale.s1FestStr).value + ", " + fest.root.Teams[1].ShortName.get(l.botLocale.s1FestStr).value, true);
         b.addField(l.botLocale.stages, l.botLocale.getS1MapName(Integer.parseInt(fest.root.Stages[0].MapID.value)) + ", " + l.botLocale.getS1MapName(Integer.parseInt(fest.root.Stages[1].MapID.value)) + ", " + l.botLocale.getS1MapName(Integer.parseInt(fest.root.Stages[2].MapID.value)), false);
-
+        if (s1splatfestSplatfestival.root.FestivalId.value.equals("4100"))
+            b.setFooter("This is a test splatfest, not an actual one");
+        if (fest.image != null) b.setImage(fest.image);
         return b.build();
     }
 }

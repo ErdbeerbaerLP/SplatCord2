@@ -26,6 +26,9 @@ public class ViewProfileCommand extends BaseCommand {
         SubcommandData splat3 = new SubcommandData("splat3", l.botLocale.cmdProfile3Desc);
 
         OptionData user = new OptionData(OptionType.USER, "user", l.botLocale.cmdProfileUserDesc, false);
+
+
+
         splat1.addOptions(user);
         splat2.addOptions(user);
         splat3.addOptions(user);
@@ -58,7 +61,7 @@ public class ViewProfileCommand extends BaseCommand {
                         b.addField(lang.botLocale.cmdProfileRank, profile.splat1Profile.rank.toString(), true);
                         String footer = "";
                         if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank())
-                            footer += "NNID: " + profile.wiiu_nnid;
+                            footer += "Legacy NNID: " + profile.wiiu_nnid;
                         if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank() && profile.wiiu_pnid != null && !profile.wiiu_pnid.isBlank()) {
                             footer += " | ";
                         }

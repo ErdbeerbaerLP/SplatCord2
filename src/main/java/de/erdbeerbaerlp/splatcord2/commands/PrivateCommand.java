@@ -8,11 +8,13 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.TranslationNode;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -59,6 +61,10 @@ public class PrivateCommand extends BaseCommand {
             cmdmsg = e.deferEdit().complete();
         }
         final long roomID = Main.iface.getUserRoom(ev.getUser().getIdLong());
+        if(roomID == 0){
+            cmdmsg.editOriginal(lang.botLocale.cmdPrivateNotOwning).queue();
+            return;
+        }
         if(Main.iface.getPlayersInRoom(roomID).size()<=1){
             cmdmsg.editOriginal(lang.botLocale.cmdPrivateNotEnoughPlayers).queue();
             return;
@@ -85,17 +91,17 @@ public class PrivateCommand extends BaseCommand {
         if(roomVersion == 2) {
             for (int i = 0; i < players / 2; i++) {
                 final Splat2Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat2Profile;
-                alpha.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
+                getProfileName(ev, profile, playerArray, curPlayer, alpha);
                 curPlayer++;
             }
             for (int i = 0; i < players / 2; i++) {
                 final Splat2Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat2Profile;
-                bravo.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
+                getProfileName(ev, profile, playerArray, curPlayer, bravo);
                 curPlayer++;
             }
             for (int i = 0; i < specs; i++) {
                 final Splat2Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat2Profile;
-                spectator.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
+                getProfileName(ev, profile, playerArray, curPlayer, spectator);
                 curPlayer++;
             }
             b.setTitle(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
@@ -109,17 +115,16 @@ public class PrivateCommand extends BaseCommand {
         }else if(roomVersion == 3){
             for (int i = 0; i < players / 2; i++) {
                 final Splat3Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat3Profile;
-                alpha.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
+                getProfileName(ev, profile, playerArray, curPlayer, alpha);
                 curPlayer++;
             }
             for (int i = 0; i < players / 2; i++) {
                 final Splat3Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat3Profile;
-                bravo.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
-                curPlayer++;
+                getProfileName(ev, profile, playerArray, curPlayer, bravo);curPlayer++;
             }
             for (int i = 0; i < specs; i++) {
                 final Splat3Profile profile = Main.getUserProfile(playerArray[curPlayer]).splat3Profile;
-                spectator.append((profile.getName() != null && !profile.getName().isBlank()) ? profile.getName() : ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete().getEffectiveName());
+                getProfileName(ev, profile, playerArray, curPlayer, spectator);
                 curPlayer++;
             }
             b.setTitle(lang.botLocale.mode + ": " + lang.rules.values().toArray(new GameRule[0])[new Random().nextInt(lang.rules.size())].name);
@@ -130,8 +135,41 @@ public class PrivateCommand extends BaseCommand {
             b.addField(lang.botLocale.cmdRandomPrivateBravo, bravo.toString(), true);
             if (!spectator.toString().isEmpty())
                 b.addField(lang.botLocale.cmdRandomPrivateSpec, spectator.toString(), true);
+        } else{
+            b.setDescription("Unknown Version error \""+roomVersion+"\"\nPlease contact developer");
         }
         cmdmsg.editOriginalEmbeds(b.build()).setActionRow(Button.primary("regenprivate", lang.botLocale.regenerateButton), Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).submit();
+    }
+
+    private static void getProfileName(GenericInteractionCreateEvent ev, Splat2Profile profile, Long[] playerArray, int curPlayer, StringBuilder name) {
+        final boolean profileUsername = (profile.getName() != null) && !profile.getName().isBlank();
+        if(!profileUsername){
+            try {
+                final Member m = ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete();
+                name.append(m.getEffectiveName());
+            }catch (final ErrorResponseException e){
+                final User u = ev.getJDA().retrieveUserById(playerArray[curPlayer]).complete();
+                name.append(u.getEffectiveName());
+            }
+        }else {
+            name.append(profile.getName());
+        }
+        name.append("\n");
+    }
+    private static void getProfileName(GenericInteractionCreateEvent ev, Splat3Profile profile, Long[] playerArray, int curPlayer, StringBuilder name) {
+        final boolean profileUsername = (profile.getName() != null) && !profile.getName().isBlank();
+        if(!profileUsername){
+            try {
+                final Member m = ev.getGuild().retrieveMemberById(playerArray[curPlayer]).complete();
+                name.append(m.getEffectiveName());
+            }catch (final ErrorResponseException e){
+                final User u = ev.getJDA().retrieveUserById(playerArray[curPlayer]).complete();
+                name.append(u.getEffectiveName());
+            }
+        }else {
+            name.append(profile.getName());
+        }
+        name.append("\n");
     }
 
     @Override
@@ -229,11 +267,15 @@ public class PrivateCommand extends BaseCommand {
                     break;
                 case "remove":
                     final User usr = ev.getOption("user").getAsUser();
-                    if (Main.iface.getOwnedRoom(ev.getUser().getIdLong()) != 0) {
-                        ev.reply(lang.botLocale.cmdPrivateCannotLeaveOwn).setEphemeral(true).queue();
-                    } else {
+                    final long oR = Main.iface.getOwnedRoom(ev.getUser().getIdLong());
+                    final long uR = Main.iface.getOwnedRoom(usr.getIdLong());
+                    if (oR != 0) {
+                        ev.reply(lang.botLocale.cmdPrivateNotOwning).setEphemeral(true).queue();
+                    } else if(oR == uR) {
                         Main.iface.setPlayerRoom(0, usr.getIdLong());
                         ev.reply(lang.botLocale.cmdPrivateRemove).setEphemeral(true).queue();
+                    }else{
+                        ev.reply(lang.botLocale.cmdPrivateError).setEphemeral(true).queue();
                     }
                     break;
             }

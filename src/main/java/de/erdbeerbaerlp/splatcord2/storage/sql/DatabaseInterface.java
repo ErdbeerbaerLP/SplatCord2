@@ -118,7 +118,7 @@ public class DatabaseInterface implements AutoCloseable {
     }
 
     public void updateSplatProfile(SplatProfile profile) {
-        runUpdate("REPLACE INTO users (`id`,`wiiu-nnid`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`, `snet2orders`, `snet3orders`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_nnid == null ? "" : profile.wiiu_nnid) + "', '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '" + profile.splat3Profile.toJson().toString() + "','" + Main.gson.toJson(profile.s2orders.toArray()) + "','" + Main.gson.toJson(profile.s3orders.toArray()) + "'," + profile.pbID + ")");
+        runUpdate("REPLACE INTO users (`id`, `wiiu-pnid`, `switch-fc`, `splatoon1-profile`, `splatoon2-profile`, `splatoon3-profile`, `snet2orders`, `snet3orders`,`pb-id`) VALUES (" + profile.getUserID() + ", '" + (profile.wiiu_pnid == null ? "" : profile.wiiu_pnid) + "', '" + profile.switch_fc + "',  '" + profile.splat1Profile.toJson().toString() + "', '" + profile.splat2Profile.toJson().toString() + "', '" + profile.splat3Profile.toJson().toString() + "','" + Main.gson.toJson(profile.s2orders.toArray()) + "','" + Main.gson.toJson(profile.s3orders.toArray()) + "'," + profile.pbID + ")");
     }
 
     public long getUserRoom(long user) {
@@ -152,14 +152,14 @@ public class DatabaseInterface implements AutoCloseable {
         try (final ResultSet res = query("SELECT `gamever` FROM privaterooms WHERE roomid = " + roomid)) {
             while (res != null && res.next()) {
                 if (res.wasNull())
-                    return 0;
+                    return 3;
                 return res.getShort(1);
             }
 
         } catch (SQLException e) {
-            return 0;
+            return 3;
         }
-        return 0;
+        return 3;
     }
 
     public boolean createNewPBRoom(long room, short gameVersion, long roomOwner) {
@@ -234,7 +234,7 @@ public class DatabaseInterface implements AutoCloseable {
     }
     public HashMap<Long, Integer> getServerStats() {
         final HashMap<Long, Integer> out = new HashMap<Long, Integer>();
-        try (final ResultSet res = query("SELECT timestamp,servercount FROM `server_stats` ORDER BY `timestamp` DESC LIMIT 1000;")) {
+        try (final ResultSet res = query("SELECT timestamp,servercount FROM `server_stats` ORDER BY `timestamp` DESC LIMIT 10000;")) {
             while (res != null && res.next()) {
                 if (!res.wasNull())
                     out.put(res.getLong(1), res.getInt(2));

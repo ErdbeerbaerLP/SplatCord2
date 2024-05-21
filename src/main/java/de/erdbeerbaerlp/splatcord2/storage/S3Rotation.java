@@ -14,6 +14,7 @@ public class S3Rotation {
     private final Coop3 eggstraCoop;
     private final CurrentSplatfest splatfest;
     private final EventSchedule event;
+    public String image;
 
     public S3Rotation(Schedule3 regular, Schedule3 bankara, Schedule3 xBattle, Coop3 coop, Coop3 eggstraCoop, Schedule3 fest, CurrentSplatfest splatfest, EventSchedule event) {
 

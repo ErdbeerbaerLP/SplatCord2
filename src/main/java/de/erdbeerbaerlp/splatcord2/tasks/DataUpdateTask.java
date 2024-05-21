@@ -18,9 +18,16 @@ import java.util.Scanner;
 import java.util.TimerTask;
 
 public class DataUpdateTask extends TimerTask {
+    private boolean currentlyRunning = false;
+
     @Override
     public void run() {
         System.out.println("Starting data update...");
+        if(currentlyRunning){
+            System.out.println("Skipping due to already running...");
+            return;
+        }
+        currentlyRunning = true;
         try {
             ScheduleUtil.updateS2RotationData();
             Main.splatoon2inkStatus = true;
@@ -83,6 +90,7 @@ public class DataUpdateTask extends TimerTask {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        currentlyRunning = false;
     }
 
 }

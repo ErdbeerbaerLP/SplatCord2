@@ -202,19 +202,23 @@ public class Main {
                 get(API::status);
             });
             path("/s1rotations", () -> {
-
+                get(API::s1rotation);
             });
             path("/s2rotations", () -> {
+                get(API::s2rotation);
 
             });
             path("/s3rotations", () -> {
+                get(API::s3rotation);
 
             });
         });
         api.start(Config.instance().web.port);
-        bot.presence.start();
-        startTime = Instant.now();
+
         Timer ti = new Timer();
+        final StatusUpdateTask statusTask = new StatusUpdateTask();
+        ti.scheduleAtFixedRate(statusTask, 0, TimeUnit.SECONDS.toMillis(7));
+        startTime = Instant.now();
 
 
         final Calendar c = Calendar.getInstance();
@@ -227,10 +231,13 @@ public class Main {
         final SplatnetOrderTask splatnetOrderTask = new SplatnetOrderTask();
         ti.scheduleAtFixedRate(rotationTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
         ti.scheduleAtFixedRate(salmonrunTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
+
         c.set(Calendar.SECOND, 30);
         ti.scheduleAtFixedRate(dataUpdateTask, c.getTime(), TimeUnit.MINUTES.toMillis(60));
         ti.scheduleAtFixedRate(splatnetOrderTask, TimeUnit.SECONDS.toMillis(10), TimeUnit.MINUTES.toMillis(5));
         ti.scheduleAtFixedRate(new StatisticRecordTask(),TimeUnit.SECONDS.toMillis(20), TimeUnit.MINUTES.toMillis(15));
+
+
 
         rotationTask.run();
         salmonrunTask.run();

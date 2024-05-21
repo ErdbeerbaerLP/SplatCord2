@@ -220,7 +220,7 @@ public class Spanish extends EnglishBase {
             case 13 -> "Estudios Esturión";
             case 14 -> "Cantera Tintorera";
             case 15 -> "Spa Cala Bacalao";
-            default -> "Mapa desconocido #" + mapid;
+            default -> super.getS1MapName(mapid);
         };
     }
 

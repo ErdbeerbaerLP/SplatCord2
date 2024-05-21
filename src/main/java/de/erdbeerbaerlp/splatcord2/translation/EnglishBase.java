@@ -200,8 +200,8 @@ public class EnglishBase {
     public String cmdSettingsMenuHeader = "Select Setting";
     public String cmdSetLegacy = "NOTE: This command is deprecated and will be removed in the future. Please resort to the updated /settings command instead";
 
-    public String stageFeedMsg = "New stage rotations will now be sent here\n"+cmdSetLegacy;
-    public String salmonFeedMsg = "New Salmon Runs will now be sent here\n"+cmdSetLegacy;
+    public String stageFeedMsg = "New stage rotations will now be sent here\n" + cmdSetLegacy;
+    public String salmonFeedMsg = "New Salmon Runs will now be sent here\n" + cmdSetLegacy;
     public String salmonPrediction = "Prediction: ";
     public String stages = "Stages";
     public String splatfestSetting = "Custom Splatfests enabled?";
@@ -226,6 +226,19 @@ public class EnglishBase {
             case 13 -> "Ancho-V Games";
             case 14 -> "Piranha Pit";
             case 15 -> "Mahi-Mahi Resort";
+            case 16 -> "The Reef ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 17 -> "Musselforge Fitness ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 18 -> "Starfish Mainstage ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 19 -> "Sturgeon Shipyard ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 20 -> "Inkblot Academy ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 21 -> "Humpback Pump Track ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 22 -> "Manta Maria ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 25 -> "Wahoo World ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 27 -> "Goby Arena ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 28 -> "Snapper Canal ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 29 -> "Mako Mart ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 51 -> "Windmill House on the Pearlie ([S2MapPort](<https://gamebanana.com/mods/356380>))";
+            case 57 -> "Zone of Glass ([S2MapPort](<https://gamebanana.com/mods/356380>))";
             default -> "??Map ID #" + mapid;
         };
     }

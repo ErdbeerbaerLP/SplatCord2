@@ -7,6 +7,8 @@ public class Phase {
     public Stage[] GachiStages = new Stage[0];
     public Stage[] RegularStages = new Stage[0];
 
+    public String image = null;
+
     @Override
     public String toString() {
         return "Phase{" +
