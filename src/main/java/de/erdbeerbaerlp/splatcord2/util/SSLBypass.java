@@ -22,7 +22,7 @@ public class SSLBypass implements X509TrustManager {
         }
 
         try {
-            context = SSLContext.getInstance("TLS");
+            context = SSLContext.getInstance("TLSv1.2");
             context.init(null, trustManagers, new SecureRandom());
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             e.printStackTrace();

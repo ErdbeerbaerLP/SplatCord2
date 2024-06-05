@@ -17,6 +17,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -26,6 +27,8 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import static de.erdbeerbaerlp.splatcord2.Main.USER_AGENT;
 
 /**
  * Most code translated from https://github.com/PretendoNetwork/boss-crypto/tree/fb870d45a680388af4416c499e5ebffeccb8e0c5/lib
@@ -145,6 +148,7 @@ public class BossFileUtil {
 
         SSLBypass.allowAllSSL(urlConnection);
         urlConnection.addRequestProperty("Accept", "application/xml");
+        urlConnection.setRequestProperty("User-Agent", USER_AGENT);
         Document doc = b.parse(urlConnection.getInputStream());
         doc.getDocumentElement().normalize();
         final Element files = (Element) doc.getDocumentElement().getElementsByTagName("Files").item(0);
@@ -152,18 +156,28 @@ public class BossFileUtil {
 
         final URL rotationURL = new URL(file.getElementsByTagName("Url").item(0).getTextContent());
         final HttpsURLConnection conn = (HttpsURLConnection) rotationURL.openConnection();
+        conn.setRequestProperty("User-Agent", USER_AGENT);
+
+        try (InputStream is = urlConnection.getInputStream()) {
         SSLBypass.allowAllSSL(conn);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (InputStream is = conn.getInputStream()) {
+        try (InputStream is2 = conn.getInputStream()) {
             byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
             int n;
 
-            while ((n = is.read(byteChunk)) > 0) {
+            while ((n = is2.read(byteChunk)) > 0) {
                 baos.write(byteChunk, 0, n);
             }
         } catch (IOException e) {
             System.err.printf("Failed while reading bytes from %s: %s", rotationURL.toExternalForm(), e.getMessage());
             e.printStackTrace();
+            final BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+            final StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            System.out.println(sb.toString());
         }
 
 
@@ -177,6 +191,84 @@ public class BossFileUtil {
 
         final BymlFile parse = BymlFile.parse(boss.getAbsolutePath());
         return Main.gson.fromJson(parse.toJson(), RotationByml.class);
+    }catch (IOException e) {
+        e.printStackTrace();
+        final BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())));
+        final StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null) {
+            sb.append(output);
+        }
+        System.out.println(sb.toString());
+        return null;
+    }
+    }
+    public static RotationByml getStageBymlP(final String url) throws Exception {
+        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        f.setNamespaceAware(false);
+        f.setValidating(false);
+        final DocumentBuilder b = f.newDocumentBuilder();
+        final URL url1 = new URL(url);
+        final HttpURLConnection urlConnection = (HttpURLConnection) url1.openConnection();
+
+        //SSLBypass.allowAllSSL(urlConnection);
+        urlConnection.addRequestProperty("Accept", "application/xml");
+        urlConnection.setRequestProperty("User-Agent", USER_AGENT);
+
+        try (InputStream is = urlConnection.getInputStream()) {
+            Document doc = b.parse(is);
+            doc.getDocumentElement().normalize();
+            final Element files = (Element) doc.getDocumentElement().getElementsByTagName("Files").item(0);
+            final Element file = (Element) files.getElementsByTagName("File").item(0);
+
+            final URL rotationURL = new URL(file.getElementsByTagName("Url").item(0).getTextContent().replace("https://", "http://"));
+            final HttpURLConnection conn = (HttpURLConnection) rotationURL.openConnection();
+            conn.setRequestProperty("User-Agent", USER_AGENT);
+            //SSLBypass.allowAllSSL(conn);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (InputStream is2 = conn.getInputStream()) {
+                byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
+                int n;
+
+                while ((n = is2.read(byteChunk)) > 0) {
+                    baos.write(byteChunk, 0, n);
+                }
+            } catch (IOException e) {
+                System.err.printf("Failed while reading bytes from %s: %s", rotationURL.toExternalForm(), e.getMessage());
+                e.printStackTrace();
+                final BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+                final StringBuilder sb = new StringBuilder();
+                String output;
+                while ((output = br.readLine()) != null) {
+                    sb.append(output);
+                }
+                System.out.println(sb.toString());
+            }
+
+
+
+        final BossFileUtil.BossContainer test = BossFileUtil.decrypt(baos.toByteArray(), Config.instance().wiiuKeys.bossAesKey.getBytes(StandardCharsets.UTF_8), Config.instance().wiiuKeys.bossHmacKey.getBytes(StandardCharsets.UTF_8));
+        final File boss = new File("./boss."+url1.getHost()+".byml");
+        try (final FileOutputStream os = new FileOutputStream(boss)) {
+            os.write(test.content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        final BymlFile parse = BymlFile.parse(boss.getAbsolutePath());
+
+        return Main.gson.fromJson(parse.toJson(), RotationByml.class);
+        }catch (IOException e) {
+            e.printStackTrace();
+            final BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())));
+            final StringBuilder sb = new StringBuilder();
+            String output;
+            while ((output = br.readLine()) != null) {
+                sb.append(output);
+            }
+            System.out.println(sb.toString());
+            return null;
+        }
 
     }
     public static SplatfestByml getFestByml(final String url) throws Exception {
