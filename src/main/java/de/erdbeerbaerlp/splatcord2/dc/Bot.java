@@ -476,6 +476,7 @@ public class Bot implements EventListener {
                 case "Cohozuna" -> String.valueOf(Emote.COHOZUNA);
                 case "Horrorboros" -> String.valueOf(Emote.HORRORBOROS);
                 case "Megalodontia" -> String.valueOf(Emote.MEGALODONTIA);
+                case "Triumvirate" -> String.valueOf(Emote.TRIUMVIRATE);
                 default -> String.valueOf(Emote.ERROR_CONTACT_DEVELOPER);
             };
             final ArrayList<MessageEmbed> embeds = new ArrayList<>();
