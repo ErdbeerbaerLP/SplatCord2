@@ -15,3 +15,6 @@ Supported languages are:
 - english (en)
 - german (de)
 - italian (it)
+
+
+<meta name="google-site-verification" content="qhwEwX7_gc_fFmCZe1sPSstDY9kiJd0D4-CCLfuNrK8" />
