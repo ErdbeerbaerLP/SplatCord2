@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
@@ -23,12 +24,21 @@ import java.util.concurrent.TimeUnit;
 public class RotationCommand extends BaseCommand {
     public RotationCommand(Locale l) {
         super("rotation", l.botLocale.cmdRotationDesc);
-        final SubcommandData splat1 = new SubcommandData("splatoon1",  l.botLocale.cmdRotationDesc);
+        final SubcommandData splat1 = new SubcommandData("splatoon1", l.botLocale.cmdRotationDesc);
         //final SubcommandData splat1pretendo = new SubcommandData("splatoon1pretendo", "(Pretendo Network) " + l.botLocale.cmdRotationDesc);
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdRotationDesc);
         final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdRotationDesc);
 
         addSubcommands(splat3, splat2, splat1/*, splat1pretendo*/);
+        splat1.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRotationDesc"));
+        splat2.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRotationDesc"));
+        splat3.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRotationDesc"));
+        setDescriptionLocalizations(l.discordLocalizationFunc("cmdRotationDesc"));
+    }
+
+    @Override
+    public boolean isServerOnly() {
+        return false;
     }
 
     public static void addS2Rotation(EmbedBuilder future, Rotation currentRotation, Locale lang) {
@@ -89,34 +99,15 @@ public class RotationCommand extends BaseCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        System.out.println(ev.getGuild().getLocale().getLanguageName());
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if(serverLang == null){
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
-                case "splatoon1":/*
-                    final Phase currentS1Rotation = Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotations)];
-                    final ArrayList<Phase> nextS1Rotations = new ArrayList<>();
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1, Main.s1rotations)]);
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 2, Main.s1rotations)]);
-                    nextS1Rotations.add(Main.s1rotations.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 3, Main.s1rotations)]);
-                    final EmbedBuilder future = new EmbedBuilder().setTitle(lang.botLocale.futureStagesTitle + " (Splatoon 1 " + Emote.NINTENDO_NETWORK + ")");
-                    addS1Rotation(future, currentS1Rotation, lang, -1);
-                    future.addBlankField(false);
-                    long time = Instant.now().toEpochMilli();
-                    for (int i = 0; i < nextS1Rotations.size(); i++) {
-                        time = RotationTimingUtil.getNextRotationStart(time + 1, Main.s1rotations);
-                        addS1Rotation(future, nextS1Rotations.get(i), lang, time + 1);
-                        if (i < nextS1Rotations.size() - 1)
-                            future.addBlankField(false);
-                    }
-                    if (iface.getCustomSplatfests(ev.getGuild().getIdLong())) {
-                        if ((s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000 ) &&((s1splatfestSplatfestival.root.Time.getEndTime() > System.currentTimeMillis() / 1000))) {
-                            ev.replyEmbeds(future.build(), MessageUtil.generateSplatfestEmbedSplatfestival(s1splatfestSplatfestival, false, lang)).queue();
-                            break;
-                        }
-                    }
-                    ev.replyEmbeds(future.build()).queue();
-                    break;
-                case "splatoon1pretendo":*/
+                case "splatoon1":
                     final Phase currentS1RotationP = Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotationsPretendo)];
                     final ArrayList<Phase> nextS1RotationsP = new ArrayList<>();
                     nextS1RotationsP.add(Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getOffsetRotationForInstant(Instant.now(), 1, Main.s1rotationsPretendo)]);

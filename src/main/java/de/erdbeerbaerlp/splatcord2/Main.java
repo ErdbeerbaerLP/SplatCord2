@@ -6,6 +6,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import de.erdbeerbaerlp.splatcord2.dc.Bot;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
+import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.RotationByml;
@@ -166,12 +167,14 @@ public class Main {
         }
         try {
             bot = new Bot();
+
         } catch (LoginException e) {
             System.err.println("Cannot login to discord!");
             e.printStackTrace();
         }
         if (bot == null) return;
 
+        CommandRegistry.setCommands();
         try {
             ScheduleUtil.updateS2RotationData();
             splatoon2inkStatus = true;

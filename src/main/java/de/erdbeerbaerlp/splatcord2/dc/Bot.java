@@ -66,13 +66,9 @@ public class Bot implements EventListener {
         b.setChunkingFilter(ChunkingFilter.ALL);
         b.setActivity(Activity.of(Activity.ActivityType.CUSTOM_STATUS, "Bot is starting..."));
         b.setStatus(OnlineStatus.DO_NOT_DISTURB);
+        b.setEventPassthrough(true);
         jda = b.build().awaitReady();
         final ArrayList<Long> knownIDs = Main.iface.getAllServers();
-        jda.retrieveCommands().submit().thenAccept((t)->{
-            for (Command c : t) {
-                jda.deleteCommandById(c.getIdLong()).queue();
-            }
-        });
         jda.getGuilds().forEach((g) -> {
             if (!knownIDs.contains(g.getIdLong()))
                 Main.iface.addServer(g.getIdLong());

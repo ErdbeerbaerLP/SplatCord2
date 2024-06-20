@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3Profile;
@@ -42,8 +43,18 @@ public class ViewProfileCommand extends BaseCommand {
     }
 
     @Override
+    public boolean isServerOnly() {
+        return false;
+    }
+
+    @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        System.out.println(ev.getGuild().getLocale().getLanguageName());
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if(serverLang == null){
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         final String subcommandName = ev.getSubcommandName();
         final OptionMapping userOption = ev.getOption("user");
         final Member m = userOption != null ? userOption.getAsMember() : ev.getMember();

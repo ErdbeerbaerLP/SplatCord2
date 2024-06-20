@@ -5,11 +5,15 @@ import de.erdbeerbaerlp.splatcord2.commands.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class CommandRegistry {
     public static final HashMap<Long, Command> registeredCommands = new HashMap<>();
@@ -29,7 +33,6 @@ public class CommandRegistry {
         baseCommandClasses.add(RandomCommand.class);
         baseCommandClasses.add(PrivateCommand.class);
         baseCommandClasses.add(StatusCommand.class);
-        baseCommandClasses.add(InviteCommand.class);
         baseCommandClasses.add(SupportCommand.class);
         baseCommandClasses.add(SettingsCommand.class);
         baseCommandClasses.add(CodeCommand.class);
@@ -55,6 +58,7 @@ public class CommandRegistry {
                 if (cmdByName == null) {
                     baseCommands.add(cmd);
                 }
+                if (!cmd.isServerOnly()) continue;
                 commands.add(cmd);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
@@ -73,5 +77,73 @@ public class CommandRegistry {
         });
     }
 
+    public static void setCommands() {
+        final Locale lang = Main.translations.get(BotLanguage.ENGLISH);
+        final List<Command> globalCmds = Main.bot.jda.retrieveCommands().complete();
+        boolean regen = false;
+        final ArrayList<BaseCommand> cmds = new ArrayList<>();
+        for (Class<? extends BaseCommand> basecmd : baseCommandClasses) {
+
+            try {
+                final BaseCommand cmd = basecmd.getConstructor(Locale.class).newInstance(lang);
+                if (!cmd.isServerOnly())
+                    cmds.add(cmd);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (cmds.size() == globalCmds.size()) {
+            for (final BaseCommand command : cmds) {
+                Command cm = null;
+                for (final Command c : globalCmds) {
+                    if (((CommandData) command).getName().equals(c.getName())) {
+                        cm = c;
+                        break;
+                    }
+                }
+                if (cm == null) {
+                    regen = true;
+                    break;
+                }
+                if (!optionsEqual(command.getOptions(), cm.getOptions())) {
+                    regen = true;
+                    break;
+                }
+
+            }
+        } else regen = true;
+
+        if (regen) {
+            System.out.println("Regenerating commands...");
+            CommandListUpdateAction commandListUpdateAction = Main.bot.jda.updateCommands();
+            for (BaseCommand cmd : cmds) {
+                commandListUpdateAction = commandListUpdateAction.addCommands(cmd);
+            }
+            final CompletableFuture<List<Command>> submit = commandListUpdateAction.submit();
+            submit.thenAccept(CommandRegistry::addCmds);
+        } else {
+            System.out.println("No need to regenerate commands");
+            addCmds(globalCmds);
+        }
+    }
+
+    private static void addCmds(List<Command> cmds) {
+        for (final Command cmd : cmds) {
+            registeredCommands.put(cmd.getIdLong(), cmd);
+            System.out.println("Added command " + cmd.getName() + " with ID " + cmd.getIdLong());
+        }
+    }
+
+    private static boolean optionsEqual(List<OptionData> data, List<Command.Option> options) {
+        if (data.size() != options.size()) return false;
+        for (int i = 0; i < data.size(); i++) {
+            final OptionData optionData = data.get(i);
+            final Command.Option option = options.get(i);
+            return option.getName().equals(optionData.getName()) && option.getChoices().equals(optionData.getChoices()) && option.getDescription().equals(optionData.getDescription()) && option.isRequired() == optionData.isRequired() && option.getType().equals(optionData.getType());
+        }
+        return true;
+    }
 
 }

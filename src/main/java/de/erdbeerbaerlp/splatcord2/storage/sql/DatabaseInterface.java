@@ -227,7 +227,7 @@ public class DatabaseInterface implements AutoCloseable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return BotLanguage.ENGLISH;
+        return null;
     }
     public void addServerStatistic(int serverCount){
         runUpdate("INSERT INTO `server_stats` (timestamp, servercount) values ("+ Instant.now().toEpochMilli()+", "+ serverCount+")");

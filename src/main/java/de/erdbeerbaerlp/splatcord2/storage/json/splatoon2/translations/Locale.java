@@ -1,8 +1,10 @@
 package de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations;
 
 import com.google.gson.JsonElement;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.translation.EnglishBase;
+import net.dv8tion.jda.api.interactions.DiscordLocale;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,19 @@ public class Locale {
     public Locale(final EnglishBase botLocale) {
         this.botLocale = botLocale;
 
+    }
+
+    public HashMap<DiscordLocale, String> discordLocalizationFunc(String translation){
+        final HashMap<DiscordLocale, String> s = new HashMap<>();
+        for (BotLanguage l : BotLanguage.values()) {
+            if(l.discordLocale == null) continue;
+            try {
+                s.put(l.discordLocale, (String) l.botLocale.getClass().getField(translation).get(l.botLocale));
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        }
+        return s;
     }
 
     @Override

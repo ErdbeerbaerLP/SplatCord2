@@ -208,6 +208,7 @@ public class EnglishBase {
     public String cmdSettingsSplatfestRegion = "Splatfest region";
 
 
+
     public String getS1MapName(int mapid) {
         return switch (mapid) {
             case 0 -> "Urchin Underpass";

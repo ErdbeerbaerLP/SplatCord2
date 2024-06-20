@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Splat1Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
@@ -98,8 +99,14 @@ public class EditProfileCommand extends BaseCommand {
     }
 
     @Override
+    public boolean isServerOnly() {
+        return false;
+    }
+
+    @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        final BotLanguage userLang = BotLanguage.fromDiscordLocale(ev.getUserLocale());
+        final Locale lang = Main.translations.get(userLang);
         final String subcommandName = ev.getSubcommandName();
         final SplatProfile profile = Main.getUserProfile(ev.getUser().getIdLong());
         if (subcommandName != null)
@@ -156,7 +163,7 @@ public class EditProfileCommand extends BaseCommand {
                         } else {
                             msg += lang.botLocale.cmdProfilennidErr;
                         }
-                        ev.reply(msg).queue();
+                        ev.reply(msg).setEphemeral(true).queue();
                     }
                 }
                 case "splat2" -> {
@@ -244,7 +251,7 @@ public class EditProfileCommand extends BaseCommand {
                         } else {
                             msg += lang.botLocale.cmdProfilefcErr;
                         }
-                        ev.reply(msg).queue();
+                        ev.reply(msg).setEphemeral(true).queue();
                     }
                 }
                 case "splat3" -> {
@@ -337,7 +344,7 @@ public class EditProfileCommand extends BaseCommand {
                         } else {
                             msg += lang.botLocale.cmdProfilefcErr;
                         }
-                        ev.reply(msg).queue();
+                        ev.reply(msg).setEphemeral(true).queue();
                     }
                 }
                 default -> ev.reply("Unknown subcommand, report to developer!").queue(); //Should never be shown at all

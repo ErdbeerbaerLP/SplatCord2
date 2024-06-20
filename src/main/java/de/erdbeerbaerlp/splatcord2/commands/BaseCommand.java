@@ -1,6 +1,8 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.IntegrationType;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +25,16 @@ public abstract class BaseCommand extends CommandDataImpl {
      */
     public BaseCommand(@NotNull String name, @NotNull String description) {
         super(name, description);
+        if(!isServerOnly()) {
+            setContexts(InteractionContextType.BOT_DM, InteractionContextType.GUILD, InteractionContextType.PRIVATE_CHANNEL);
+            setIntegrationTypes(IntegrationType.GUILD_INSTALL, IntegrationType.USER_INSTALL);
+        }
+
+        //setLocalizationFunction(LocalizationUtil::debugToToml);
+    }
+
+    public boolean isServerOnly(){
+        return true;
     }
 
     public abstract boolean requiresManageServer();
