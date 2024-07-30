@@ -15,3 +15,4 @@ Supported languages are:
 - english (en)
 - german (de)
 - italian (it)
+
