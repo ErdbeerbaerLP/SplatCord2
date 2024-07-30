@@ -12,7 +12,7 @@ public class RotationTimingUtil {
 
     public static int getRotationForInstant(Instant instant, final RotationByml rotation) {
         final long mil = instant.toEpochMilli() - getBaseTimestamp(rotation);
-        return getRotationForLong(mil);
+        return getRotationForLong(mil,rotation);
     }
 
     private static long getBaseTimestamp(final RotationByml rotation) {
@@ -27,11 +27,11 @@ public class RotationTimingUtil {
     }
 
     public static int getOffsetRotationForInstant(Instant instant, int offset,final RotationByml rotation) {
-        return getRotationForLong((instant.toEpochMilli() + (offset * rotationIncrement)) - getBaseTimestamp(rotation));
+        return getRotationForLong((instant.toEpochMilli() + (offset * rotationIncrement)) - getBaseTimestamp(rotation),rotation);
     }
 
-    private static int getRotationForLong(long l) {
-        final int length = 179;
+    private static int getRotationForLong(long l,final RotationByml r) {
+        final int length = r.root.Phases.length-1;
         long offset = l / rotationIncrement;
         if(offset >= length) return length;
 
@@ -40,9 +40,8 @@ public class RotationTimingUtil {
 
     public static HashMap<Long, Phase> getAllRotations(final RotationByml r){
         final HashMap<Long, Phase> out = new HashMap<>();
-        final long base = getBaseTimestamp(r);
-        long ts = base;
-        for(int i=0;i<179;i++){
+        long ts = getBaseTimestamp(r);
+        for(int i=0;i<r.root.Phases.length-1;i++){
             out.put(ts,r.root.Phases[getRotationForInstant(Instant.ofEpochMilli(ts), r)]);
             ts += rotationIncrement;
         }

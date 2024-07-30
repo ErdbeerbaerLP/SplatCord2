@@ -56,11 +56,11 @@ public class ImageUtil {
 
     public static byte[] generateS1Image(Phase rotation) {
         try {
-            final URL mapurl = new URL("https://splatcord.ink/assets/s1/" + rotation.RegularStages[0].MapID.value + ".png");
-            final URL map2url = new URL("https://splatcord.ink/assets/s1/" + rotation.RegularStages[1].MapID.value + ".png");
-            final URL map3url = new URL("https://splatcord.ink/assets/s1/" + rotation.GachiStages[0].MapID.value + ".png");
-            final URL map4url = new URL("https://splatcord.ink/assets/s1/" + rotation.GachiStages[1].MapID.value + ".png");
-            final URL shifty = new URL("https://splatcord.ink/assets/s1/shifty.png");
+            final URL mapurl = new URL("https://splatcord.ink/images/s1/" + rotation.RegularStages[0].MapID.value + ".png");
+            final URL map2url = new URL("https://splatcord.ink/images/s1/" + rotation.RegularStages[1].MapID.value + ".png");
+            final URL map3url = new URL("https://splatcord.ink/images/s1/" + rotation.GachiStages[0].MapID.value + ".png");
+            final URL map4url = new URL("https://splatcord.ink/images/s1/" + rotation.GachiStages[1].MapID.value + ".png");
+            final URL shifty = new URL("https://splatcord.ink/images/s1/shifty.png");
             BufferedImage map, map2, map3, map4;
             try {
                 map = ImageIO.read(mapurl);
@@ -496,10 +496,10 @@ public class ImageUtil {
 
     public static byte[] generateS1Image(SplatfestByml rotation) {
         try {
-            final URL mapurl = new URL("https://splatcord.ink/assets/s1/" + rotation.root.Stages[0].MapID.value + ".png");
-            final URL map2url = new URL("https://splatcord.ink/assets/s1/" + rotation.root.Stages[1].MapID.value + ".png");
-            final URL map3url = new URL("https://splatcord.ink/assets/s1/" + rotation.root.Stages[2].MapID.value + ".png");
-            final URL shifty = new URL("https://splatcord.ink/assets/s1/shifty.png");
+            final URL mapurl = new URL("https://splatcord.ink/images/s1/" + rotation.root.Stages[0].MapID.value + ".png");
+            final URL map2url = new URL("https://splatcord.ink/images/s1/" + rotation.root.Stages[1].MapID.value + ".png");
+            final URL map3url = new URL("https://splatcord.ink/images/s1/" + rotation.root.Stages[2].MapID.value + ".png");
+            final URL shifty = new URL("https://splatcord.ink/images/s1/shifty.png");
             BufferedImage map, map2, map3;
             try {
                 map = ImageIO.read(mapurl);

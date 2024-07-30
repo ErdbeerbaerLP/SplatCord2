@@ -18,10 +18,11 @@ import static de.erdbeerbaerlp.splatcord2.Main.*;
 
 public class RotationTask extends TimerTask {
     private boolean currentlyRunning = false;
+
     @Override
     public void run() {
         System.out.println("Running RotationTask");
-        if(currentlyRunning){
+        if (currentlyRunning) {
             System.out.println("Skipping due to already running...");
             return;
         }
@@ -66,9 +67,11 @@ public class RotationTask extends TimerTask {
             //Splatoon 1 Pretendo Rotations
             if (iface.status.isDBAlive() && currentS1PRotationInt != Config.instance().doNotEdit.lastS1PRotation) {
                 final byte[] img = ImageUtil.generateS1Image(currentS1PRotation);
-                currentS1PRotation.image = ((StandardGuildMessageChannel) bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(img, "s1.png")).complete().getAttachments().get(0).getUrl();
+                if (img != null)
+                    currentS1PRotation.image = ((StandardGuildMessageChannel) bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(img, "s1.png")).complete().getAttachments().get(0).getUrl();
                 final byte[] img2 = ImageUtil.generateS1Image(s1splatfestPretendo);
-                s1splatfestPretendo.image = ((StandardGuildMessageChannel) bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(img2, "s1fest.png")).complete().getAttachments().get(0).getUrl();
+                if (img2 != null)
+                    s1splatfestPretendo.image = ((StandardGuildMessageChannel) bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(img2, "s1fest.png")).complete().getAttachments().get(0).getUrl();
 
                 iface.getAllS1PMapChannels().forEach((serverid, channel) -> {
                     try {
