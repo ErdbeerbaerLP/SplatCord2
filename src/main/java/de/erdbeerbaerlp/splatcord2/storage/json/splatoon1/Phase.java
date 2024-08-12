@@ -6,8 +6,12 @@ public class Phase {
     public GachiRule GachiRule = new GachiRule();
     public Stage[] GachiStages = new Stage[0];
     public Stage[] RegularStages = new Stage[0];
-
+    public SplatfestByml.RotationBymlRoot.BymlEntry Time;
     public String image = null;
+
+    public int getTime() {
+        return Integer.parseInt(Time.value);
+    }
 
     @Override
     public String toString() {
