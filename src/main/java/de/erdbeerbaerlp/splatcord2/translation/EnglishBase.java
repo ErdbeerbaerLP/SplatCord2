@@ -59,6 +59,7 @@ public class EnglishBase {
     public String cmdStatusDesc = "Shows bot status and statistics";
     public String cmdStatusStats = "Statistics";
     public String cmdStatusStatsServers = "Servers: ";
+    public String cmdStatusStatsUsers = "User Installs: ";
     public String cmdStatusStatsUptime = "Uptime: ";
     public String cmdStatusStatsDbUptime = "Database-Uptime: ";
     public String cmdProfileDesc = "Shows your (or someone elses) Splatoon profile(s)"; //Should not show up anyway
@@ -139,6 +140,8 @@ public class EnglishBase {
     public String cmdProfileLevel3Set = "Splatoon 3 level set to ";
     public String cmdProfileSplatfestSet = "Splatfest team set to ";
     public String cmdSplatnetOrdered = "Ordered %gear%\nYou will get pinged if it is available";
+    public String cmdSplatnetOrderedDM = "Ordered %gear%\nYou will get DMed if it is available";
+    public String cmdSplatnetOrderedDMFailed = "I can't DM you :/";
     public String cmdSplatnetOrderFinished = "%ping%, your Order is now available in Splatnet!";
     public String cmdProfileMainWeaponDesc = "Set your main weapon(s)";
     public String cmdProfileMainWeapon = "Main Weapons";

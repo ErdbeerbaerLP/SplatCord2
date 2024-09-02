@@ -44,6 +44,7 @@ public class German extends EnglishBase {
         cmdStatusDesc = "Zeigt Bostatus und Statistiken";
         cmdStatusStats = "Statistiken";
         cmdStatusStatsServers = "Server: ";
+        cmdStatusStatsUsers = "Nutzer-Installationen: ";
         cmdStatusStatsUptime = "Uptime: ";
         cmdStatusStatsDbUptime = "Datenbank-Uptime: ";
         cmdProfile1Desc = "Zeigt dein (oder ein anderes) Splatoon 1 Profil";
@@ -121,6 +122,8 @@ public class German extends EnglishBase {
         cmdProfileS3RankSet = "Dein Rang wurde auf %rank% gesetzt";
         cmdProfileSplatfestSet = "Dein Splatfest-Team ist nun ";
         cmdSplatnetOrdered = "%gear% wurde Bestellt!\nSobald es verfügbar ist, wirst du erwähnt";
+        cmdSplatnetOrderedDM = "gear% wurde Bestellt!\nSobald es verfügbar ist, wirst du DMd";
+        cmdSplatnetOrderedDMFailed = "Ich kann dir keine DMs senden :/";
         cmdSplatnetOrderFinished = "%ping%, deine Bestellung ist nun in TentaWorld verfügbar!";
         cmdProfileMainWeaponDesc = "Setze deine Hauptwaffe(n)";
         cmdProfileMainWeapon = "Hauptwaffen";

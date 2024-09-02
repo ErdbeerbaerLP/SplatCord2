@@ -1,6 +1,6 @@
 package de.erdbeerbaerlp.splatcord2.tasks;
 
-import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Merchandise;
@@ -11,7 +11,8 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.LimitedGear;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.Power;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.time.Instant;
@@ -46,9 +47,16 @@ public class SplatnetOrderTask extends TimerTask {
                         final ArrayList<Order> finishedOrders = new ArrayList<>();
                         for (Order o : orders) {
                             if ((m.gear.kind + "/" + m.gear.id).equals(o.gear)) {
-                                final TextChannel channel = bot.jda.getTextChannelById(o.channel);
+                                final MessageChannel channel = bot.jda.getChannelById(MessageChannel.class, o.channel);
                                 if (channel == null) continue;
-                                final Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
+                                BotLanguage msgLang = o.locale;;
+                                if(channel instanceof GuildMessageChannel gc){
+                                    msgLang = iface.getServerLang(gc.getGuild().getIdLong());
+                                    if (msgLang == null) {
+                                        msgLang = BotLanguage.fromDiscordLocale(gc.getGuild().getLocale());
+                                    }
+                                }
+                                final Locale lang = translations.get(msgLang);
                                 final MessageCreateBuilder b = new MessageCreateBuilder();
                                 b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%", user.getAsMention()));
                                 final EmbedBuilder emb = new EmbedBuilder().setTimestamp(Instant.ofEpochSecond(m.end_time)).setFooter(lang.botLocale.footer_ends).setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image).setAuthor(lang.allGears.get(m.gear.kind + "/" + m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image).addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true).addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
@@ -58,9 +66,9 @@ public class SplatnetOrderTask extends TimerTask {
                             }
                         }
 
-                        if (finishedOrders.size() > 0) {
+                        if (!finishedOrders.isEmpty()) {
                             profile.s2orders.removeAll(finishedOrders);
-                            Main.iface.updateSplatProfile(profile);
+                            iface.updateSplatProfile(profile);
                             finishedOrders.clear();
                         }
                     }
@@ -79,14 +87,24 @@ public class SplatnetOrderTask extends TimerTask {
                 for (Long usrid : allOrders.keySet()) {
                     final SplatProfile profile = getUserProfile(usrid);
                     final ArrayList<Order> orders = profile.s3orders;
-                    if (orders.size() > 0) {
+                    if (!orders.isEmpty()) {
                         final User user = getUserById(usrid);
                         final ArrayList<Order> finishedOrders = new ArrayList<>();
                         for (Order o : orders) {
                             if ((g.gear.name).equals(o.gear)) {
-                                final TextChannel channel = bot.jda.getTextChannelById(o.channel);
-                                if (channel == null) continue;
-                                final Locale lang = Main.translations.get(Main.iface.getServerLang(channel.getGuild().getIdLong()));
+                                final MessageChannel channel = bot.jda.getChannelById(MessageChannel.class, o.channel);
+                                if (channel == null){
+                                    System.out.println("Skipping invalid channel "+o.channel);
+                                    continue;
+                                }
+                                BotLanguage msgLang = o.locale;;
+                                if(channel instanceof GuildMessageChannel gc){
+                                    msgLang = iface.getServerLang(gc.getGuild().getIdLong());
+                                    if (msgLang == null) {
+                                        msgLang = BotLanguage.fromDiscordLocale(gc.getGuild().getLocale());
+                                    }
+                                }
+                                final Locale lang = translations.get(msgLang);
                                 final MessageCreateBuilder b = new MessageCreateBuilder();
                                 b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%", user.getAsMention()));
                                 final EmbedBuilder emb = new EmbedBuilder().setTimestamp(Instant.ofEpochSecond(g.getEndTime())).setFooter(lang.botLocale.footer_ends).setThumbnail(g.gear.image.url).setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-","_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
@@ -102,9 +120,9 @@ public class SplatnetOrderTask extends TimerTask {
                             }
                         }
 
-                        if (finishedOrders.size() > 0) {
+                        if (!finishedOrders.isEmpty()) {
                             profile.s3orders.removeAll(finishedOrders);
-                            Main.iface.updateSplatProfile(profile);
+                            iface.updateSplatProfile(profile);
                             finishedOrders.clear();
                         }
                     }

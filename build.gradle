@@ -30,7 +30,7 @@ artifacts {
     archives tasks.shadowJar
 }
 dependencies {
-    embed("com.github.freya022:JDA:423300af14"){
+    embed("com.github.freya022:JDA:f94446d"){
         transitive = true
         exclude module: 'opus-java'
     }

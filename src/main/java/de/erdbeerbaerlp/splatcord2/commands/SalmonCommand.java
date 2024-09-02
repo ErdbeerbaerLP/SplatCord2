@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
@@ -8,10 +9,8 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Coop3;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.time.Instant;
 
@@ -23,6 +22,9 @@ public class SalmonCommand extends BaseCommand {
         final SubcommandData splat2 = new SubcommandData("splatoon2", l.botLocale.cmdSalmonDesc);
         final SubcommandData splat3 = new SubcommandData("splatoon3", l.botLocale.cmdSalmonDesc);
         addSubcommands(splat2, splat3);
+        splat2.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSalmonDesc"));
+        splat3.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSalmonDesc"));
+        setDescriptionLocalizations(l.discordLocalizationFunc("cmdSalmonDesc"));
     }
 
     private static String getWeaponName(Locale lang, Weapons w) {
@@ -34,14 +36,21 @@ public class SalmonCommand extends BaseCommand {
     }
 
     @Override
+    public boolean isServerOnly() {
+        return false;
+    }
+    @Override
     public boolean requiresManageServer() {
         return false;
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if(serverLang == null){
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
                 case "splatoon2":
@@ -110,7 +119,7 @@ public class SalmonCommand extends BaseCommand {
                             .setDescription(lang.botLocale.salmonPrediction + prediction2)
                             .setFooter(lang.botLocale.footer_starts)
                             .setTimestamp(Instant.ofEpochSecond(nextRotation.getStartTime()))
-                            .build()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                            .build()).queue();
                     break;
             }
 

@@ -9,13 +9,11 @@ import de.erdbeerbaerlp.splatcord2.util.ImageUtil;
 import de.erdbeerbaerlp.splatcord2.util.LInk3Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 
@@ -80,7 +78,7 @@ public class ViewProfileCommand extends BaseCommand {
                             footer += "PNID: " + profile.wiiu_pnid;
                         b.setFooter(footer);
 
-                        ev.replyEmbeds(b.build()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        ev.replyEmbeds(b.build()).queue();
                     } else {
                         ev.reply(lang.botLocale.cmdProfileMissingNNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
@@ -106,7 +104,7 @@ public class ViewProfileCommand extends BaseCommand {
                         String footer = "Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc);
                         b.setFooter(footer);
 
-                        ev.replyEmbeds(b.build()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        ev.replyEmbeds(b.build()).queue();
                     } else {
                         ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
                     }
@@ -138,7 +136,6 @@ public class ViewProfileCommand extends BaseCommand {
                             }
                             b.setFooter("Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc));
                             mb.setEmbeds(b.build());
-                            mb.setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1")));
                             msg.editOriginal(mb.build()).queue();
                         });
                     } else {

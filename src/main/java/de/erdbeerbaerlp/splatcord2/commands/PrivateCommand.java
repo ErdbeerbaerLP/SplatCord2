@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.Splat2Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.GameRule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
@@ -37,7 +38,8 @@ public class PrivateCommand extends BaseCommand {
         splVersions.addChoice("Splatoon 2", 2);
 
         final SubcommandData join = new SubcommandData("join", l.botLocale.cmdPrivateJoinDesc);
-        join.addOption(OptionType.STRING, "id", l.botLocale.cmdPrivateRoomID, true);
+        final OptionData jo = new OptionData(OptionType.STRING, "id", l.botLocale.cmdPrivateRoomID, true);
+        join.addOptions(jo);
         final SubcommandData leave = new SubcommandData("leave", l.botLocale.cmdPrivateLeaveDesc);
         final OptionData userOption = new OptionData(OptionType.USER, "user", l.botLocale.targetUser, true);
         final SubcommandData add = new SubcommandData("add", l.botLocale.cmdPrivateAddDesc);
@@ -49,8 +51,24 @@ public class PrivateCommand extends BaseCommand {
         final SubcommandData delete = new SubcommandData("delete", l.botLocale.cmdPrivateDeleteDesc);
         final SubcommandData generate = new SubcommandData("generate", l.botLocale.cmdPrivateGenerateDesc);
         addSubcommands(join, leave, add, remove, create, delete, generate);
+
+        splVersions.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomModeVersion"));
+        join.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateJoinDesc"));
+        jo.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateRoomID"));
+        leave.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateLeaveDesc"));
+        userOption.setDescriptionLocalizations(l.discordLocalizationFunc("targetUser"));
+        add.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateAddDesc"));
+        remove.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateRemoveDesc"));
+        create.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateCreateDesc"));
+        delete.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateDeleteDesc"));
+        generate.setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateGenerateDesc"));
+        setDescriptionLocalizations(l.discordLocalizationFunc("cmdPrivateDesc"));
     }
 
+    @Override
+    public boolean isServerOnly() {
+        return false;
+    }
     public static void generatePrivate(GenericInteractionCreateEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
 
@@ -179,7 +197,11 @@ public class PrivateCommand extends BaseCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if(serverLang == null){
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         if (ev.getSubcommandName() != null)
             switch (ev.getSubcommandName()) {
                 case "join":

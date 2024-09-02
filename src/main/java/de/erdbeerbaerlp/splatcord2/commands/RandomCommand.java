@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.GameRule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
@@ -32,15 +33,18 @@ public class RandomCommand extends BaseCommand {
     public RandomCommand(Locale l) {
         super("random", l.botLocale.cmdRandomDesc);
         final SubcommandData weapon = new SubcommandData("weapon", l.botLocale.cmdRandomWeaponDesc);
-        weapon.addOption(OptionType.INTEGER, "amount", l.botLocale.cmdRandomAmountDesc);
+        final OptionData amount = new OptionData(OptionType.INTEGER, "amount", l.botLocale.cmdRandomAmountDesc);
+        weapon.addOptions(amount);
         final SubcommandData number = new SubcommandData("number", l.botLocale.cmdRandomWeaponDesc);
-        number.addOption(OptionType.INTEGER, "maximum", l.botLocale.cmdRandomNumMin, true);
-        number.addOption(OptionType.INTEGER, "minimum", l.botLocale.cmdRandomNumMax, false);
+        final OptionData min = new OptionData(OptionType.INTEGER, "maximum", l.botLocale.cmdRandomNumMin, true);
+        final OptionData max = new OptionData(OptionType.INTEGER, "minimum", l.botLocale.cmdRandomNumMax, false);
+        number.addOptions(min,max);
         final SubcommandData stage = new SubcommandData("stage", l.botLocale.cmdRandomStageDesc);
-        stage.addOption(OptionType.INTEGER, "amount", l.botLocale.cmdRandomAmountDesc);
+        stage.addOptions(amount);
         final SubcommandData team = new SubcommandData("private", l.botLocale.cmdRandomPrivateDesc);
-        team.addOption(OptionType.INTEGER, "players", l.botLocale.cmdRandomTeamAmountDesc);
-        team.addOption(OptionType.BOOLEAN, "weapons", l.botLocale.cmdRandomTeamWeapons);
+        final OptionData players = new OptionData(OptionType.INTEGER, "players", l.botLocale.cmdRandomTeamAmountDesc);
+        final OptionData wpns = new OptionData(OptionType.BOOLEAN, "weapons", l.botLocale.cmdRandomTeamWeapons);
+        team.addOptions(players,wpns);
         final SubcommandData mode = new SubcommandData("mode", l.botLocale.cmdRandomMode);
         OptionData splVersions = new OptionData(OptionType.INTEGER, "version", l.botLocale.cmdRandomModeVersion);
         OptionData splVersions2 = new OptionData(OptionType.INTEGER, "version", l.botLocale.cmdRandomModeVersion);
@@ -54,13 +58,29 @@ public class RandomCommand extends BaseCommand {
         team.addOptions(splVersions);
         mode.addOptions(splVersions2);
         addSubcommands(weapon, number, stage, team, mode);
+
+
+        splVersions.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomModeVersion"));
+        splVersions2.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomModeVersion"));
+        number.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRotationDesc"));
+        amount.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomAmountDesc"));
+        min.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomNumMin"));
+        max.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomNumMax"));
+        players.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomTeamAmountDesc"));
+        wpns.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomTeamWeapons"));
+        mode.setDescriptionLocalizations(l.discordLocalizationFunc("cmdRandomMode"));
+        setDescriptionLocalizations(l.discordLocalizationFunc("cmdRotationDesc"));
+    }
+
+    @Override
+    public boolean isServerOnly() {
+        return false;
     }
 
     static <T> void shuffleArray(T[] ar) {
         final Random rnd = new Random();
         for (int i = ar.length - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);
-            // Simple swap
             T a = ar[index];
             ar[index] = ar[i];
             ar[i] = a;
@@ -123,7 +143,11 @@ public class RandomCommand extends BaseCommand {
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
         final Random r = new Random();
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if(serverLang == null){
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         final String subcmd = ev.getSubcommandName();
         if (subcmd == null) return;
         int amount = 1;

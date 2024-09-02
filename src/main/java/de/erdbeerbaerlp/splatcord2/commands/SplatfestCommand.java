@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Config;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.SplatfestByml;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
@@ -9,14 +10,12 @@ import de.erdbeerbaerlp.splatcord2.util.ImageUtil;
 import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.entities.channel.middleman.StandardGuildMessageChannel;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,9 +32,16 @@ public class SplatfestCommand extends BaseCommand {
         d.setAutoComplete(true);
         spl3.addOptions(d);
         addSubcommands(spl1,spl12, spl3);
-
+        spl1.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatfestDescS3"));
+        spl12.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatfestDescS3"));
+        spl3.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatfestDescS3"));
+        setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatfestDescS3"));
     }
 
+    @Override
+    public boolean isServerOnly() {
+        return false;
+    }
     @Override
     public boolean requiresManageServer() {
         return false;
@@ -43,7 +49,11 @@ public class SplatfestCommand extends BaseCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if(serverLang == null){
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         final CompletableFuture<InteractionHook> submit = ev.deferReply().submit();
         switch (ev.getSubcommandName()) {
             case "splatoon3" -> {
@@ -52,7 +62,7 @@ public class SplatfestCommand extends BaseCommand {
                 final FestRecord fest = ScheduleUtil.getSplatfestByID(festID);
 
                 if (fest == null) return;
-                submit.thenAccept((s) -> s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbed(fest, true, lang)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue());
+                submit.thenAccept((s) -> s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbed(fest, true, lang)).queue());
             }
             case "splatoon1pretendo" -> {
                 final SplatfestByml fest = Main.s1splatfestPretendo;
@@ -63,7 +73,7 @@ public class SplatfestCommand extends BaseCommand {
                 if (fest == null) return;
                 submit.thenAccept((s) -> {
                     try {
-                        s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbedPretendo(fest, true, lang)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbedPretendo(fest, true, lang)).queue();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -78,7 +88,7 @@ public class SplatfestCommand extends BaseCommand {
                 if (fest == null) return;
                 submit.thenAccept((s) -> {
                     try {
-                        s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbedSplatfestival(fest, true, lang)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        s.editOriginalEmbeds(MessageUtil.generateSplatfestEmbedSplatfestival(fest, true, lang)).queue();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -127,7 +127,11 @@ public class Bot implements EventListener {
     public void onEvent(@NotNull GenericEvent event) {
 
         if (event instanceof final CommandAutoCompleteInteractionEvent ev) {
-            final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+            BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+            if(serverLang == null){
+                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+            }
+            final Locale lang = Main.translations.get(serverLang);
             switch (CommandRegistry.registeredCommands.get(ev.getCommandIdLong()).getName()) {
                 case "splatnet2" -> {
                     final ArrayList<Command.Choice> choices = new ArrayList<>();
@@ -329,7 +333,11 @@ public class Bot implements EventListener {
             }
 
         } else if (event instanceof final ButtonInteractionEvent ev) {
-            final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+            BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+            if(serverLang == null){
+                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+            }
+            final Locale lang = Main.translations.get(serverLang);
             switch (ev.getComponentId()) {
                 case "s1clear" -> {
                     Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), null);

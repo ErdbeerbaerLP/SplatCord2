@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
@@ -10,15 +11,14 @@ import de.erdbeerbaerlp.splatcord2.util.GameModeUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.ArrayList;
 
 public class EventCommand extends BaseCommand {
     public EventCommand(Locale l) {
         super("challenges", l.botLocale.cmdEventDesc);
+        setDescriptionLocalizations(l.discordLocalizationFunc("cmdEventDesc"));
     }
 
     @Override
@@ -27,9 +27,18 @@ public class EventCommand extends BaseCommand {
     }
 
     @Override
+    public boolean isServerOnly() {
+        return false;
+    }
+
+    @Override
     public void execute(SlashCommandInteractionEvent ev) {
 
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if(serverLang == null){
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
         final EventSchedule nextRotation = ScheduleUtil.getNextS3Event();
 
@@ -61,7 +70,7 @@ public class EventCommand extends BaseCommand {
         if (curEmb != null) embs.add(curEmb.build());
         if (futureEmb != null) embs.add(futureEmb.build());
         if (!embs.isEmpty())
-            ev.replyEmbeds(embs).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+            ev.replyEmbeds(embs).queue();
 
     }
 }

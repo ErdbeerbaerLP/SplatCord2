@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.commands;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.SplatProfile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.splatnet.Order;
@@ -10,6 +11,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.LimitedGear;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.Power;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -33,7 +35,10 @@ public class Splatnet3Command extends BaseCommand {
         d.setAutoComplete(true);
         order.addOptions(d);
         this.addSubcommands(list, order);
-
+        list.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatnetDesc"));
+        order.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatnetDesc"));
+        d.setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatnetDesc"));
+        setDescriptionLocalizations(l.discordLocalizationFunc("cmdSplatnetDesc"));
     }
 
     public static ArrayList<MessageEmbed> dailyEmbeds(Locale lang) {
@@ -50,7 +55,7 @@ public class Splatnet3Command extends BaseCommand {
                     .setTimestamp(Instant.ofEpochSecond(g.getEndTime()))
                     .setFooter(lang.botLocale.footer_ends)
                     .setThumbnail(g.gear.image.url)
-                    .setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-","_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
+                    .setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-", "_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
             final StringBuilder sb = new StringBuilder();
             for (Power p : g.gear.additionalGearPowers) {
                 sb.append(Emote.resolveFromS3Ability(p.name));
@@ -71,7 +76,7 @@ public class Splatnet3Command extends BaseCommand {
                     .setTimestamp(Instant.ofEpochSecond(g.getEndTime()))
                     .setFooter(lang.botLocale.footer_ends)
                     .setThumbnail(g.gear.image.url)
-                    .setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-","_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
+                    .setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-", "_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
 
             final StringBuilder sb = new StringBuilder();
             for (Power p : g.gear.additionalGearPowers) {
@@ -89,13 +94,22 @@ public class Splatnet3Command extends BaseCommand {
     }
 
     @Override
+    public boolean isServerOnly() {
+        return false;
+    }
+
+    @Override
     public boolean requiresManageServer() {
         return false;
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+        if (serverLang == null) {
+            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        }
+        final Locale lang = Main.translations.get(serverLang);
         final CompletableFuture<InteractionHook> submit = ev.deferReply().submit();
         final String subcmd = ev.getSubcommandName();
         if (subcmd == null) return;
@@ -106,7 +120,6 @@ public class Splatnet3Command extends BaseCommand {
                 submit.thenAccept((h) -> {
                     h.editOriginalEmbeds(emb)
                             .setActionRow(
-                                    Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
                                     Button.secondary("snet3prev0", Emoji.fromUnicode("U+25C0")).asDisabled(),
                                     Button.secondary("snet3next1", Emoji.fromUnicode("U+25B6"))).queue();
                 });
@@ -121,9 +134,22 @@ public class Splatnet3Command extends BaseCommand {
                         return;
                     }
                 }
-                profile.s3orders.add(new Order(ev.getChannel().getId(), gName));
-                Main.iface.updateSplatProfile(profile);
-                submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", LInk3.getGear(gName).localizedName.get(lang.botLocale.locale.replace("-","_")))).build()).queue());
+                if (ev.hasFullGuild()) {
+                    profile.s3orders.add(new Order(ev.getChannel().getId(), gName, BotLanguage.fromDiscordLocale(ev.getUserLocale())));
+                    Main.iface.updateSplatProfile(profile);
+                    submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", LInk3.getGear(gName).localizedName.get(lang.botLocale.locale.replace("-", "_")))).build()).queue());
+                }else{
+                    try{
+                        final PrivateChannel pc = ev.getUser().openPrivateChannel().complete();
+                        profile.s3orders.add(new Order(pc.getId(), gName, BotLanguage.fromDiscordLocale(ev.getUserLocale())));
+                        Main.iface.updateSplatProfile(profile);
+                        submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrderedDM.replace("%gear%", LInk3.getGear(gName).localizedName.get(lang.botLocale.locale.replace("-", "_")))).build()).queue());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrderedDMFailed).build()).queue());
+                    }
+                }
+
             }
         }
 
