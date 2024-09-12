@@ -233,8 +233,8 @@ public class MessageUtil {
                     (lang.s3locales.stages.get(r.getFest().getProSFMatch().vsStages[0].id).name +
                             ", " + (lang.s3locales.stages.get(r.getFest().getProSFMatch().vsStages[1].id)).name)
                     , true);
-            if (r.getSplatfest() != null && r.getSplatfest().getMidtermTime() <= System.currentTimeMillis() / 1000 && r.getSplatfest().tricolorStage != null) {
-                b.addField(Emote.SPLATFEST + lang.botLocale.tricolorBattle, lang.s3locales.stages.get(r.getSplatfest().tricolorStage.id).name, true);
+            if (r.getTricolorStage() != null) {
+                b.addField(Emote.SPLATFEST + lang.botLocale.tricolorBattle, lang.s3locales.stages.get(r.getTricolorStage().id).name, true);
             }
         } else
             b.addField(Emote.REGULAR +

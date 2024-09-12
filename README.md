@@ -3,7 +3,7 @@ Splatcord 2
 [![Discord Bots](https://top.gg/api/widget/status/822228767165644872.svg)](https://top.gg/bot/822228767165644872)
 
 
-Splatcord 2 is an Discord bot providing Splatoon 2 stage and salmon run notifications
+Splatcord 2 is an Discord bot providing Splatoon stage and salmon run notifications
 
 To enable stage notifications, use `/setstage` in the destination channel.
 To enable SalmonRun notifications, use `/setsalmon` in the target channel.

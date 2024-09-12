@@ -195,7 +195,7 @@ public class Main {
         }).routes(() -> {
             path("/", ()->{
                 get((ctx)->{
-                    ctx.redirect("https://splatcord.ink/?API");
+                    ctx.redirect("https://splatcord.ink/info/api");
                 });
             });
             path("/stats", () -> {
@@ -209,11 +209,9 @@ public class Main {
             });
             path("/s2rotations", () -> {
                 get(API::s2rotation);
-
             });
             path("/s3rotations", () -> {
                 get(API::s3rotation);
-
             });
         });
         api.start(Config.instance().web.port);

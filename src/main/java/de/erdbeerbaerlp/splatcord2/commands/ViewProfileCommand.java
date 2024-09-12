@@ -47,105 +47,106 @@ public class ViewProfileCommand extends BaseCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        System.out.println(ev.getGuild().getLocale().getLanguageName());
-        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
-        if(serverLang == null){
-            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
-        }
-        final Locale lang = Main.translations.get(serverLang);
-        final String subcommandName = ev.getSubcommandName();
-        final OptionMapping userOption = ev.getOption("user");
-        final Member m = userOption != null ? userOption.getAsMember() : ev.getMember();
-        final SplatProfile profile = Main.getUserProfile(m.getIdLong());
-        if (subcommandName != null)
-            switch (subcommandName) {
-                case "splat1":
-                    if ((profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank()) || (profile.wiiu_pnid != null && !profile.wiiu_pnid.isEmpty())) {
-                        final EmbedBuilder b = new EmbedBuilder();
-                        if (profile.splat1Profile.name != null && !profile.splat1Profile.name.isBlank())
-                            b.setTitle(profile.splat1Profile.name + "'s Splatoon 1 Profile");
-                        else
-                            b.setTitle(m.getEffectiveName() + "'s Splatoon 1 Profile");
-                        b.addField(lang.botLocale.cmdProfileLevel, profile.splat1Profile.level + "", true);
-                        b.addField(lang.botLocale.cmdProfileRank, profile.splat1Profile.rank.toString(), true);
-                        String footer = "";
-                        if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank())
-                            footer += "Legacy NNID: " + profile.wiiu_nnid;
-                        if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank() && profile.wiiu_pnid != null && !profile.wiiu_pnid.isBlank()) {
-                            footer += " | ";
-                        }
-                        if (profile.wiiu_pnid != null && !profile.wiiu_pnid.isBlank())
-                            footer += "PNID: " + profile.wiiu_pnid;
-                        b.setFooter(footer);
-
-                        ev.replyEmbeds(b.build()).queue();
-                    } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingNNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
-                    }
-                    break;
-                case "splat2":
-                    if (profile.switch_fc != -1) {
-                        final EmbedBuilder b = new EmbedBuilder();
-                        if (profile.splat2Profile.getName() != null && !profile.splat2Profile.getName().isBlank())
-                            b.setTitle(profile.splat2Profile.getName() + "'s Splatoon 2 Profile");
-                        else
-                            b.setTitle(m.getEffectiveName() + "'s Splatoon 2 Profile");
-                        b.addField(lang.botLocale.cmdProfileLevel, profile.splat2Profile.getLevel(), true);
-                        b.addField(lang.botLocale.cmdProfileSRTitle, getSRTitle(profile.splat2Profile.srTitle, lang), true);
-                        String mains = "- " + (profile.splat2Profile.mainWeapon1 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon1).name : lang.botLocale.unset) +
-                                "\n" +
-                                "- " + (profile.splat2Profile.mainWeapon2 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon2).name : lang.botLocale.unset);
-                        b.addField(lang.botLocale.cmdProfileMainWeapon, mains, true);
-                        b.addBlankField(false);
-                        b.addField(lang.rules.get("rainmaker").name, profile.splat2Profile.rainmaker.toString(), true);
-                        b.addField(lang.rules.get("splat_zones").name, profile.splat2Profile.splatzones.toString(), true);
-                        b.addField(lang.rules.get("tower_control").name, profile.splat2Profile.towercontrol.toString(), true);
-                        b.addField(lang.rules.get("clam_blitz").name, profile.splat2Profile.clamblitz.toString(), true);
-                        String footer = "Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc);
-                        b.setFooter(footer);
-
-                        ev.replyEmbeds(b.build()).queue();
-                    } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
-                    }
-                    break;
-                case "splat3":
-                    if (profile.switch_fc != -1) {
-                        ev.deferReply().submit().thenAccept((msg) -> {
-                            final MessageEditBuilder mb = new MessageEditBuilder();
-                            final EmbedBuilder b = new EmbedBuilder();
-                            if (profile.splat3Profile.getName() != null && !profile.splat3Profile.getName().isBlank())
-                                b.setTitle(profile.splat3Profile.getName() + "'s Splatoon 3 Profile");
-                            else
-                                b.setTitle(m.getEffectiveName() + "'s Splatoon 3 Profile");
-                            b.addField(lang.botLocale.cmdProfileLevel, profile.splat3Profile.getLevel(), true);
-                            b.addField(lang.botLocale.cmdProfileCatalogLevel, profile.splat3Profile.catalogLevel + "", true);
-                            b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel + "", true);
-                            b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
-                            b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
-                            if (lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam) != null)
-                                b.addField(lang.botLocale.cmdProfileSplatfest, lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam).teamName, true);
-                            else
-                                b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.unset, true);
-                            if (profile.splat3Profile.loadout != null && !profile.splat3Profile.loadout.isEmpty()) {
-                                final LInk3Profile loadout = LInk3Utils.decode(profile.splat3Profile.loadout);
-                                final byte[] img = ImageUtil.generateLoadoutImage(loadout, lang);
-                                mb.setAttachments(FileUpload.fromData(img,"splashtag.png"));
-                                b.setImage("attachment://splashtag.png");
-                                b.setColor(loadout.splashtag.color.toColor());
-                            }
-                            b.setFooter("Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc));
-                            mb.setEmbeds(b.build());
-                            msg.editOriginal(mb.build()).queue();
-                        });
-                    } else {
-                        ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
-                    }
-                    break;
-                default:
-                    ev.reply("Unknown subcommand, report to developer!").queue(); //Should never be shown at all
-                    break;
+        try {
+            BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+            if (serverLang == null) {
+                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
             }
+            final Locale lang = Main.translations.get(serverLang);
+            final String subcommandName = ev.getSubcommandName();
+            final OptionMapping userOption = ev.getOption("user");
+            final Member m = userOption != null ? userOption.getAsMember() : ev.getMember();
+            final SplatProfile profile = Main.getUserProfile(m.getIdLong());
+            if (subcommandName != null)
+                switch (subcommandName) {
+                    case "splat1":
+                        if ((profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank()) || (profile.wiiu_pnid != null && !profile.wiiu_pnid.isEmpty())) {
+                            final EmbedBuilder b = new EmbedBuilder();
+                            if (profile.splat1Profile.name != null && !profile.splat1Profile.name.isBlank())
+                                b.setTitle(profile.splat1Profile.name + "'s Splatoon 1 Profile");
+                            else
+                                b.setTitle(m.getEffectiveName() + "'s Splatoon 1 Profile");
+                            b.addField(lang.botLocale.cmdProfileLevel, profile.splat1Profile.level + "", true);
+                            b.addField(lang.botLocale.cmdProfileRank, profile.splat1Profile.rank.toString(), true);
+                            String footer = "";
+                            if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank())
+                                footer += "Legacy NNID: " + profile.wiiu_nnid;
+                            if (profile.wiiu_nnid != null && !profile.wiiu_nnid.isBlank() && profile.wiiu_pnid != null && !profile.wiiu_pnid.isBlank()) {
+                                footer += " | ";
+                            }
+                            if (profile.wiiu_pnid != null && !profile.wiiu_pnid.isBlank())
+                                footer += "PNID: " + profile.wiiu_pnid;
+                            b.setFooter(footer);
+
+                            ev.replyEmbeds(b.build()).queue();
+                        } else {
+                            ev.reply(lang.botLocale.cmdProfileMissingNNID.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
+                        }
+                        break;
+                    case "splat2":
+                        if (profile.switch_fc != -1) {
+                            final EmbedBuilder b = new EmbedBuilder();
+                            if (profile.splat2Profile.getName() != null && !profile.splat2Profile.getName().isBlank())
+                                b.setTitle(profile.splat2Profile.getName() + "'s Splatoon 2 Profile");
+                            else
+                                b.setTitle(m.getEffectiveName() + "'s Splatoon 2 Profile");
+                            b.addField(lang.botLocale.cmdProfileLevel, profile.splat2Profile.getLevel(), true);
+                            b.addField(lang.botLocale.cmdProfileSRTitle, getSRTitle(profile.splat2Profile.srTitle, lang), true);
+                            String mains = "- " + (profile.splat2Profile.mainWeapon1 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon1).name : lang.botLocale.unset) +
+                                    "\n" +
+                                    "- " + (profile.splat2Profile.mainWeapon2 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon2).name : lang.botLocale.unset);
+                            b.addField(lang.botLocale.cmdProfileMainWeapon, mains, true);
+                            b.addBlankField(false);
+                            b.addField(lang.rules.get("rainmaker").name, profile.splat2Profile.rainmaker.toString(), true);
+                            b.addField(lang.rules.get("splat_zones").name, profile.splat2Profile.splatzones.toString(), true);
+                            b.addField(lang.rules.get("tower_control").name, profile.splat2Profile.towercontrol.toString(), true);
+                            b.addField(lang.rules.get("clam_blitz").name, profile.splat2Profile.clamblitz.toString(), true);
+                            String footer = "Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc);
+                            b.setFooter(footer);
+
+                            ev.replyEmbeds(b.build()).queue();
+                        } else {
+                            ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
+                        }
+                        break;
+                    case "splat3":
+                        if (profile.switch_fc != -1) {
+                            ev.deferReply().submit().thenAccept((msg) -> {
+                                final MessageEditBuilder mb = new MessageEditBuilder();
+                                final EmbedBuilder b = new EmbedBuilder();
+                                if (profile.splat3Profile.getName() != null && !profile.splat3Profile.getName().isBlank())
+                                    b.setTitle(profile.splat3Profile.getName() + "'s Splatoon 3 Profile");
+                                else
+                                    b.setTitle(m.getEffectiveName() + "'s Splatoon 3 Profile");
+                                b.addField(lang.botLocale.cmdProfileLevel, profile.splat3Profile.getLevel(), true);
+                                b.addField(lang.botLocale.cmdProfileCatalogLevel, profile.splat3Profile.catalogLevel + "", true);
+                                b.addField(lang.botLocale.cmdProfileTableturfLevel, profile.splat3Profile.tableturfLevel + "", true);
+                                b.addField(lang.botLocale.cmdProfileSRTitle, lang.botLocale.getS3SRTitle(profile.splat3Profile.srTitle), true);
+                                b.addField(lang.botLocale.cmdProfileRank, profile.splat3Profile.rank.toString(), true);
+                                if (lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam) != null)
+                                    b.addField(lang.botLocale.cmdProfileSplatfest, lang.s3locales.getFestTeam(profile.splat3Profile.splatfestTeam).teamName, true);
+                                else
+                                    b.addField(lang.botLocale.cmdProfileSplatfest, lang.botLocale.unset, true);
+                                if (profile.splat3Profile.loadout != null && !profile.splat3Profile.loadout.isEmpty()) {
+                                    final LInk3Profile loadout = LInk3Utils.decode(profile.splat3Profile.loadout);
+                                    final byte[] img = ImageUtil.generateLoadoutImage(loadout, lang);
+                                    mb.setAttachments(FileUpload.fromData(img, "splashtag.png"));
+                                    b.setImage("attachment://splashtag.png");
+                                    b.setColor(loadout.splashtag.color.toColor());
+                                }
+                                b.setFooter("Switch FC: " + EditProfileCommand.formatToFC(profile.switch_fc));
+                                mb.setEmbeds(b.build());
+                                msg.editOriginal(mb.build()).queue();
+                            });
+                        } else {
+                            ev.reply(lang.botLocale.cmdProfileMissingFC.replace("%s", m.getEffectiveName())).setEphemeral(true).queue();
+                        }
+                        break;
+                    default:
+                        ev.reply("Unknown subcommand, report to developer!").queue(); //Should never be shown at all
+                        break;
+                }
+        }catch (Exception e) {e.printStackTrace();}
     }
 
     private String getSRTitle(int title, Locale lang) {

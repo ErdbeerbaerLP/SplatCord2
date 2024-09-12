@@ -20,12 +20,14 @@ public class Schedule3 {
     }
 
     public MatchSetting getRegularSFMatch(){
+        if(festMatchSettings == null) return null;
         for (MatchSetting f : festMatchSettings) {
             if(f.festMode.equals("REGULAR")) return f;
         }
         return null;
     }
     public MatchSetting getProSFMatch(){
+        if(festMatchSettings == null) return null;
         for (MatchSetting f : festMatchSettings) {
             if(f.festMode.equals("CHALLENGE")) return f;
         }

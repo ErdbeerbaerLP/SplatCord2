@@ -8,13 +8,16 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.RotationByml;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.SplatfestByml;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Detail;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.*;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import io.javalin.http.Context;
 import io.javalin.http.util.NaiveRateLimit;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -67,21 +70,26 @@ public class API {
     }
 
     public static void s2rotation(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
-        final JsonObject out = new JsonObject();
-        out.add("battle", Main.gson.toJsonTree(new S2Rotation().rotations));
-        out.add("salmon", Main.gson.toJsonTree(new S2SalmonRotation().rotations));
-        out.addProperty("_CREDIT", "Data provided by https://splatoon2.ink");
-        ctx.json(Main.gson.toJson(out));
+            NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+            final JsonObject out = new JsonObject();
+            out.add("battle", Main.gson.toJsonTree(new S2Rotation().rotations));
+            out.add("salmon", Main.gson.toJsonTree(new S2SalmonRotation().rotations));
+            out.addProperty("_CREDIT", "Data provided by https://splatoon2.ink");
+            ctx.json(Main.gson.toJson(out));
     }
 
     public static void s3rotation(final Context ctx) {
         NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
-        final JsonObject out = new JsonObject();
-        out.add("battle", Main.gson.toJsonTree(new S3Rotation().rotations));
-        out.add("salmon", Main.gson.toJsonTree(new S3SalmonRotation()));
-        out.addProperty("_CREDIT", "Data provided by https://splatoon3.ink");
-        ctx.json(Main.gson.toJson(out));
+        try {
+            final JsonObject out = new JsonObject();
+            out.add("battle", Main.gson.toJsonTree(new S3Rotation().rotations));
+            out.add("salmon", Main.gson.toJsonTree(new S3SalmonRotation()));
+            out.addProperty("_CREDIT", "Data provided by https://splatoon3.ink");
+            ctx.json(Main.gson.toJson(out));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public static class S1Rotation {
@@ -136,7 +144,7 @@ public class API {
             public String rankedMode;
         }
 
-        public HashMap<Long, Rotation> rotations = new HashMap<>();
+        HashMap<Long, Rotation> rotations = new HashMap<>();
     }
 
     public static class S1Splatfest {
@@ -233,7 +241,7 @@ public class API {
             public String leagueMode;
         }
 
-        public HashMap<Long, Rotation> rotations = new HashMap<>();
+        HashMap<Long, Rotation> rotations = new HashMap<>();
     }
 
     public static class S2SalmonRotation {
@@ -254,7 +262,7 @@ public class API {
 
         }
 
-        public HashMap<Long, Rotation> rotations = new HashMap<>();
+        HashMap<Long, Rotation> rotations = new HashMap<>();
 
         static class Rotation {
             public Stage stage;
@@ -276,21 +284,23 @@ public class API {
 
         private Weapon getWeaponObj(de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Weapons w) {
             final Weapon wpn = new Weapon();
-            wpn.id = w.id;
-
             if (w.weapon == null && w.coop_special_weapon != null) {
+                wpn.id = w.coop_special_weapon.id;
+                wpn.imageURL = "https://splatoon2.ink/assets/splatnet/" + w.coop_special_weapon.image;
                 for (BotLanguage l : BotLanguage.values()) {
                     if (l.val >= 10) continue;
-                    final String localizedString = Main.translations.get(l).coop_special_weapons.get(wpn.id).name;
+                    final String localizedString = Main.translations.get(l).coop_special_weapons.get(w.coop_special_weapon.image).name;
                     wpn.translatedNames.put(l.s3Key, localizedString);
                 }
-            } else {
+            } else if(w.weapon != null && w.coop_special_weapon == null){
+                wpn.imageURL = "https://splatoon2.ink/assets/splatnet/" + w.weapon.image;
+                wpn.id = w.weapon.id;
                 for (BotLanguage l : BotLanguage.values()) {
                     if (l.val >= 10) continue;
-                    final String localizedString = Main.translations.get(l).weapons.get(wpn.id).name;
+                    final String localizedString = Main.translations.get(l).weapons.get(w.weapon.id).name;
                     wpn.translatedNames.put(l.s3Key, localizedString);
                 }
-            }
+            } else return null;
             return wpn;
         }
 
@@ -302,6 +312,7 @@ public class API {
 
         public static class Weapon {
             int id = -1;
+            String imageURL;
             HashMap<String, String> translatedNames = new HashMap<>();
         }
     }
@@ -310,6 +321,7 @@ public class API {
         public S3Rotation() {
             final Schedules3.SchDat s3 = ScheduleUtil.schedules3.data;
             for (Schedule3 turf : s3.regularSchedules.nodes) {
+                if (turf.regularMatchSetting == null) continue;
                 final Rotation rot = new Rotation();
                 final ArrayList<Stage> stages = new ArrayList<>();
                 for (de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage s : turf.regularMatchSetting.vsStages) {
@@ -320,6 +332,8 @@ public class API {
                 rotations.put(turf.getStartTime(), rot);
             }
             for (Schedule3 bankara : s3.bankaraSchedules.nodes) {
+                if (bankara.bankaraMatchSettings == null || bankara.bankaraMatchSettings[0] == null || bankara.bankaraMatchSettings[1] == null)
+                    continue;
                 final Rotation rot = rotations.getOrDefault(bankara.getStartTime(), new Rotation());
                 final ArrayList<Stage> openStages = new ArrayList<>();
                 for (de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage s : bankara.bankaraMatchSettings[1].vsStages) {
@@ -352,6 +366,8 @@ public class API {
                 rotations.put(bankara.getStartTime(), rot);
             }
             for (Schedule3 x : s3.xSchedules.nodes) {
+
+                if (x.xMatchSetting == null) continue;
                 final Rotation rot = rotations.getOrDefault(x.getStartTime(), new Rotation());
                 final ArrayList<Stage> xStages = new ArrayList<>();
                 for (de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage s : x.xMatchSetting.vsStages) {
@@ -369,14 +385,43 @@ public class API {
                 rot.xStages = xStages.toArray(new Stage[0]);
                 rotations.put(x.getStartTime(), rot);
             }
+            for (Schedule3 sf : s3.festSchedules.nodes) {
+                if (sf.getRegularSFMatch() == null || sf.getProSFMatch() == null) continue;
+                final Rotation rot = rotations.getOrDefault(sf.getStartTime(), new Rotation());
+                final ArrayList<Stage> stages = new ArrayList<>();
+                if (sf.getRegularSFMatch() != null)
+                    for (de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage s : sf.getRegularSFMatch().vsStages) {
+                        final Stage st = getStageObj(s);
+                        stages.add(st);
+                    }
+                rot.splatfestOpenStages = stages.toArray(new Stage[0]);
+
+                final ArrayList<Stage> stages2 = new ArrayList<>();
+                if (sf.getProSFMatch() != null)
+                    for (de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage s : sf.getProSFMatch().vsStages) {
+                        final Stage st = getStageObj(s);
+                        stages2.add(st);
+                    }
+                rot.splatfestProStages = stages2.toArray(new Stage[0]);
+                if (s3.currentFest.getMidtermTime() <= sf.getStartTime())
+                    rot.tricolorStage = getStageObj(s3.currentFest.tricolorStage);
+                rotations.put(sf.getStartTime(), rot);
+            }
+            for (Schedule3 sf : s3.currentFest.timetable) {
+                final Rotation rot = rotations.getOrDefault(sf.getStartTime(), new Rotation());
+                rot.tricolorStage = getStageObj(sf.festMatchSettings[0].vsStages[0]);
+                rotations.put(sf.getStartTime(), rot);
+            }
         }
 
         private Stage getStageObj(de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage s) {
+            if(s == null) return null;
             final Stage st = new Stage();
-            st.mapID = s.vsStageId;
+            st.mapID = Integer.parseInt(new String(Base64.getDecoder().decode(s.id), StandardCharsets.UTF_8).replace("VsStage-", ""));
             for (BotLanguage l : BotLanguage.values()) {
                 if (l.val >= 10) continue;
-                final String localizedString = Main.translations.get(l).s3locales.stages.get(s.id).name;
+                final Locale locale = Main.translations.get(l);
+                final String localizedString = locale.s3locales.stages.containsKey(s.id)?locale.s3locales.stages.get(s.id).name:s.name;
                 st.translatedNames.put(l.s3Key, localizedString);
                 st.imageUrl = s.image.url;
             }
@@ -388,9 +433,12 @@ public class API {
             public Stage[] seriesStages;
             public Stage[] openStages;
             public Stage[] xStages;
+            public Stage[] splatfestOpenStages;
+            public Stage[] splatfestProStages;
             public String seriesMode;
             public String openMode;
             public String xMode;
+            public Stage tricolorStage;
         }
 
         public static class Stage {
@@ -399,7 +447,7 @@ public class API {
             HashMap<String, String> translatedNames = new HashMap<>();
         }
 
-        public HashMap<Long, Rotation> rotations = new HashMap<>();
+        HashMap<Long, Rotation> rotations = new HashMap<>();
     }
 
     public static class S3SalmonRotation {
@@ -416,7 +464,7 @@ public class API {
                 }
                 rot.weapons = weapons.toArray(new Weapon[0]);
                 rot.stage = getStageObj(rotation.setting.coopStage);
-                regularRotations.put(startTime,rot);
+                regularRotations.put(startTime, rot);
             }
             for (Coop3 rotation : s3.bigRunSchedules.nodes) {
                 final Rotation rot = new Rotation();
@@ -429,7 +477,7 @@ public class API {
                 }
                 rot.weapons = weapons.toArray(new Weapon[0]);
                 rot.stage = getStageObj(rotation.setting.coopStage);
-                bigrunRotations.put(startTime,rot);
+                bigrunRotations.put(startTime, rot);
             }
             for (Coop3 rotation : s3.teamContestSchedules.nodes) {
                 final EggstraRotation rot = new EggstraRotation();
@@ -441,13 +489,13 @@ public class API {
                 }
                 rot.weapons = weapons.toArray(new Weapon[0]);
                 rot.stage = getStageObj(rotation.setting.coopStage);
-                eggstraRotations.put(startTime,rot);
+                eggstraRotations.put(startTime, rot);
             }
         }
 
-        public HashMap<Long, EggstraRotation> eggstraRotations = new HashMap<>();
-        public HashMap<Long, Rotation> regularRotations = new HashMap<>();
-        public HashMap<Long, Rotation> bigrunRotations = new HashMap<>();
+        HashMap<Long, EggstraRotation> eggstraRotations = new HashMap<>();
+        HashMap<Long, Rotation> regularRotations = new HashMap<>();
+        HashMap<Long, Rotation> bigrunRotations = new HashMap<>();
 
         static class Rotation {
             public Stage stage;
@@ -455,6 +503,7 @@ public class API {
             public Weapon[] weapons;
             long endTime;
         }
+
         static class EggstraRotation {
             public Stage stage;
             public Weapon[] weapons;
@@ -476,6 +525,7 @@ public class API {
         private Weapon getWeaponObj(CoopSetting.CoopWeapon w) {
             final Weapon wpn = new Weapon();
             wpn.id = w.__splatoon3ink_id;
+            wpn.imageURL = w.image.url;
             for (BotLanguage l : BotLanguage.values()) {
                 if (l.val >= 10) continue;
                 final String localizedString = Main.translations.get(l).s3locales.weapons.get(wpn.id).name;
@@ -492,6 +542,7 @@ public class API {
 
         public static class Weapon {
             String id;
+            String imageURL;
             HashMap<String, String> translatedNames = new HashMap<>();
         }
     }

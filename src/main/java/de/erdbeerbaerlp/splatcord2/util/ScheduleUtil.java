@@ -108,7 +108,20 @@ public class ScheduleUtil {
                 }
         }
 
-        return new S3Rotation(regular, bankara, xBattle, coop, eggstraCoop, fest, schedules3.data.currentFest, event);
+        Stage tricolorStage = null;
+        if (schedules3.data.currentFest != null) {
+            if (schedules3.data.currentFest.getMidtermTime() <= timestamp)
+                tricolorStage = schedules3.data.currentFest.tricolorStage;
+            for (Schedule3 s : schedules3.data.currentFest.timetable){
+                    if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
+                        tricolorStage = s.festMatchSettings[0].vsStages[0];
+                        break;
+                    }
+            }
+        }
+
+
+        return new S3Rotation(regular, bankara, xBattle, coop, eggstraCoop, fest, schedules3.data.currentFest, event, tricolorStage);
     }
 
     public static Rotation getCurrentRotation() {
@@ -243,15 +256,16 @@ public class ScheduleUtil {
     }
 
     public static HashMap<Long, Rotation> getAllS2Rotations() {
-        final HashMap<Long,Rotation> out = new HashMap<>();
+        final HashMap<Long, Rotation> out = new HashMap<>();
         for (int i = 0; i < schedules.regular.length; i++) {
-            final Rotation r = new Rotation(schedules.regular[i],schedules.gachi[i],schedules.league[i]);
+            final Rotation r = new Rotation(schedules.regular[i], schedules.gachi[i], schedules.league[i]);
             out.put(r.getRegular().start_time, r);
         }
         return out;
     }
+
     public static HashMap<Long, Detail> getAllS2CoOpRotations() {
-        final HashMap<Long,Detail> out = new HashMap<>();
+        final HashMap<Long, Detail> out = new HashMap<>();
         for (int i = 0; i < Main.coop_schedules.details.length; i++) {
             final Detail detail = Main.coop_schedules.details[i];
             out.put(detail.start_time, detail);
