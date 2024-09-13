@@ -255,13 +255,13 @@ public class ImageUtil {
 
         if (rotation.getFest().festMatchSettings != null && rotation.getFest().festMatchSettings.length > 0)
             try {
-                boolean tricolor = rotation.getSplatfest() != null && rotation.getSplatfest().getMidtermTime() <= System.currentTimeMillis() / 1000 && rotation.getSplatfest().tricolorStage != null;
+                boolean tricolor = rotation.getTricolorStage() != null;
                 final URL mapurl = new URL(rotation.getFest().getRegularSFMatch().vsStages[0].image.url);
                 final URL map2url = new URL(rotation.getFest().getRegularSFMatch().vsStages[1].image.url);
                 final URL map3url = new URL(rotation.getFest().getProSFMatch().vsStages[0].image.url);
                 final URL map4url = new URL(rotation.getFest().getProSFMatch().vsStages[1].image.url);
                 URL map5url = null;
-                if (tricolor) map5url = new URL(rotation.getSplatfest().tricolorStage.image.url);
+                if (tricolor) map5url = new URL(rotation.getTricolorStage().image.url);
                 final URL shifty = new URL("https://splatcord.ink/assets/s1/shifty.png");
                 Image map, map2, map3, map4, map5 = null;
                 try {
