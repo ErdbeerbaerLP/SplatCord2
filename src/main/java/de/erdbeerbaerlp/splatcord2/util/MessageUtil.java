@@ -8,6 +8,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.Phase;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon1.SplatfestByml;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Locale;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.EventTimePeriod;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -221,20 +222,24 @@ public class MessageUtil {
                         , false);
     }
 
+    private static String translateStage(Locale l, Stage s){
+        return l.s3locales.stages.containsKey(s.id)?l.s3locales.stages.get(s.id).name:s.name;
+    }
+
     public static void addS3Embed(Locale lang, final S3Rotation r, EmbedBuilder b) {
         if (r.getFest().festMatchSettings != null && r.getFest().festMatchSettings.length > 0) {
             b.addField(Emote.SPLATFEST +
                             lang.game_modes.get("regular").name,
-                    (lang.s3locales.stages.get(r.getFest().getRegularSFMatch().vsStages[0].id).name +
-                            ", " + (lang.s3locales.stages.get(r.getFest().getRegularSFMatch().vsStages[1].id)).name)
+                    (translateStage(lang,r.getFest().getRegularSFMatch().vsStages[0]) +
+                            ", " + (translateStage(lang,r.getFest().getRegularSFMatch().vsStages[1])))
                     , true);
             b.addField(Emote.SPLATFEST +
                             lang.game_modes.get("regular").name + " (Pro)",
-                    (lang.s3locales.stages.get(r.getFest().getProSFMatch().vsStages[0].id).name +
-                            ", " + (lang.s3locales.stages.get(r.getFest().getProSFMatch().vsStages[1].id)).name)
+                    (translateStage(lang,r.getFest().getProSFMatch().vsStages[0]) +
+                            ", " + (translateStage(lang,r.getFest().getProSFMatch().vsStages[1])))
                     , true);
             if (r.getTricolorStage() != null) {
-                b.addField(Emote.SPLATFEST + lang.botLocale.tricolorBattle, lang.s3locales.stages.get(r.getTricolorStage().id).name, true);
+                b.addField(Emote.SPLATFEST + lang.botLocale.tricolorBattle, translateStage(lang,r.getTricolorStage()), true);
             }
         } else
             b.addField(Emote.REGULAR +
