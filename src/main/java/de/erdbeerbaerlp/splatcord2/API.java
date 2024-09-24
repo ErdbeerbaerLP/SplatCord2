@@ -70,12 +70,12 @@ public class API {
     }
 
     public static void s2rotation(final Context ctx) {
-            NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
-            final JsonObject out = new JsonObject();
-            out.add("battle", Main.gson.toJsonTree(new S2Rotation().rotations));
-            out.add("salmon", Main.gson.toJsonTree(new S2SalmonRotation().rotations));
-            out.addProperty("_CREDIT", "Data provided by https://splatoon2.ink");
-            ctx.json(Main.gson.toJson(out));
+        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        final JsonObject out = new JsonObject();
+        out.add("battle", Main.gson.toJsonTree(new S2Rotation().rotations));
+        out.add("salmon", Main.gson.toJsonTree(new S2SalmonRotation().rotations));
+        out.addProperty("_CREDIT", "Data provided by https://splatoon2.ink");
+        ctx.json(Main.gson.toJson(out));
     }
 
     public static void s3rotation(final Context ctx) {
@@ -292,7 +292,7 @@ public class API {
                     final String localizedString = Main.translations.get(l).coop_special_weapons.get(w.coop_special_weapon.image).name;
                     wpn.translatedNames.put(l.s3Key, localizedString);
                 }
-            } else if(w.weapon != null && w.coop_special_weapon == null){
+            } else if (w.weapon != null && w.coop_special_weapon == null) {
                 wpn.imageURL = "https://splatoon2.ink/assets/splatnet/" + w.weapon.image;
                 wpn.id = w.weapon.id;
                 for (BotLanguage l : BotLanguage.values()) {
@@ -407,21 +407,22 @@ public class API {
                     rot.tricolorStage = getStageObj(s3.currentFest.tricolorStage);
                 rotations.put(sf.getStartTime(), rot);
             }
-            for (Schedule3 sf : s3.currentFest.timetable) {
-                final Rotation rot = rotations.getOrDefault(sf.getStartTime(), new Rotation());
-                rot.tricolorStage = getStageObj(sf.festMatchSettings[0].vsStages[0]);
-                rotations.put(sf.getStartTime(), rot);
-            }
+            if (s3.currentFest != null)
+                for (Schedule3 sf : s3.currentFest.timetable) {
+                    final Rotation rot = rotations.getOrDefault(sf.getStartTime(), new Rotation());
+                    rot.tricolorStage = getStageObj(sf.festMatchSettings[0].vsStages[0]);
+                    rotations.put(sf.getStartTime(), rot);
+                }
         }
 
         private Stage getStageObj(de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.Stage s) {
-            if(s == null) return null;
+            if (s == null) return null;
             final Stage st = new Stage();
             st.mapID = Integer.parseInt(new String(Base64.getDecoder().decode(s.id), StandardCharsets.UTF_8).replace("VsStage-", ""));
             for (BotLanguage l : BotLanguage.values()) {
                 if (l.val >= 10) continue;
                 final Locale locale = Main.translations.get(l);
-                final String localizedString = locale.s3locales.stages.containsKey(s.id)?locale.s3locales.stages.get(s.id).name:s.name;
+                final String localizedString = locale.s3locales.stages.containsKey(s.id) ? locale.s3locales.stages.get(s.id).name : s.name;
                 st.translatedNames.put(l.s3Key, localizedString);
                 st.imageUrl = s.image.url;
             }
