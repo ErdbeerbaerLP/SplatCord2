@@ -10,13 +10,11 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.TranslationNode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomCommand extends BaseCommand {
-    final String[] weapons = Main.weaponData.keySet().toArray(new String[0]);
     public ArrayList<String> lastRandomWeapons = new ArrayList<>();
     public ArrayList<String> lastRandomWeapons3 = new ArrayList<>();
 
@@ -103,6 +100,8 @@ public class RandomCommand extends BaseCommand {
     }
 
     private String getRandomWeaponID(Locale lang) {
+
+        final String[] weapons = Main.weaponData.keySet().toArray(new String[0]);
         final Random r = new Random();
         do {
             final int weapon = r.nextInt(weapons.length - 1);
@@ -167,19 +166,24 @@ public class RandomCommand extends BaseCommand {
                 final MessageCreateBuilder mb = new MessageCreateBuilder();
                 switch (splVer) {
                     case 2:
-                        final ArrayList<MessageEmbed> embeds = new ArrayList<>();
-                        for (int i = 0; i < amount; ++i) {
-                            final String wpnid = getRandomWeaponID(lang);
-                            final de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon wpn = Main.weaponData.get(wpnid);
-                            embeds.add(new EmbedBuilder()
-                                    .setTitle(lang.weapons.get(Integer.parseInt(wpnid)).name)
-                                    .setThumbnail("https://splatoon2.ink/assets/splatnet" + wpn.image)
-                                    .addField(lang.botLocale.weaponSub, lang.weapon_subs.get(wpn.sub.id).name, true)
-                                    .addField(lang.botLocale.weaponSpecial, lang.weapon_specials.get(wpn.special.id).name, true)
-                                    .build());
+                        if(Main.weaponData.isEmpty()){
+                            mb.setContent("Splatoon 2 weapons are currently unavailable");
+                            break;
+                        }else {
+                            final ArrayList<MessageEmbed> embeds = new ArrayList<>();
+                            for (int i = 0; i < amount; ++i) {
+                                final String wpnid = getRandomWeaponID(lang);
+                                final de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon wpn = Main.weaponData.get(wpnid);
+                                embeds.add(new EmbedBuilder()
+                                        .setTitle(lang.weapons.get(Integer.parseInt(wpnid)).name)
+                                        .setThumbnail("https://splatoon2.ink/assets/splatnet" + wpn.image)
+                                        .addField(lang.botLocale.weaponSub, lang.weapon_subs.get(wpn.sub.id).name, true)
+                                        .addField(lang.botLocale.weaponSpecial, lang.weapon_specials.get(wpn.special.id).name, true)
+                                        .build());
+                            }
+                            mb.setEmbeds(embeds);
+                            break;
                         }
-                        mb.setEmbeds(embeds);
-                        break;
                     case 3:
                         final ArrayList<MessageEmbed> embs = new ArrayList<>();
                         for (int i = 0; i < amount; ++i) {
@@ -196,7 +200,7 @@ public class RandomCommand extends BaseCommand {
                         break;
                 }
 
-                ev.reply(mb.setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).build()).queue();
+                ev.reply(mb.build()).queue();
                 break;
             case "number":
                 long minimumNumber = 0;
@@ -204,9 +208,9 @@ public class RandomCommand extends BaseCommand {
                 final OptionMapping minOption = ev.getOption("minimum");
                 if (minOption != null) minimumNumber = Long.parseLong(minOption.getAsString());
                 if (minimumNumber > maximumNumber)
-                    ev.reply(lang.botLocale.cmdRandomNumMinMaxError + ThreadLocalRandom.current().nextLong(maximumNumber, minimumNumber + 1)).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                    ev.reply(lang.botLocale.cmdRandomNumMinMaxError + ThreadLocalRandom.current().nextLong(maximumNumber, minimumNumber + 1)).queue();
                 else
-                    ev.reply(ThreadLocalRandom.current().nextLong(minimumNumber, maximumNumber + 1) + "").setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                    ev.reply(ThreadLocalRandom.current().nextLong(minimumNumber, maximumNumber + 1) + "").queue();
                 break;
             case "stage":
                 final StringBuilder stageString = new StringBuilder();
@@ -217,7 +221,7 @@ public class RandomCommand extends BaseCommand {
                             final int stage = r.nextInt(lang.stages.size() - 1);
                             stageString.append(stages[stage].getName()).append("\n");
                         }
-                        ev.reply(stageString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        ev.reply(stageString.toString().trim()).queue();
                         break;
                     case 3:
                         final TranslationNode[] s3Stages = lang.s3locales.stages.values().toArray(new TranslationNode[0]);
@@ -225,7 +229,7 @@ public class RandomCommand extends BaseCommand {
                             final int stage = r.nextInt(lang.s3locales.stages.size() - 1);
                             stageString.append(s3Stages[stage].name).append("\n");
                         }
-                        ev.reply(stageString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                        ev.reply(stageString.toString().trim()).queue();
                         break;
                 }
                 break;
@@ -304,7 +308,7 @@ public class RandomCommand extends BaseCommand {
                     if (players == 7) privateString.append("[" + playerArray[6] + "]\n");
                     if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
                     if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
-                    ev.reply(privateString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                    ev.reply(privateString.toString().trim()).queue();
                 } else if (splVer == 3) {
                     shuffleArray(playerArray);
                     final StringBuilder privateString = new StringBuilder();
@@ -365,7 +369,7 @@ public class RandomCommand extends BaseCommand {
                     if (players == 7) privateString.append("[" + playerArray[6] + "]\n");
                     if (players >= 9) privateString.append("[" + playerArray[8] + "]\n");
                     if (players == 10) privateString.append("[" + playerArray[9] + "]\n");
-                    ev.reply(privateString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                    ev.reply(privateString.toString().trim()).queue();
 
                 }
                 break;
@@ -388,7 +392,7 @@ public class RandomCommand extends BaseCommand {
                     default:
                         break;
                 }
-                ev.reply(modeString.toString().trim()).setActionRow(Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).queue();
+                ev.reply(modeString.toString().trim()).queue();
                 break;
         }
     }

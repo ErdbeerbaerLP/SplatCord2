@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.util;
 
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import de.erdbeerbaerlp.splatcord2.Main;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
@@ -8,6 +9,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.CoOpSch
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.coop_schedules.Detail;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedule;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.scheduling.Schedules;
+import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.weapons.Weapon;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.*;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.FestRecord;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.SplatfestData;
@@ -15,9 +17,14 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatfest.SplatfestDat
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public class ScheduleUtil {
@@ -185,6 +192,15 @@ public class ScheduleUtil {
     }
 
     public static void updateS2RotationData() throws IOException, JsonParseException {
+        System.out.println("Downloading Weapon data");
+        final URL wpn = new URL("https://splatoon2.ink/data/weapons.json");
+        final HttpsURLConnection wpnConn = (HttpsURLConnection) wpn.openConnection();
+        wpnConn.setRequestProperty("User-Agent", Main.USER_AGENT);
+        wpnConn.connect();
+        final String out = new Scanner(wpnConn.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
+        final Type mapType = new TypeToken<Map<String, Weapon>>() {
+        }.getType();
+        Main.weaponData = Main.gson.fromJson(new StringReader(out), mapType);
         System.out.println("Downloading S2 Rotations...");
         final URL sched = new URL("https://splatoon2.ink/data/schedules.json");
         final HttpsURLConnection deConn = (HttpsURLConnection) sched.openConnection();

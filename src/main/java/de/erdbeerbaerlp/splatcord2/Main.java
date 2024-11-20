@@ -3,7 +3,6 @@ package de.erdbeerbaerlp.splatcord2;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
 import de.erdbeerbaerlp.splatcord2.dc.Bot;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
@@ -132,15 +130,6 @@ public class Main {
             translations.put(l, locale);
 
         }
-        System.out.println("Downloading Weapon data");
-        final URL wpn = new URL("https://splatoon2.ink/data/weapons.json");
-        final HttpsURLConnection wpnConn = (HttpsURLConnection) wpn.openConnection();
-        wpnConn.setRequestProperty("User-Agent", USER_AGENT);
-        wpnConn.connect();
-        final String out = new Scanner(wpnConn.getInputStream(), StandardCharsets.UTF_8).useDelimiter("\\A").next();
-        final Type mapType = new TypeToken<Map<String, Weapon>>() {
-        }.getType();
-        weaponData = gson.fromJson(new StringReader(out), mapType);
 
         System.out.println("Downloading SplatNet2 data");
         final URL tworld = new URL("https://splatoon2.ink/data/merchandises.json");
