@@ -55,7 +55,8 @@ public class DataUpdateTask extends TimerTask {
         try {
             Main.s1rotationsPretendo = BossFileUtil.getStageByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
             Main.splatoon1PretendoStatus = true;
-            Main.s1splatfestPretendo = BossFileUtil.getFestByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=EU&l=en");
+            Main.s1splatfestPretendo = BossFileUtil.getFestBymlDirect("https://cdn.discordapp.com/attachments/911878047895023637/1320359116123934720/00000544?ex=67694fc0&is=6767fe40&hm=8670a1c8ea6c87be64f674b014bfa3fc34fc2b696b5bb3884c2c435d0e4583e7&", false);
+            //Main.s1splatfestPretendo = BossFileUtil.getFestByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=EU&l=en");
             Main.s1splatfestSplatfestival = BossFileUtil.getFestBymlDirect("https://github.com/Sheldon10095/Splatfestival_StaffFiles/raw/main/FestFiles/00000544",false);
         } catch (Exception e) {
             System.err.println("Failed loading splatoon 1 rotations from pretendo!");

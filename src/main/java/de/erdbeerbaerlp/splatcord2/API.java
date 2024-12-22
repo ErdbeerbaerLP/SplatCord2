@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class API {
@@ -47,7 +48,7 @@ public class API {
     }
 
     public static void status(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 5, TimeUnit.MINUTES);
+        NaiveRateLimit.requestPerTimeUnit(ctx, 10, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         out.addProperty("database", Main.iface.status.isDBAlive());
         out.addProperty("splat1NintendoNetwork", Main.splatoon1Status);
@@ -58,19 +59,24 @@ public class API {
     }
 
     public static void s1rotation(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        NaiveRateLimit.requestPerTimeUnit(ctx, 5, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         final JsonObject n = new JsonObject();
         n.addProperty("notice", "Nintendo Network has been shut down. Thanks for your interest.");
-        out.add("nintendo", n);
-        out.add("pretendo", Main.gson.toJsonTree(new S1Rotation(Main.s1rotationsPretendo)));
-        out.add("pretendoSplatfest", Main.gson.toJsonTree(new S1Splatfest(Main.s1splatfestPretendo)));
-        out.add("splatfestivalSplatfest", Main.gson.toJsonTree(new S1Splatfest(Main.s1splatfestSplatfestival)));
-        ctx.json(Main.gson.toJson(out));
+        try {
+            out.add("nintendo", n);
+            out.add("pretendo", Main.gson.toJsonTree(new S1Rotation(Main.s1rotationsPretendo)));
+            out.add("pretendoSplatfest", Main.gson.toJsonTree(new S1Splatfest(Main.s1splatfestPretendo)));
+            out.add("splatfestivalSplatfest", Main.gson.toJsonTree(new S1Splatfest(Main.s1splatfestSplatfestival)));
+
+            ctx.json(Main.gson.toJson(out));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void s2rotation(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        NaiveRateLimit.requestPerTimeUnit(ctx, 5, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         out.add("battle", Main.gson.toJsonTree(new S2Rotation().rotations));
         out.add("salmon", Main.gson.toJsonTree(new S2SalmonRotation().rotations));
@@ -79,7 +85,7 @@ public class API {
     }
 
     public static void s3rotation(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        NaiveRateLimit.requestPerTimeUnit(ctx, 5, TimeUnit.MINUTES);
         try {
             final JsonObject out = new JsonObject();
             out.add("battle", Main.gson.toJsonTree(new S3Rotation().rotations));
@@ -173,10 +179,25 @@ public class API {
             }
             this.stages = stages.toArray(new Stage[0]);
             festivalID = Integer.parseInt(byml.root.FestivalId.value);
-
+            final ArrayList<Team> teamIn = new ArrayList<>();
+            for (final SplatfestByml.RotationBymlRoot.TeamObj t : byml.root.Teams) {
+                final Team nt = new Team();
+                nt.color = t.Color.value;
+                if (t.Name != null)
+                    for (Map.Entry<String, SplatfestByml.RotationBymlRoot.BymlEntry> name : t.Name.entrySet()) {
+                        nt.translatedNames.put(name.getKey(), name.getValue().value);
+                    }
+                if (t.ShortName != null)
+                    for (Map.Entry<String, SplatfestByml.RotationBymlRoot.BymlEntry> name : t.ShortName.entrySet()) {
+                        nt.translatedShortNames.put(name.getKey(), name.getValue().value);
+                    }
+                teamIn.add(nt);
+            }
+            teams = teamIn.toArray(new Team[0]);
         }
 
         Stage[] stages;
+        Team[] teams;
         public String mode;
         HashMap<String, Long> time = new HashMap<>();
         int festivalID;
@@ -184,6 +205,12 @@ public class API {
         public static class Stage {
             int mapID = -1;
             HashMap<String, String> translatedNames = new HashMap<>();
+        }
+
+        public static class Team {
+            String color;
+            HashMap<String, String> translatedNames = new HashMap<>();
+            HashMap<String, String> translatedShortNames = new HashMap<>();
         }
     }
 
@@ -222,7 +249,7 @@ public class API {
                 if (l.val >= 10) continue;
                 final String localizedString = Main.translations.get(l).stages.get(st.mapID).getName();
                 st.translatedNames.put(l.s3Key, localizedString);
-                st.imageUrl = "https://splatoon2.ink/assets/splatnet/" + s.image;
+                st.imageUrl = "https://splatoon2.ink/assets/splatnet" + s.image;
             }
             return st;
         }

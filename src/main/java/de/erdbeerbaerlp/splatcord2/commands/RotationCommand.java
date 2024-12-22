@@ -49,17 +49,25 @@ public class RotationCommand extends BaseCommand {
     }
 
     private static void addS1Rotation(EmbedBuilder future, Phase currentRotation, Locale lang, long timestamp) {
-        future.addField(":alarm_clock: ", timestamp == -1 ? ("`" + lang.botLocale.now + "`") : ("<t:" + TimeUnit.MILLISECONDS.toSeconds(timestamp) + ":t>"), true)
-                .addField(Emote.REGULAR +
-                                lang.game_modes.get("regular").name,
-                        lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
-                                ", " + lang.botLocale.getS1MapName(currentRotation.RegularStages[1].MapID.value)
-                        , true)
-                .addField(Emote.RANKED +
-                                lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang, currentRotation.GachiRule.value) + ")",
-                        lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
-                                ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
-                        , true);
+        if (timestamp/1000 >= Main.s1splatfestPretendo.root.Time.getStartTime() && timestamp/1000 <= Main.s1splatfestPretendo.root.Time.getEndTime()) {
+            future.addField(":alarm_clock: ", timestamp == -1 ? ("`" + lang.botLocale.now + "`") : ("<t:" + TimeUnit.MILLISECONDS.toSeconds(timestamp) + ":t>"), true)
+                    .addField(Emote.SPLATFEST_SPL1 + GameModeUtil.translateS1(lang,Main.s1splatfestPretendo.root.Rule.value),
+                            lang.botLocale.getS1MapName(Integer.parseInt(Main.s1splatfestPretendo.root.Stages[0].MapID.value)) +
+                                    ", " + lang.botLocale.getS1MapName(Integer.parseInt(Main.s1splatfestPretendo.root.Stages[1].MapID.value)) +
+                                    ", " + lang.botLocale.getS1MapName(Integer.parseInt(Main.s1splatfestPretendo.root.Stages[2].MapID.value))
+                            , true);
+        } else
+            future.addField(":alarm_clock: ", timestamp == -1 ? ("`" + lang.botLocale.now + "`") : ("<t:" + TimeUnit.MILLISECONDS.toSeconds(timestamp) + ":t>"), true)
+                    .addField(Emote.REGULAR +
+                                    lang.game_modes.get("regular").name,
+                            lang.botLocale.getS1MapName(currentRotation.RegularStages[0].MapID.value) +
+                                    ", " + lang.botLocale.getS1MapName(currentRotation.RegularStages[1].MapID.value)
+                            , true)
+                    .addField(Emote.RANKED +
+                                    lang.game_modes.get("gachi").name + " (" + GameModeUtil.translateS1(lang, currentRotation.GachiRule.value) + ")",
+                            lang.botLocale.getS1MapName(currentRotation.GachiStages[0].MapID.value) +
+                                    ", " + lang.botLocale.getS1MapName(currentRotation.GachiStages[1].MapID.value)
+                            , true);
     }
 
     private static void addS2Rotation(EmbedBuilder future, Rotation currentRotation, Locale lang, boolean now) {
@@ -99,7 +107,7 @@ public class RotationCommand extends BaseCommand {
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
         BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
-        if(serverLang == null){
+        if (serverLang == null) {
             serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
         }
         final Locale lang = Main.translations.get(serverLang);
