@@ -227,7 +227,7 @@ public class MessageUtil {
     }
 
     public static void addS3Embed(Locale lang, final S3Rotation r, EmbedBuilder b) {
-        if (r.getFest().festMatchSettings != null && r.getFest().festMatchSettings.length > 0) {
+        if (r.getFest() != null && r.getFest().festMatchSettings != null && r.getFest().festMatchSettings.length > 0) {
             b.addField(Emote.SPLATFEST +
                             lang.game_modes.get("regular").name,
                     (translateStage(lang,r.getFest().getRegularSFMatch().vsStages[0]) +

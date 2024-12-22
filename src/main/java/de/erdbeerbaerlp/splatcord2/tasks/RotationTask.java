@@ -81,7 +81,6 @@ public class RotationTask extends TimerTask {
             }
         if (splatoon3inkStatus)
             try {
-
                 final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
                 if (iface.status.isDBAlive() && currentS3Rotation.getRegular().getStartTime() != Config.instance().doNotEdit.lastS3RotationTimestamp) {
                     final byte[] img = ImageUtil.generateS3Image(currentS3Rotation);
