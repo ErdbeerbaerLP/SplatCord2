@@ -120,28 +120,29 @@ public class Main {
         CommandRegistry.setCommands();
 
         Javalin api = Javalin.create(config -> {
-            config.routing.caseInsensitiveRoutes = true;
-        }).routes(() -> {
-            path("/", ()->{
-                get((ctx)->{
-                    ctx.redirect("https://splatcord.ink/info/api");
+            config.router.caseInsensitiveRoutes = true;
+            config.router.apiBuilder((() -> {
+                path("/", ()->{
+                    get((ctx)->{
+                        ctx.redirect("https://splatcord.ink/info/api");
+                    });
                 });
-            });
-            path("/stats", () -> {
-                get(API::stats);
-            });
-            path("/status", () -> {
-                get(API::status);
-            });
-            path("/s1rotations", () -> {
-                get(API::s1rotation);
-            });
-            path("/s2rotations", () -> {
-                get(API::s2rotation);
-            });
-            path("/s3rotations", () -> {
-                get(API::s3rotation);
-            });
+                path("/stats", () -> {
+                    get(API::stats);
+                });
+                path("/status", () -> {
+                    get(API::status);
+                });
+                path("/s1rotations", () -> {
+                    get(API::s1rotation);
+                });
+                path("/s2rotations", () -> {
+                    get(API::s2rotation);
+                });
+                path("/s3rotations", () -> {
+                    get(API::s3rotation);
+                });
+            }));
         });
         api.start(Config.instance().web.port);
 
