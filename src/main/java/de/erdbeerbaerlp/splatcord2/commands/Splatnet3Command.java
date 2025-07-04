@@ -134,7 +134,7 @@ public class Splatnet3Command extends BaseCommand {
                         return;
                     }
                 }
-                if (ev.hasFullGuild()) {
+                if (ev.isFromAttachedGuild()) {
                     profile.s3orders.add(new Order(ev.getChannel().getId(), gName, BotLanguage.fromDiscordLocale(ev.getUserLocale())));
                     Main.iface.updateSplatProfile(profile);
                     submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", LInk3.getGear(gName).localizedName.get(lang.botLocale.locale.replace("-", "_")))).build()).queue());

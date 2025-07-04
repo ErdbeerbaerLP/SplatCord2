@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.role.RoleCreateEvent;
 import net.dv8tion.jda.api.events.role.update.RoleUpdatePermissionsEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -126,6 +127,9 @@ public class Bot implements EventListener {
     @Override
     public void onEvent(@NotNull GenericEvent event) {
 
+        if(event instanceof MessageDeleteEvent ev){
+            
+        }
         if (event instanceof final CommandAutoCompleteInteractionEvent ev) {
             BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
             if(serverLang == null){

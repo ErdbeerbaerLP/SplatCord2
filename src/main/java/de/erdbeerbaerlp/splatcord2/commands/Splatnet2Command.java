@@ -87,7 +87,7 @@ public class Splatnet2Command extends BaseCommand {
                         return;
                     }
                 }
-                if (ev.hasFullGuild()) {
+                if (ev.isFromAttachedGuild()) {
                     profile.s2orders.add(new Order(ev.getChannel().getId(), asString, BotLanguage.fromDiscordLocale(ev.getUserLocale())));
                     Main.iface.updateSplatProfile(profile);
                     submit.thenAccept((h) -> h.editOriginal(new MessageEditBuilder().setContent(lang.botLocale.cmdSplatnetOrdered.replace("%gear%", lang.allGears.get(asString))).build()).queue());

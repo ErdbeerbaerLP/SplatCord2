@@ -64,7 +64,13 @@ public class S3Rotation {
                 "regular=" + regular +
                 ", bankara=" + bankara +
                 ", xBattle=" + xBattle +
-                ", fest=" + bankara +
+                ", fest=" + fest +
+                ", coop=" + coop +
+                ", eggstraCoop=" + eggstraCoop +
+                ", splatfest=" + splatfest +
+                ", tricolorStage=" + tricolorStage +
+                ", event=" + event +
+                ", image='" + image + '\'' +
                 '}';
     }
 

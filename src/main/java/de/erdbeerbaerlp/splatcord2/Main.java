@@ -2,7 +2,6 @@ package de.erdbeerbaerlp.splatcord2;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
 import de.erdbeerbaerlp.splatcord2.dc.Bot;
 import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.CommandRegistry;
@@ -19,17 +18,13 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.SplatNet3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
 import de.erdbeerbaerlp.splatcord2.tasks.*;
-import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
-import de.erdbeerbaerlp.splatcord2.util.wiiu.BossFileUtil;
 import io.javalin.Javalin;
 import net.dv8tion.jda.api.entities.User;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.security.auth.login.LoginException;
 import java.awt.*;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -87,27 +82,6 @@ public class Main {
             e.printStackTrace();
         }
         if (iface == null) return;
-        System.out.println("Downloading Splat1 rotation data");
-
-        try {
-            Main.s1rotations = BossFileUtil.getStageByml("https://npts.app.nintendo.net/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
-            Main.splatoon1Status = true;
-        } catch (Exception e) {
-            System.err.println("Failed loading splatoon 1 rotations!");
-            Main.splatoon1Status = false;
-            e.printStackTrace();
-        }
-        try {
-            Main.s1rotationsPretendo = BossFileUtil.getStageByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
-            Main.splatoon1PretendoStatus = true;
-            Main.s1splatfestPretendo = BossFileUtil.getFestByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=EU&l=en");
-            Main.s1splatfestSplatfestival = BossFileUtil.getFestBymlDirect("https://github.com/Sheldon10095/Splatfestival_StaffFiles/raw/main/FestFiles/00000544",false);
-        } catch (Exception e) {
-            System.err.println("Failed loading splatoon 1 rotations from pretendo!");
-            e.printStackTrace();
-            Main.splatoon1PretendoStatus = false;
-        }
-
 
         System.out.println("Downloading locales");
         for (BotLanguage l : BotLanguage.values()) {
@@ -131,53 +105,19 @@ public class Main {
 
         }
 
-        System.out.println("Downloading SplatNet2 data");
-        final URL tworld = new URL("https://splatoon2.ink/data/merchandises.json");
-        final HttpsURLConnection con = (HttpsURLConnection) tworld.openConnection();
-        con.setRequestProperty("User-Agent", Main.USER_AGENT);
-        con.connect();
-        splatNet2 = Main.gson.fromJson(new InputStreamReader(con.getInputStream()), SplatNet.class);
-
-        System.out.println("Downloading SplatNet3 data");
-        final URL tw3 = new URL("https://splatoon3.ink/data/gear.json");
-        final HttpsURLConnection con3 = (HttpsURLConnection) tw3.openConnection();
-        con3.setRequestProperty("User-Agent", Main.USER_AGENT);
-        con3.connect();
-        splatNet3 = Main.gson.fromJson(new InputStreamReader(con3.getInputStream()), SplatNet3.class);
 
         System.out.println("Downloading Loadout.ink (slushiegoose.github.io) data");
         LInk3.init();
         try {
-            ScheduleUtil.updateSpl3Fests();
-            splatoon3inkStatus = true;
-        } catch (IOException | JsonParseException e) {
-            splatoon3inkStatus = false;
-            e.printStackTrace();
-        }
-        try {
             bot = new Bot();
-
         } catch (LoginException e) {
             System.err.println("Cannot login to discord!");
             e.printStackTrace();
         }
         if (bot == null) return;
+        new DataUpdateTask().run();
 
         CommandRegistry.setCommands();
-        try {
-            ScheduleUtil.updateS2RotationData();
-            splatoon2inkStatus = true;
-        } catch (IOException | JsonParseException e) {
-            splatoon2inkStatus = false;
-            e.printStackTrace();
-        }
-        try {
-            ScheduleUtil.updateS3RotationData();
-            splatoon3inkStatus = true;
-        } catch (IOException | JsonParseException e) {
-            splatoon3inkStatus = false;
-            e.printStackTrace();
-        }
 
         Javalin api = Javalin.create(config -> {
             config.routing.caseInsensitiveRoutes = true;

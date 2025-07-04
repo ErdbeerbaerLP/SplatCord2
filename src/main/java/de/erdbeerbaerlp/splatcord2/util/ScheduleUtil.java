@@ -119,16 +119,20 @@ public class ScheduleUtil {
         if (schedules3.data.currentFest != null) {
             if (schedules3.data.currentFest.getMidtermTime() <= timestamp)
                 tricolorStage = schedules3.data.currentFest.tricolorStage;
-            for (Schedule3 s : schedules3.data.currentFest.timetable){
+            if (schedules3.data.currentFest.timetable != null)
+                for (Schedule3 s : schedules3.data.currentFest.timetable) {
                     if (s.getStartTime() <= timestamp && s.getEndTime() > timestamp) {
                         tricolorStage = s.festMatchSettings[0].vsStages[0];
                         break;
                     }
-            }
+                }
         }
 
 
-        return new S3Rotation(regular, bankara, xBattle, coop, eggstraCoop, fest, schedules3.data.currentFest, event, tricolorStage);
+        System.out.println("Get for timestamp " + timestamp);
+        final S3Rotation rot = new S3Rotation(regular, bankara, xBattle, coop, eggstraCoop, fest, schedules3.data.currentFest, event, tricolorStage);
+        System.out.println(rot);
+        return rot;
     }
 
     public static Rotation getCurrentRotation() {
