@@ -62,7 +62,27 @@ public class LInk3Utils {
         try {
             splashtag.name = URLDecoder.decode(code.substring(20), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace(); // Handle the exception appropriately
+            e.printStackTrace();
+        }
+        return splashtag;
+    }
+
+    public static Splashtag decodeSplashtagV2(String code) {
+        Splashtag splashtag = new Splashtag();
+        String title = hexToBinary(code.substring(0, 6)).result;
+        splashtag.adjective = Integer.parseInt(title.substring(0, 12), 2);
+        splashtag.subject = Integer.parseInt(title.substring(12, 24), 2);
+
+        String bgbadge = hexToBinary(code.substring(6, 17)).result;
+        splashtag.bg = Integer.parseInt(bgbadge.substring(0, 11), 2);
+        for (int i = 0; i < 3; i++) {
+            splashtag.badges[i] = Integer.parseInt(bgbadge.substring(11 + i * 11, 22 + i * 11), 2);
+        }
+        splashtag.discriminator = Integer.parseInt(code.substring(17, 21), 10);
+        try {
+            splashtag.name = URLDecoder.decode(code.substring(21), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
         return splashtag;
     }
@@ -156,6 +176,57 @@ public class LInk3Utils {
                     Gear clothes = decodeGearV1(code.substring(12, 20));
                     Gear shoes = decodeGearV1(code.substring(20, 28));
                     Splashtag splashtag = decodeSplashtagV1(code.substring(28));
+
+                    final LInk3Profile p = new LInk3Profile();
+                    p.name = splashtag.name;
+                    p.discriminator = splashtag.discriminator;
+                    p.subject = LInk3.getFromID(LInk3.subjects, splashtag.subject);
+                    p.adjective = LInk3.getFromID(LInk3.adjectives, splashtag.adjective);
+                    p.splashtag = (de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Splashtag) LInk3.getFromID(LInk3.splashtags, splashtag.bg);
+                    p.badges = new ImageNode[3];
+                    for (int i = 0; i < 3; i++) {
+                        if (splashtag.badges[i] != 0)
+                            p.badges[i] = (ImageNode) LInk3.getFromID(LInk3.badges, splashtag.badges[i]);
+                        else splashtag.badges[i] = null;
+                    }
+
+
+                    p.wpn = (Weapon) LInk3.getFromID(((WeaponType) LInk3.getFromID(LInk3.weaponTypes, weaponset)).weapons, weaponid);
+
+
+                    p.head = new LInk3Gear((de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Gear) LInk3.getFromID(LInk3.hat, head.gear));
+                    p.head.mainEffect = (ImageNode) LInk3.getFromID(LInk3.skills, head.main);
+                    p.head.subEffects = new ImageNode[3];
+                    p.head.subEffects[0] = (ImageNode) LInk3.getFromID(LInk3.skills, head.subs[0]);
+                    p.head.subEffects[1] = (ImageNode) LInk3.getFromID(LInk3.skills, head.subs[1]);
+                    p.head.subEffects[2] = (ImageNode) LInk3.getFromID(LInk3.skills, head.subs[2]);
+                    p.clothes = new LInk3Gear((de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Gear) LInk3.getFromID(LInk3.clothes, clothes.gear));
+                    p.clothes.mainEffect = (ImageNode) LInk3.getFromID(LInk3.skills, clothes.main);
+                    p.clothes.subEffects = new ImageNode[3];
+                    p.clothes.subEffects[0] = (ImageNode) LInk3.getFromID(LInk3.skills, clothes.subs[0]);
+                    p.clothes.subEffects[1] = (ImageNode) LInk3.getFromID(LInk3.skills, clothes.subs[1]);
+                    p.clothes.subEffects[2] = (ImageNode) LInk3.getFromID(LInk3.skills, clothes.subs[2]);
+                    p.shoes = new LInk3Gear((de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.Gear) LInk3.getFromID(LInk3.shoes, shoes.gear));
+                    p.shoes.mainEffect = (ImageNode) LInk3.getFromID(LInk3.skills, clothes.main);
+                    p.shoes.subEffects = new ImageNode[3];
+                    p.shoes.subEffects[0] = (ImageNode) LInk3.getFromID(LInk3.skills, shoes.subs[0]);
+                    p.shoes.subEffects[1] = (ImageNode) LInk3.getFromID(LInk3.skills, shoes.subs[1]);
+                    p.shoes.subEffects[2] = (ImageNode) LInk3.getFromID(LInk3.skills, shoes.subs[2]);
+
+
+                    return p;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            case '2':
+                try {
+                    int weaponset = Integer.parseInt(String.valueOf(code.charAt(1)), 16);
+                    int weaponid = Integer.parseInt(code.substring(2, 4), 16);
+                    Gear head = decodeGearV1(code.substring(4, 12));
+                    Gear clothes = decodeGearV1(code.substring(12, 20));
+                    Gear shoes = decodeGearV1(code.substring(20, 28));
+                    Splashtag splashtag = decodeSplashtagV2(code.substring(28));
 
                     final LInk3Profile p = new LInk3Profile();
                     p.name = splashtag.name;
