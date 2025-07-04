@@ -4,7 +4,7 @@ public class Italian extends EnglishBase {
     {
 
         s1FestStr = "EUit";
-        langName = "Italian/Italiano (Partially translated, by @pinklimes)";
+        langName = "Italian/Italiano (Partially translated, by @limes.pink)";
 
         salmonStage = "Arene:";
         weapons = "Armi:";
