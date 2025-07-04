@@ -222,7 +222,7 @@ public class API {
                 if (l.val >= 10) continue;
                 final String localizedString = Main.translations.get(l).stages.get(st.mapID).getName();
                 st.translatedNames.put(l.s3Key, localizedString);
-                st.imageUrl = "https://splatoon2.ink/assets/splatnet/" + s.image;
+                st.imageUrl = "https://splatoon2.ink/assets/splatnet" + s.image;
             }
             return st;
         }
@@ -286,14 +286,14 @@ public class API {
             final Weapon wpn = new Weapon();
             if (w.weapon == null && w.coop_special_weapon != null) {
                 wpn.id = w.coop_special_weapon.id;
-                wpn.imageURL = "https://splatoon2.ink/assets/splatnet/" + w.coop_special_weapon.image;
+                wpn.imageURL = "https://splatoon2.ink/assets/splatnet" + w.coop_special_weapon.image;
                 for (BotLanguage l : BotLanguage.values()) {
                     if (l.val >= 10) continue;
                     final String localizedString = Main.translations.get(l).coop_special_weapons.get(w.coop_special_weapon.image).name;
                     wpn.translatedNames.put(l.s3Key, localizedString);
                 }
             } else if (w.weapon != null && w.coop_special_weapon == null) {
-                wpn.imageURL = "https://splatoon2.ink/assets/splatnet/" + w.weapon.image;
+                wpn.imageURL = "https://splatoon2.ink/assets/splatnet" + w.weapon.image;
                 wpn.id = w.weapon.id;
                 for (BotLanguage l : BotLanguage.values()) {
                     if (l.val >= 10) continue;
