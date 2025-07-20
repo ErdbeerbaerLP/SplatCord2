@@ -229,6 +229,23 @@ public class DatabaseInterface implements AutoCloseable {
         }
         return null;
     }
+    public HashMap<String, Long> getServerChannels(final long serverID) {
+        try (final ResultSet res = query("SELECT s1mapchannel, mapchannel, salchannel, s3mapchannel, s3salmonchannel, s3eventChannel FROM servers WHERE serverid = " + serverID)) {
+            final HashMap<String, Long> out = new HashMap<>();
+            if (res.next()) {
+                out.put("s1channel",res.getLong(1));
+                out.put("s2channel",res.getLong(2));
+                out.put("s2salmon",res.getLong(3));
+                out.put("s3channel",res.getLong(4));
+                out.put("s3salmon",res.getLong(5));
+                out.put("s3event",res.getLong(6));
+                return out;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public void addServerStatistic(int serverCount){
         runUpdate("INSERT INTO `server_stats` (timestamp, servercount) values ("+ Instant.now().toEpochMilli()+", "+ serverCount+")");
     }

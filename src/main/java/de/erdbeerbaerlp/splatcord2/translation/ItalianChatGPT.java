@@ -83,7 +83,8 @@ public class ItalianChatGPT extends EnglishBase {
         cmdProfileMissingFC = "%s non ha ancora impostato un codice amico Switch.";
         cmdProfileFCSet = "Codice amico Switch impostato su ";
         cmdSettingsDesc = "Modifica le impostazioni del server (ad esempio la lingua)";
-        cmdSettingsDelMsg = "Eliminare i vecchi messaggi di rotazione? Predefinito: sì";
+        cmdSettingsDelMsg = "Eliminare i vecchi messaggi di rotazione?";
+        cmdSettingsNoChannel = "Nessun canale selezionato";
         cmdSettingsDelEnable = "I vecchi messaggi di rotazione verranno ora eliminati dal canale";
         cmdSettingsDelDisable = "I vecchi messaggi di rotazione verranno ora mantenuti nel canale";
         cmdSettingsArgMissing = "Non sono stati forniti abbastanza parametri, le impostazioni non sono state modificate";

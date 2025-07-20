@@ -13,6 +13,8 @@ import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.*;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -33,7 +35,6 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -81,9 +82,6 @@ public class Bot implements EventListener {
         });
 
 
-
-
-
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -127,12 +125,12 @@ public class Bot implements EventListener {
     @Override
     public void onEvent(@NotNull GenericEvent event) {
 
-        if(event instanceof MessageDeleteEvent ev){
-            
+        if (event instanceof MessageDeleteEvent ev) {
+
         }
         if (event instanceof final CommandAutoCompleteInteractionEvent ev) {
             BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
-            if(serverLang == null){
+            if (serverLang == null) {
                 serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
             }
             final Locale lang = Main.translations.get(serverLang);
@@ -239,45 +237,78 @@ public class Bot implements EventListener {
             switch (ev.getComponentId()) {
                 case "s1channel" -> {
                     if (checkPerms(ev)) return;
-                    Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotations)]);
+
+                    if (ev.getValues().isEmpty())
+                        Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), null);
+                    else {
+                        Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                        if (Main.splatoon1PretendoStatus) {
+                            MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotations)]);
+                        }
+                    }
                     ev.getInteraction().deferEdit().queue();
                 }
-                /*case "s1channelPretendo" -> {
-                    if (checkPerms(ev)) return;
-                    Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS1PRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotationsPretendo)]);
-                    ev.getInteraction().deferEdit().queue();
-                }*/
                 case "s2channel" -> {
                     if (checkPerms(ev)) return;
-                    Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS2RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentRotation());
+
+                    if (ev.getValues().isEmpty())
+                        Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), null);
+                    else {
+                        Main.iface.setS2StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+
+                        if (Main.splatoon2inkStatus) {
+                            MessageUtil.sendS2RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentRotation());
+                        }
+                    }
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s3channel" -> {
                     if (checkPerms(ev)) return;
-                    Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS3RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
+                    if (ev.getValues().isEmpty())
+                        Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    else {
+                        Main.iface.setS3StageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                        if (Main.splatoon3inkStatus) {
+                            MessageUtil.sendS3RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
+                        }
+                    }
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s2salmon" -> {
                     if (checkPerms(ev)) return;
-                    Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendSalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    if (ev.getValues().isEmpty())
+                        Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), null);
+                    else {
+                        Main.iface.setSalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                        if (Main.splatoon2inkStatus) {
+                            MessageUtil.sendSalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                        }
+                    }
                     ev.getInteraction().deferEdit().queue();
                 }
                 case "s3salmon" -> {
                     if (checkPerms(ev)) return;
-                    Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS3SalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                    if (ev.getValues().isEmpty())
+                        Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), null);
+                    else {
+                        Main.iface.setS3SalmonChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                        if (Main.splatoon3inkStatus) {
+                            MessageUtil.sendS3SalmonFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                        }
+                    }
                     ev.getInteraction().deferEdit().queue();
 
                 }
                 case "s3event" -> {
                     if (checkPerms(ev)) return;
-                    Main.iface.setS3EventChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
-                    MessageUtil.sendS3EventRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
+                    if (ev.getValues().isEmpty())
+                        Main.iface.setS3EventChannel(ev.getGuild().getIdLong(), null);
+                    else {
+                        Main.iface.setS3EventChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
+                        if (Main.splatoon3inkStatus) {
+                            MessageUtil.sendS3EventRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), ScheduleUtil.getCurrentS3Rotation());
+                        }
+                    }
                     ev.getInteraction().deferEdit().queue();
                 }
                 default -> ev.reply("Selected " + ev.getValues().get(0).getAsMention()).setEphemeral(true).queue();
@@ -338,7 +369,7 @@ public class Bot implements EventListener {
 
         } else if (event instanceof final ButtonInteractionEvent ev) {
             BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
-            if(serverLang == null){
+            if (serverLang == null) {
                 serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
             }
             final Locale lang = Main.translations.get(serverLang);
@@ -422,20 +453,20 @@ public class Bot implements EventListener {
                 if (Main.splatNet3.data.gesotown.limitedGears.length < (targetPage + 1) * 3) b = b.asDisabled();
 
                 ev.editMessageEmbeds(Splatnet3Command.saleEmbeds(lang, targetPage - 1))
-                        .setActionRow(
+                        .setComponents(ActionRow.of(
                                 Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
                                 Button.secondary("snet3prev" + (targetPage - 1), Emoji.fromUnicode("U+25C0")),
-                                b).queue();
+                                b)).queue();
             } else if (ev.getComponentId().startsWith("snet3prev")) {
                 int targetPage = Integer.parseInt(ev.getComponentId().replace("snet3prev", ""));
 
                 Button b = Button.secondary("snet3prev" + (targetPage - 1), Emoji.fromUnicode("U+25C0"));
                 if (targetPage == 0) b = b.asDisabled();
                 ev.editMessageEmbeds(targetPage == 0 ? Splatnet3Command.dailyEmbeds(lang) : Splatnet3Command.saleEmbeds(lang, targetPage - 1))
-                        .setActionRow(
+                        .setComponents(ActionRow.of(
                                 Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
                                 b,
-                                Button.secondary("snet3next" + (targetPage + 1), Emoji.fromUnicode("U+25B6"))).queue();
+                                Button.secondary("snet3next" + (targetPage + 1), Emoji.fromUnicode("U+25B6")))).queue();
             }
         } else if (event instanceof RoleUpdatePermissionsEvent) {
             //Update command permissions on role creation / permission change
@@ -446,6 +477,7 @@ public class Bot implements EventListener {
 
     private boolean checkPerms(final EntitySelectInteractionEvent ev) {
         final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        if(ev.getValues().isEmpty()) return false; // To allow removal of channel
         if (!ev.getGuild().getMember(ev.getJDA().getSelfUser()).hasPermission(ev.getGuild().getChannelById(GuildMessageChannel.class, ev.getValues().get(0).getIdLong()), Permission.MESSAGE_SEND)) {
             ev.reply(lang.botLocale.noWritePerms).queue();
             return true;

@@ -10,6 +10,8 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.loadoutink.LInk3;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.LimitedGear;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.splatnet.Power;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -19,7 +21,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 
 import java.time.Instant;
@@ -119,9 +120,9 @@ public class Splatnet3Command extends BaseCommand {
                 System.out.println(emb);
                 submit.thenAccept((h) -> {
                     h.editOriginalEmbeds(emb)
-                            .setActionRow(
+                            .setComponents(ActionRow.of(
                                     Button.secondary("snet3prev0", Emoji.fromUnicode("U+25C0")).asDisabled(),
-                                    Button.secondary("snet3next1", Emoji.fromUnicode("U+25B6"))).queue();
+                                    Button.secondary("snet3next1", Emoji.fromUnicode("U+25B6")))).queue();
                 });
             }
             case "order" -> {

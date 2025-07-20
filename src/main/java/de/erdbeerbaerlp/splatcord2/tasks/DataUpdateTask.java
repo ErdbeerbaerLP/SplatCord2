@@ -46,10 +46,10 @@ public class DataUpdateTask extends TimerTask {
 
         try {
             Main.s1rotations = BossFileUtil.getStageByml("https://npts.app.nintendo.net/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
-            Main.splatoon1Status = true;
+            Main.splatoon1NintendoStatus = true;
         } catch (Exception e) {
             System.err.println("Failed loading splatoon 1 rotations!");
-            Main.splatoon1Status = false;
+            Main.splatoon1NintendoStatus = false;
             e.printStackTrace();
         }
         try {

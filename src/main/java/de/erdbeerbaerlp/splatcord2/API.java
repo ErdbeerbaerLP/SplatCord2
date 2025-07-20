@@ -50,7 +50,7 @@ public class API {
         NaiveRateLimit.requestPerTimeUnit(ctx, 5, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         out.addProperty("database", Main.iface.status.isDBAlive());
-        out.addProperty("splat1NintendoNetwork", Main.splatoon1Status);
+        out.addProperty("splat1NintendoNetwork", Main.splatoon1NintendoStatus);
         out.addProperty("splat1PretendoNetwork", Main.splatoon1PretendoStatus);
         out.addProperty("splatoon2.ink", Main.splatoon2inkStatus);
         out.addProperty("splatoon3.ink", Main.splatoon3inkStatus);

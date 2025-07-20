@@ -9,6 +9,8 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon2.translations.Stage;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.Splat3Profile;
 import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.TranslationNode;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -21,7 +23,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.TimeUtil;
 
 import java.time.Instant;
@@ -156,7 +157,7 @@ public class PrivateCommand extends BaseCommand {
         } else{
             b.setDescription("Unknown Version error \""+roomVersion+"\"\nPlease contact developer");
         }
-        cmdmsg.editOriginalEmbeds(b.build()).setActionRow(Button.primary("regenprivate", lang.botLocale.regenerateButton), Button.danger("delete", Emoji.fromUnicode("U+1F5D1"))).submit();
+        cmdmsg.editOriginalEmbeds(b.build()).setComponents(ActionRow.of(Button.primary("regenprivate", lang.botLocale.regenerateButton), Button.danger("delete", Emoji.fromUnicode("U+1F5D1")))).submit();
     }
 
     private static void getProfileName(GenericInteractionCreateEvent ev, Splat2Profile profile, Long[] playerArray, int curPlayer, StringBuilder name) {

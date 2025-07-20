@@ -98,7 +98,7 @@ public class Spanish extends EnglishBase {
         cmdProfileMissingFC = "%s no ha configurado un código de amigo de Switch aún.";
         cmdProfileFCSet = "Código de amigo establecido a ";
         cmdSettingsDesc = "Editar configuración de servidor (ej. idioma)";
-        cmdSettingsDelMsg = "¿Borrar mensajes antiguos? Por defecto: Sí";
+        cmdSettingsDelMsg = "¿Borrar mensajes antiguos?";
         cmdSettingsDelEnable = "Los mensajes de rotación antiguos se borrarán cuando se envién nuevos.";
         cmdSettingsDelDisable = "Los mensajes de rotación antiguos se mantendrán cuando se envién nuevos.";
         cmdSettingsArgMissing = "Datos enviados insuficientes, la configuración no ha cambiado";

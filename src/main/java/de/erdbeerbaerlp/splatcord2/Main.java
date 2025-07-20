@@ -54,7 +54,7 @@ public class Main {
     public static SplatfestByml s1splatfestSplatfestival = null;
     public static boolean splatoon2inkStatus = false;
     public static boolean splatoon3inkStatus = false;
-    public static boolean splatoon1Status = false;
+    public static boolean splatoon1NintendoStatus = false;
     public static boolean splatoon1PretendoStatus = false;
     public static CoOpSchedules coop_schedules;
     public static Map<String, Weapon> weaponData = new HashMap<>();

@@ -81,7 +81,8 @@ public class JapaneseChatGPT extends EnglishBase {
         cmdProfileMissingFC = "まだSwitchフレンドコードを設定していません。";
         cmdProfileFCSet = "Switchフレンドコードがに設定されました ";
         cmdSettingsDesc = "サーバー設定を編集します（言語など）";
-        cmdSettingsDelMsg = "古いローテーションメッセージを削除しますか？デフォルト：はい";
+        cmdSettingsDelMsg = "古いローテーションメッセージを削除しますか？";
+        cmdSettingsNoChannel = "チャンネルが選択されていません";
         cmdSettingsDelEnable = "古いローテーションメッセージがチャンネルから削除されます";
         cmdSettingsDelDisable = "古いローテーションメッセージがチャンネルに残ります";
         cmdSettingsArgMissing = "パラメータが不十分です、設定は変更されませんでした";

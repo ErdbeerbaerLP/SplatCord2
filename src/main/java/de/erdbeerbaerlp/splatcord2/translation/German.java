@@ -86,7 +86,8 @@ public class German extends EnglishBase {
         cmdProfileMissingFC = "%s hat noch keinen Switch Freundescode festgelegt.";
         cmdProfileFCSet = "Switch Freundescode gesetzt auf ";
         cmdSettingsDesc = "Bearbeite Servereinstellungen (z.B. Sprache)";
-        cmdSettingsDelMsg = "Alte Rotations-Nachrichten Löschen? Standard: Ja";
+        cmdSettingsDelMsg = "Alte Rotations-Nachrichten Löschen?";
+        cmdSettingsNoChannel = "Kein Kanal ausgewählt";
         cmdSettingsDelEnable = "Alte Rotations-Nachrichten werden jetzt aus dem channel gelöscht";
         cmdSettingsDelDisable = "Alte Rotations-Nachrichten werden jetzt im channel belassen";
         cmdSettingsArgMissing = "Nicht genug Parameter angegeben, Einstellungen wurden nicht verändert";

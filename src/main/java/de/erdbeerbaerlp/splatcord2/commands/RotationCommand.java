@@ -12,9 +12,10 @@ import de.erdbeerbaerlp.splatcord2.util.MessageUtil;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -136,7 +137,7 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS2Rotations.size() - 1)
                             s2EmbedBuilder.addBlankField(false);
                     }
-                    ev.replyEmbeds(s2EmbedBuilder.build()).setActionRow(Button.primary("loadmore2", lang.botLocale.cmdRotationLoadAll)).queue();
+                    ev.replyEmbeds(s2EmbedBuilder.build()).setComponents(ActionRow.of(Button.primary("loadmore2", lang.botLocale.cmdRotationLoadAll))).queue();
                     break;
                 case "splatoon3":
                     final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
@@ -151,7 +152,7 @@ public class RotationCommand extends BaseCommand {
                         if (i < nextS3Rotations.size() - 1)
                             s3EmbedBuilder.addBlankField(false);
                     }
-                    ev.replyEmbeds(s3EmbedBuilder.build()).setActionRow(Button.primary("loadmore3", lang.botLocale.cmdRotationLoadAll)).queue();
+                    ev.replyEmbeds(s3EmbedBuilder.build()).setComponents(ActionRow.of(Button.primary("loadmore3", lang.botLocale.cmdRotationLoadAll))).queue();
                     break;
             }
 
