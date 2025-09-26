@@ -40,9 +40,13 @@ public class ViewFCCommand extends BaseCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
-        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
-        if(serverLang == null){
-            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        if(ev.getGuild() != null){
+            BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+            if(serverLang == null){
+                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+            }
+        }else{ 
+            serverLang = BotLanguage.ENGLISH; //Fallback to english for now, command ran in DMs for example
         }
         final Locale lang = Main.translations.get(serverLang);
         final String subcommandName = ev.getSubcommandName();
