@@ -52,7 +52,7 @@ public class ViewFCCommand extends BaseCommand {
         final Locale lang = Main.translations.get(serverLang);
         final String subcommandName = ev.getSubcommandName();
         final OptionMapping userOption = ev.getOption("user");
-        final Member m = userOption != null ? userOption.getAsMember() : ev.getMember();
+        final User m = userOption != null ? userOption.getAsUser() : ev.getUser();
         final SplatProfile profile = Main.getUserProfile(m.getIdLong());
         if (subcommandName != null)
             switch (subcommandName) {
