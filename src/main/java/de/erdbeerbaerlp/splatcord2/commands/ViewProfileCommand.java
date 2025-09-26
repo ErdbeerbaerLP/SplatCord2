@@ -48,8 +48,9 @@ public class ViewProfileCommand extends BaseCommand {
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
         try {
+            BotLanguage serverLang = null;
            if(ev.getGuild() != null){
-                BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+                serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
                 if(serverLang == null){
                     serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
                 }
