@@ -163,9 +163,9 @@ public class Bot implements EventListener {
                     ev.replyChoices(choices3).queue();
                 }
                 case "editprofile" -> {
+                    final ArrayList<Command.Choice> choices = new ArrayList<>();
                     switch (ev.getFocusedOption().getName()) {
                         case "splatfest-team":
-                            final ArrayList<Command.Choice> choices = new ArrayList<>();
                             final SplatfestRegion[] regions = new SplatfestRegion[]{ScheduleUtil.getSplatfestData().US, ScheduleUtil.getSplatfestData().EU, ScheduleUtil.getSplatfestData().JP, ScheduleUtil.getSplatfestData().AP};
                             int count = 0;
                             for (final SplatfestRegion r : regions) {
@@ -192,8 +192,28 @@ public class Bot implements EventListener {
                                     }
                                 }
                             }
-                            ev.replyChoices(choices).queue();
+                            break;
+                        case "main1":
+                        case "main2":
+                            int cnt = 0;
+                            if ("reset".toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                                choices.add(new Command.Choice("Reset", -1));
+                                cnt++;
+                            }
+                            for (Integer wpnid : lang.weapons.keySet()) {
+                                final String out = lang.weapons.get(wpnid).name;
+                                if (out.toLowerCase().contains(ev.getFocusedOption().getValue().toLowerCase())) {
+                                    choices.add(new Command.Choice(out, wpnid));
+                                    cnt++;
+                                    if (cnt >= 23) {
+                                        ev.replyChoices(choices).queue();
+                                        return;
+                                    }
+                                }
+                            }
+                            break;
                     }
+                    ev.replyChoices(choices).queue();
                 }
                 case "splatfest", "splatfestdebug" -> {
                     final ArrayList<Command.Choice> choices = new ArrayList<>();

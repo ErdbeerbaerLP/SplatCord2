@@ -182,8 +182,9 @@ public class RandomCommand extends BaseCommand {
                                 embeds.add(new EmbedBuilder()
                                         .setTitle(lang.weapons.get(Integer.parseInt(wpnid)).name)
                                         .setThumbnail("https://splatoon2.ink/assets/splatnet" + wpn.image)
-                                        .addField(lang.botLocale.weaponSub, lang.weapon_subs.get(wpn.sub.id).name, true)
-                                        .addField(lang.botLocale.weaponSpecial, lang.weapon_specials.get(wpn.special.id).name, true)
+                                        // ## Sadly removed from the endpoint :/
+                                        //.addField(lang.botLocale.weaponSub, lang.weapon_subs.get(wpn.sub.id).name, true)
+                                        //.addField(lang.botLocale.weaponSpecial, lang.weapon_specials.get(wpn.special.id).name, true)
                                         .build());
                             }
                             mb.setEmbeds(embeds);

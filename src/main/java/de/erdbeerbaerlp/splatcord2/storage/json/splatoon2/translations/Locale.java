@@ -17,8 +17,6 @@ public class Locale {
     public HashMap<String, GameRule> rules;
     public HashMap<String, Stage> coop_stages;
     public HashMap<Integer, Weapon> weapons;
-    public HashMap<Integer, SubWeapon> weapon_subs;
-    public HashMap<Integer, SpecialWeapon> weapon_specials;
     public HashMap<String, Weapon> coop_special_weapons;
     public HashMap<String, JsonElement> gear;
     public HashMap<Integer, Brand> brands;
@@ -52,8 +50,6 @@ public class Locale {
                 ", rules=" + rules +
                 ", coop_stages=" + coop_stages +
                 ", weapons=" + weapons +
-                ", weapon_subs=" + weapon_subs +
-                ", weapon_specials=" + weapon_specials +
                 ", coop_special_weapons=" + coop_special_weapons +
                 ", gear=" + gear +
                 ", brands=" + brands +

@@ -97,9 +97,9 @@ public class ViewProfileCommand extends BaseCommand {
                                 b.setTitle(m.getEffectiveName() + "'s Splatoon 2 Profile");
                             b.addField(lang.botLocale.cmdProfileLevel, profile.splat2Profile.getLevel(), true);
                             b.addField(lang.botLocale.cmdProfileSRTitle, getSRTitle(profile.splat2Profile.srTitle, lang), true);
-                            String mains = "- " + (profile.splat2Profile.mainWeapon1 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon1).name : lang.botLocale.unset) +
+                            String mains = "- " + (profile.splat2Profile.mainWeapon1 >= 0 ? (lang.weapons.containsKey(profile.splat2Profile.mainWeapon1) ? lang.weapons.get(profile.splat2Profile.mainWeapon1).name : "Unknown weapon id `"+profile.splat2Profile.mainWeapon1+"`") : lang.botLocale.unset) +
                                     "\n" +
-                                    "- " + (profile.splat2Profile.mainWeapon2 > 0 ? lang.weapons.get(profile.splat2Profile.mainWeapon2).name : lang.botLocale.unset);
+                                    "- " + (profile.splat2Profile.mainWeapon2 >= 0 ? (lang.weapons.containsKey(profile.splat2Profile.mainWeapon2) ? lang.weapons.get(profile.splat2Profile.mainWeapon2).name : "Unknown weapon id `"+profile.splat2Profile.mainWeapon2+"`") : lang.botLocale.unset);
                             b.addField(lang.botLocale.cmdProfileMainWeapon, mains, true);
                             b.addBlankField(false);
                             b.addField(lang.rules.get("rainmaker").name, profile.splat2Profile.rainmaker.toString(), true);
