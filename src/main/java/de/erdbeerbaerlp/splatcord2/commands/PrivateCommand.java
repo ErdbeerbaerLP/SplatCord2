@@ -71,7 +71,16 @@ public class PrivateCommand extends BaseCommand {
         return false;
     }
     public static void generatePrivate(GenericInteractionCreateEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
+        BotLanguage serverLang = null;
+        if (ev.getGuild() != null) {
+            serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+            if (serverLang == null) {
+                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+            }
+        } else {
+            serverLang = BotLanguage.ENGLISH; //Fallback to english for now, command ran in DMs for example
+        }
+        final Locale lang = Main.translations.get(serverLang);
 
         InteractionHook cmdmsg = null;
         if (ev instanceof SlashCommandInteractionEvent e) {

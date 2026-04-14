@@ -20,7 +20,8 @@ public class Detail {
 
     public void genImage() {
         outImage = ImageUtil.generateSR2Image(this);
-        outImageURL = ((StandardGuildMessageChannel) Main.bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(outImage, "salmonrun2.png")).complete().getAttachments().get(0).getUrl();
+        if (outImage != null)
+            outImageURL = ((StandardGuildMessageChannel) Main.bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(outImage, "salmonrun2.png")).complete().getAttachments().get(0).getUrl();
     }
 
     @Override

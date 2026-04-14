@@ -34,16 +34,16 @@ artifacts {
 }
 
 dependencies {
-    embed("net.dv8tion:JDA:6.0.0-rc.1"){
+    embed("net.dv8tion:JDA:6.4.1"){
         transitive = true
         exclude module: 'opus-java'
     }
-    embed group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
+    embed group: 'com.mysql', name: 'mysql-connector-j', version: '9.6.0'
     embed 'com.github.ErdbeerbaerLP:toml4j:wip-SNAPSHOT'
 
     embed group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
-    embed 'com.fasterxml.jackson.core:jackson-databind:2.19.1'
-    embed("io.javalin:javalin:6.7.0")
+    embed 'com.fasterxml.jackson.core:jackson-databind:2.21.2'
+    embed("io.javalin:javalin:7.1.0")
 
 }
 jar {

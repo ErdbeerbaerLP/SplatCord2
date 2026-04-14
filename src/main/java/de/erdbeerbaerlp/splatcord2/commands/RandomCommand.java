@@ -142,9 +142,14 @@ public class RandomCommand extends BaseCommand {
     @Override
     public void execute(SlashCommandInteractionEvent ev) {
         final Random r = new Random();
-        BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
-        if(serverLang == null){
-            serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+        BotLanguage serverLang = null;
+        if (ev.getGuild() != null) {
+            serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+            if (serverLang == null) {
+                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+            }
+        } else {
+            serverLang = BotLanguage.ENGLISH; //Fallback to english for now, command ran in DMs for example
         }
         final Locale lang = Main.translations.get(serverLang);
         final String subcmd = ev.getSubcommandName();

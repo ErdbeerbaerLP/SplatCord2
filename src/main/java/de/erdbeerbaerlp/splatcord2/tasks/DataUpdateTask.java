@@ -56,12 +56,19 @@ public class DataUpdateTask extends TimerTask {
             Main.s1rotationsPretendo = BossFileUtil.getStageByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/schdat2?c=EU&l=en");
             Main.splatoon1PretendoStatus = true;
             Main.s1splatfestPretendo = BossFileUtil.getFestByml("https://npts.app.pretendo.cc/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=EU&l=en");
-            Main.s1splatfestSplatfestival = BossFileUtil.getFestBymlDirect("https://github.com/Sheldon10095/Splatfestival_StaffFiles/raw/main/FestFiles/00000544",false);
         } catch (Exception e) {
             System.err.println("Failed loading splatoon 1 rotations from pretendo!");
             e.printStackTrace();
 
             Main.splatoon1PretendoStatus = false;
+        }
+        try {
+            Main.s1splatfestSplatfestival = BossFileUtil.getFestByml("https://nptsapp.spfn.net/p01/tasksheet/1/zvGSM4kOrXpkKnpT/optdat2?c=US&l=en");
+            Main.splatoon1SplatfestivalStatus = true;
+        } catch (Exception e) {
+            System.err.println("Failed loading splatoon 1 splatfests from splatfestival!");
+            e.printStackTrace();
+            Main.splatoon1SplatfestivalStatus = false;
         }
         try {
             final URL tworld2 = new URL("https://splatoon2.ink/data/merchandises.json");

@@ -1,6 +1,7 @@
 package de.erdbeerbaerlp.splatcord2.util;
 
 import de.erdbeerbaerlp.splatcord2.Main;
+import de.erdbeerbaerlp.splatcord2.storage.BotLanguage;
 import de.erdbeerbaerlp.splatcord2.storage.Emote;
 import de.erdbeerbaerlp.splatcord2.storage.Rotation;
 import de.erdbeerbaerlp.splatcord2.storage.S3Rotation;
@@ -174,7 +175,13 @@ public class MessageUtil {
     }
 
     public static MessageCreateData getMapMessage(final Long serverid, final Rotation r) {
-        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        BotLanguage serverLang = null;
+        serverLang = Main.iface.getServerLang(serverid);
+        if (serverLang == null) {
+            serverLang = BotLanguage.fromDiscordLocale(bot.jda.getGuildById(serverid).getLocale());
+        }
+
+        final Locale lang = Main.translations.get(serverLang);
         final EmbedBuilder b = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + " (Splatoon 2)");
         addS2Embed(lang, r, b);
         if (r.image != null) b.setImage(r.image);
@@ -182,7 +189,13 @@ public class MessageUtil {
     }
 
     public static MessageCreateData getS3MapMessage(final Long serverid, final S3Rotation r) {
-        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        BotLanguage serverLang = null;
+        serverLang = Main.iface.getServerLang(serverid);
+        if (serverLang == null) {
+            serverLang = BotLanguage.fromDiscordLocale(bot.jda.getGuildById(serverid).getLocale());
+        }
+
+        final Locale lang = Main.translations.get(serverLang);
         final EmbedBuilder emb = new EmbedBuilder().setTitle(lang.botLocale.stagesTitle + " (Splatoon 3)");
         addS3Embed(lang, r, emb);
         if (r.image != null) emb.setImage(r.image);
@@ -190,7 +203,13 @@ public class MessageUtil {
     }
 
     public static MessageCreateData getS3EventMessage(final Long serverid, final S3Rotation r) {
-        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        BotLanguage serverLang = null;
+        serverLang = Main.iface.getServerLang(serverid);
+        if (serverLang == null) {
+            serverLang = BotLanguage.fromDiscordLocale(bot.jda.getGuildById(serverid).getLocale());
+        }
+
+        final Locale lang = Main.translations.get(serverLang);
         final EmbedBuilder emb = new EmbedBuilder().setTitle(Emote.EVENT + lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).name)
                 .setDescription("**" + lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).desc + "**\n" + lang.s3locales.events.get(r.getEvent().leagueMatchSetting.leagueMatchEvent.id).regulation.replace("<br />", "\n"))
                 .addField(lang.botLocale.mode, GameModeUtil.translateS3(lang, r.getEvent().leagueMatchSetting.vsRule.id), true)
@@ -267,7 +286,13 @@ public class MessageUtil {
 
 
     public static MessageCreateData getS1Message(Long serverid, Phase currentRotation) {
-        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        BotLanguage serverLang = null;
+        serverLang = Main.iface.getServerLang(serverid);
+        if (serverLang == null) {
+            serverLang = BotLanguage.fromDiscordLocale(bot.jda.getGuildById(serverid).getLocale());
+        }
+
+        final Locale lang = Main.translations.get(serverLang);
         final MessageCreateBuilder builder = new MessageCreateBuilder();
 
         if ((s1splatfestPretendo.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && (s1splatfestPretendo.root.Time.getEndTime() > System.currentTimeMillis() / 1000)) {
@@ -298,7 +323,13 @@ public class MessageUtil {
     }
 
     public static MessageCreateData getS1PMessage(Long serverid, Phase currentRotation) {
-        final Locale lang = Main.translations.get(iface.getServerLang(serverid));
+        BotLanguage serverLang = null;
+        serverLang = Main.iface.getServerLang(serverid);
+        if (serverLang == null) {
+            serverLang = BotLanguage.fromDiscordLocale(bot.jda.getGuildById(serverid).getLocale());
+        }
+
+        final Locale lang = Main.translations.get(serverLang);
         final MessageCreateBuilder builder = new MessageCreateBuilder();
         if ((s1splatfestPretendo.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && (s1splatfestPretendo.root.Time.getEndTime() > System.currentTimeMillis() / 1000)) {
             builder.setEmbeds(generateSplatfestEmbedPretendo(s1splatfestPretendo, false, lang));
@@ -318,9 +349,11 @@ public class MessageUtil {
             if (currentRotation.image != null) b.setImage(currentRotation.image);
             builder.setEmbeds(b.build());
             if (iface.getCustomSplatfests(serverid)) {
-                if (s1splatfestSplatfestival.root.FestivalId.value.equals("4100")) return builder.build();
-                if ((s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && ((s1splatfestSplatfestival.root.Time.getEndTime() > System.currentTimeMillis() / 1000))) {
-                    builder.addEmbeds(generateSplatfestEmbedSplatfestival(s1splatfestSplatfestival, false, lang));
+                if(splatoon1SplatfestivalStatus) {
+                    if (s1splatfestSplatfestival.root.FestivalId.value.equals("4100")) return builder.build();
+                    if ((s1splatfestSplatfestival.root.Time.getStartTime() <= System.currentTimeMillis() / 1000) && ((s1splatfestSplatfestival.root.Time.getEndTime() > System.currentTimeMillis() / 1000))) {
+                        builder.addEmbeds(generateSplatfestEmbedSplatfestival(s1splatfestSplatfestival, false, lang));
+                    }
                 }
             }
         }
@@ -336,33 +369,7 @@ public class MessageUtil {
         };
     }
 
-    public static void sendS1RotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {
-        final GuildMessageChannel ch = (GuildMessageChannel) bot.jda.getGuildChannelById(channel);
-        if (ch == null) {
-            System.out.println(serverid + " : Channel " + channel + " is null, removing...");
-            iface.setS1StageChannel(serverid, null);
-            return;
-        }
-        try {
-            final long lastRotationMessageID = iface.getLastS1RotationMessage(serverid);
-            final boolean deleteMessage = iface.getDeleteMessage(serverid);
-            if (deleteMessage && lastRotationMessageID != 0) {
-                final RestAction<Message> message = ch.retrieveMessageById(lastRotationMessageID);
-                message.submit().thenAccept((msg) -> {
-                    msg.delete().queue();
-                });
-            }
-            final CompletableFuture<Message> msg = bot.sendMessage(
-                    getS1Message(
-                            serverid,
-                            currentS1Rotation), channel);
-            if (msg != null) msg.thenAccept((a) -> iface.setLastS1RotationMessage(serverid, a.getIdLong()));
 
-        } catch (InsufficientPermissionException e) {
-            final Guild guildById = bot.jda.getGuildById(serverid);
-            System.err.println("Failed to send s1 rotation to Server \"" + (guildById == null ? "null" : guildById.getName()) + "(" + serverid + ")\"");
-        }
-    }
 
     public static void sendS1PRotationFeed(Long serverid, Long channel, Phase currentS1Rotation) {
         final GuildMessageChannel ch = (GuildMessageChannel) bot.jda.getGuildChannelById(channel);

@@ -243,7 +243,7 @@ public class Bot implements EventListener {
                     else {
                         Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong());
                         if (Main.splatoon1PretendoStatus) {
-                            MessageUtil.sendS1RotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotations.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotations)]);
+                            MessageUtil.sendS1PRotationFeed(ev.getGuild().getIdLong(), ev.getValues().get(0).getIdLong(), Main.s1rotationsPretendo.root.Phases[RotationTimingUtil.getRotationForInstant(Instant.now(), Main.s1rotationsPretendo)]);
                         }
                     }
                     ev.getInteraction().deferEdit().queue();
@@ -368,14 +368,18 @@ public class Bot implements EventListener {
             }
 
         } else if (event instanceof final ButtonInteractionEvent ev) {
-            BotLanguage serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
-            if (serverLang == null) {
-                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+            BotLanguage serverLang = null;
+            if (ev.getGuild() != null) {
+                serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+                if (serverLang == null) {
+                    serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+                }
+            } else {
+                serverLang = BotLanguage.ENGLISH; //Fallback to english for now, command ran in DMs for example
             }
             final Locale lang = Main.translations.get(serverLang);
             switch (ev.getComponentId()) {
                 case "s1clear" -> {
-                    Main.iface.setS1StageChannel(ev.getGuild().getIdLong(), null);
                     Main.iface.setS1PStageChannel(ev.getGuild().getIdLong(), null);
                     ev.getInteraction().deferEdit().queue();
                 }
@@ -454,7 +458,6 @@ public class Bot implements EventListener {
 
                 ev.editMessageEmbeds(Splatnet3Command.saleEmbeds(lang, targetPage - 1))
                         .setComponents(ActionRow.of(
-                                Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
                                 Button.secondary("snet3prev" + (targetPage - 1), Emoji.fromUnicode("U+25C0")),
                                 b)).queue();
             } else if (ev.getComponentId().startsWith("snet3prev")) {
@@ -464,7 +467,6 @@ public class Bot implements EventListener {
                 if (targetPage == 0) b = b.asDisabled();
                 ev.editMessageEmbeds(targetPage == 0 ? Splatnet3Command.dailyEmbeds(lang) : Splatnet3Command.saleEmbeds(lang, targetPage - 1))
                         .setComponents(ActionRow.of(
-                                Button.danger("delete", Emoji.fromUnicode("U+1F5D1")),
                                 b,
                                 Button.secondary("snet3next" + (targetPage + 1), Emoji.fromUnicode("U+25B6")))).queue();
             }
@@ -476,8 +478,17 @@ public class Bot implements EventListener {
     }
 
     private boolean checkPerms(final EntitySelectInteractionEvent ev) {
-        final Locale lang = Main.translations.get(Main.iface.getServerLang(ev.getGuild().getIdLong()));
-        if(ev.getValues().isEmpty()) return false; // To allow removal of channel
+        BotLanguage serverLang = null;
+        if (ev.getGuild() != null) {
+            serverLang = Main.iface.getServerLang(ev.getGuild().getIdLong());
+            if (serverLang == null) {
+                serverLang = BotLanguage.fromDiscordLocale(ev.getGuild().getLocale());
+            }
+        } else {
+            serverLang = BotLanguage.ENGLISH; //F+allback to english for now, command ran in DMs for example
+        }
+        final Locale lang = Main.translations.get(serverLang);
+        if (ev.getValues().isEmpty()) return false; // To allow removal of channel
         if (!ev.getGuild().getMember(ev.getJDA().getSelfUser()).hasPermission(ev.getGuild().getChannelById(GuildMessageChannel.class, ev.getValues().get(0).getIdLong()), Permission.MESSAGE_SEND)) {
             ev.reply(lang.botLocale.noWritePerms).queue();
             return true;
@@ -508,7 +519,13 @@ public class Bot implements EventListener {
 
     public Map.Entry<Long, Long> sendS3SalmonMessage(long serverid, long channel) throws InsufficientPermissionException, ExecutionException, InterruptedException {
         final S3Rotation currentS3Rotation = ScheduleUtil.getCurrentS3Rotation();
-        Locale lang = Main.translations.get(Main.iface.getServerLang(serverid));
+        BotLanguage serverLang = null;
+        serverLang = Main.iface.getServerLang(serverid);
+        if (serverLang == null) {
+            serverLang = BotLanguage.fromDiscordLocale(jda.getGuildById(serverid).getLocale());
+        }
+
+        final Locale lang = Main.translations.get(serverLang);
         final GuildMessageChannel ch = jda.getChannelById(GuildMessageChannel.class, channel);
         CompletableFuture<Message> submitMsg = null;
         if (ch != null) {

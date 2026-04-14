@@ -30,7 +30,7 @@ public class SplatnetOrderTask extends TimerTask {
     @Override
     public void run() {
         System.out.println("Running SplatnetOrderTask");
-        if(currentlyRunning){
+        if (currentlyRunning) {
             System.out.println("Skipping due to already running...");
             return;
         }
@@ -49,8 +49,9 @@ public class SplatnetOrderTask extends TimerTask {
                             if ((m.gear.kind + "/" + m.gear.id).equals(o.gear)) {
                                 final MessageChannel channel = bot.jda.getChannelById(MessageChannel.class, o.channel);
                                 if (channel == null) continue;
-                                BotLanguage msgLang = o.locale;;
-                                if(channel instanceof GuildMessageChannel gc){
+                                BotLanguage msgLang = o.locale;
+                                ;
+                                if (channel instanceof GuildMessageChannel gc) {
                                     msgLang = iface.getServerLang(gc.getGuild().getIdLong());
                                     if (msgLang == null) {
                                         msgLang = BotLanguage.fromDiscordLocale(gc.getGuild().getLocale());
@@ -61,7 +62,10 @@ public class SplatnetOrderTask extends TimerTask {
                                 b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%", user.getAsMention()));
                                 final EmbedBuilder emb = new EmbedBuilder().setTimestamp(Instant.ofEpochSecond(m.end_time)).setFooter(lang.botLocale.footer_ends).setThumbnail("https://splatoon2.ink/assets/splatnet" + m.gear.image).setAuthor(lang.allGears.get(m.gear.kind + "/" + m.gear.id) + " (" + lang.brands.get(m.gear.brand.id).name + ")", null, "https://splatoon2.ink/assets/splatnet" + m.gear.brand.image).addField(lang.botLocale.skillSlots, Emote.resolveFromS2Ability(m.skill.id) + repeat(1 + m.gear.rarity, Emote.ABILITY_LOCKED.toString()), true).addField(lang.botLocale.price, Emote.SPLATCASH.toString() + m.price, true);
                                 b.addEmbeds(emb.build());
-                                channel.sendMessage(b.build()).queue();
+                                if (channel.canTalk())
+                                    channel.sendMessage(b.build()).queue();
+                                else
+                                    user.openPrivateChannel().complete().sendMessage(b.build()).queue();
                                 finishedOrders.add(o);
                             }
                         }
@@ -93,12 +97,13 @@ public class SplatnetOrderTask extends TimerTask {
                         for (Order o : orders) {
                             if ((g.gear.name).equals(o.gear)) {
                                 final MessageChannel channel = bot.jda.getChannelById(MessageChannel.class, o.channel);
-                                if (channel == null){
-                                    System.out.println("Skipping invalid channel "+o.channel);
+                                if (channel == null) {
+                                    System.out.println("Skipping invalid channel " + o.channel);
                                     continue;
                                 }
-                                BotLanguage msgLang = o.locale;;
-                                if(channel instanceof GuildMessageChannel gc){
+                                BotLanguage msgLang = o.locale;
+                                ;
+                                if (channel instanceof GuildMessageChannel gc) {
                                     msgLang = iface.getServerLang(gc.getGuild().getIdLong());
                                     if (msgLang == null) {
                                         msgLang = BotLanguage.fromDiscordLocale(gc.getGuild().getLocale());
@@ -107,7 +112,7 @@ public class SplatnetOrderTask extends TimerTask {
                                 final Locale lang = translations.get(msgLang);
                                 final MessageCreateBuilder b = new MessageCreateBuilder();
                                 b.addContent(lang.botLocale.cmdSplatnetOrderFinished.replace("%ping%", user.getAsMention()));
-                                final EmbedBuilder emb = new EmbedBuilder().setTimestamp(Instant.ofEpochSecond(g.getEndTime())).setFooter(lang.botLocale.footer_ends).setThumbnail(g.gear.image.url).setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-","_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
+                                final EmbedBuilder emb = new EmbedBuilder().setTimestamp(Instant.ofEpochSecond(g.getEndTime())).setFooter(lang.botLocale.footer_ends).setThumbnail(g.gear.image.url).setAuthor(LInk3.getGear(g.gear.name).localizedName.get(lang.botLocale.locale.replace("-", "_")) + " (" + lang.s3locales.brands.get(g.gear.brand.id).name + ")", null, g.gear.brand.image.url);
                                 final StringBuilder sb = new StringBuilder();
                                 for (Power p : g.gear.additionalGearPowers) {
                                     sb.append(Emote.resolveFromS3Ability(p.name));
@@ -115,7 +120,10 @@ public class SplatnetOrderTask extends TimerTask {
                                 emb.addField(lang.botLocale.skillSlots, Emote.resolveFromS3Ability(g.gear.primaryGearPower.name).toString() + sb, true);
                                 emb.addField(lang.botLocale.price, Emote.SPLATCASH + g.price, true);
                                 b.addEmbeds(emb.build());
-                                channel.sendMessage(b.build()).queue();
+                                if (channel.canTalk())
+                                    channel.sendMessage(b.build()).queue();
+                                else
+                                    user.openPrivateChannel().complete().sendMessage(b.build()).queue();
                                 finishedOrders.add(o);
                             }
                         }

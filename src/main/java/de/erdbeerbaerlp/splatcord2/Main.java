@@ -19,6 +19,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.translations.S3Locale;
 import de.erdbeerbaerlp.splatcord2.storage.sql.DatabaseInterface;
 import de.erdbeerbaerlp.splatcord2.tasks.*;
 import io.javalin.Javalin;
+import io.javalin.plugin.bundled.RateLimitPlugin;
 import net.dv8tion.jda.api.entities.User;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -56,6 +57,7 @@ public class Main {
     public static boolean splatoon3inkStatus = false;
     public static boolean splatoon1NintendoStatus = false;
     public static boolean splatoon1PretendoStatus = false;
+    public static boolean splatoon1SplatfestivalStatus = false;
     public static CoOpSchedules coop_schedules;
     public static Map<String, Weapon> weaponData = new HashMap<>();
     public static Font splatfont2;
@@ -120,17 +122,20 @@ public class Main {
         CommandRegistry.setCommands();
 
         Javalin api = Javalin.create(config -> {
+            config.registerPlugin(new RateLimitPlugin());
             config.router.caseInsensitiveRoutes = true;
-            config.router.apiBuilder((() -> {
+            config.routes.apiBuilder((() -> {
                 path("/", ()->{
                     get((ctx)->{
                         ctx.redirect("https://splatcord.ink/info/api");
                     });
                 });
                 path("/stats", () -> {
+
                     get(API::stats);
                 });
                 path("/status", () -> {
+
                     get(API::status);
                 });
                 path("/s1rotations", () -> {

@@ -18,7 +18,8 @@ public class Coop3 {
 
     public void genImage() {
         outImage = ImageUtil.generateSR3Image(this);
-        outImageURL = ((StandardGuildMessageChannel) Main.bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(outImage, "salmonrun3.png")).complete().getAttachments().get(0).getUrl();
+        if (outImage != null)
+            outImageURL = ((StandardGuildMessageChannel) Main.bot.jda.getGuildChannelById(Config.instance().discord.imageChannelID)).sendFiles(FileUpload.fromData(outImage, "salmonrun3.png")).complete().getAttachments().get(0).getUrl();
     }
 
     public long getStartTime() {

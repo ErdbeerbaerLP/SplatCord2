@@ -13,7 +13,7 @@ import de.erdbeerbaerlp.splatcord2.storage.json.splatoon3.rotation.*;
 import de.erdbeerbaerlp.splatcord2.util.ScheduleUtil;
 import de.erdbeerbaerlp.splatcord2.util.wiiu.RotationTimingUtil;
 import io.javalin.http.Context;
-import io.javalin.http.util.NaiveRateLimit;
+import io.javalin.plugin.bundled.RateLimitPlugin;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class API {
 
     public static void stats(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        ctx.with(RateLimitPlugin.class).requestPerTimeUnit(2, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         out.addProperty("servers", Main.bot.jda.getGuilds().size());
 
@@ -47,7 +47,7 @@ public class API {
     }
 
     public static void status(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 5, TimeUnit.MINUTES);
+        ctx.with(RateLimitPlugin.class).requestPerTimeUnit(5, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         out.addProperty("database", Main.iface.status.isDBAlive());
         out.addProperty("splat1NintendoNetwork", Main.splatoon1NintendoStatus);
@@ -58,7 +58,7 @@ public class API {
     }
 
     public static void s1rotation(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        ctx.with(RateLimitPlugin.class).requestPerTimeUnit(2, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         final JsonObject n = new JsonObject();
         n.addProperty("notice", "Nintendo Network has been shut down. Thanks for your interest.");
@@ -70,7 +70,7 @@ public class API {
     }
 
     public static void s2rotation(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        ctx.with(RateLimitPlugin.class).requestPerTimeUnit(2, TimeUnit.MINUTES);
         final JsonObject out = new JsonObject();
         out.add("battle", Main.gson.toJsonTree(new S2Rotation().rotations));
         out.add("salmon", Main.gson.toJsonTree(new S2SalmonRotation().rotations));
@@ -79,7 +79,7 @@ public class API {
     }
 
     public static void s3rotation(final Context ctx) {
-        NaiveRateLimit.requestPerTimeUnit(ctx, 2, TimeUnit.MINUTES);
+        ctx.with(RateLimitPlugin.class).requestPerTimeUnit(2, TimeUnit.MINUTES);
         try {
             final JsonObject out = new JsonObject();
             out.add("battle", Main.gson.toJsonTree(new S3Rotation().rotations));
